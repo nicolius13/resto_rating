@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header />
-    <nuxt />
+    <nuxt class="mainApp" />
   </div>
 </template>
 
@@ -14,4 +14,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.mainApp {
+  height: Calc(100vh - 76px);
+}
+</style>

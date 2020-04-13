@@ -38,6 +38,13 @@ export default {
   css: [],
 
   /*
+   ** Env
+   */
+  env: {
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+  },
+
+  /*
    ** Plugins to load before mounting the App
    */
   plugins: [],
@@ -49,6 +56,7 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     'bootstrap-vue/nuxt',
+    '@nuxtjs/dotenv',
   ],
   /*
    ** Axios module configuration

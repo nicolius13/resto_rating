@@ -1,15 +1,13 @@
 <template>
-  <div>
-    <section class="main">
-      <div class="searchWrapper">
-        <h1>Find Restaurant</h1>
-        <div class="search">
-          <div class="searchBar"></div>
-          <div class="searchBtn">GO</div>
-        </div>
-        <p>{{ message }}</p>
+  <div class="landing">
+    <div class="searchWrapper">
+      <h1>Find Restaurant</h1>
+      <div class="search">
+        <div class="searchBar"></div>
+        <div class="searchBtn">GO</div>
       </div>
-    </section>
+      <p>{{ message }}</p>
+    </div>
   </div>
 </template>
 
@@ -31,14 +29,13 @@ body {
   color: #fff;
   font-family: 'Montserrat', sans-serif;
 }
-.main {
-  height: Calc(100vh - 76px);
+.landing {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-.main::after {
+.landing::after {
   content: '';
   background: url('../assets/asian-d.jpg');
   background-size: cover;
