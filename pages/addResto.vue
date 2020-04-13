@@ -1,6 +1,6 @@
 <template>
   <div>
-    This is a map page
+    Add your restaurant !
   </div>
 </template>
 

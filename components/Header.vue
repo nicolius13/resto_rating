@@ -1,6 +1,6 @@
 <template>
-  <b-navbar id="navBar" toggleable="md">
-    <div class="container">
+  <b-navbar id="navBar" type="muted" toggleable="md">
+    <b-container>
       <b-navbar-brand id="logo" to="/">
         <img src="../assets/logo.png" alt="logo" />
         <span>Resto Finder</span>
@@ -20,12 +20,20 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
-          <b-nav-item class="deco" to="/map">Map</b-nav-item>
-          <b-nav-item class="deco" to="/">Add a Restaurant</b-nav-item>
-          <b-nav-item class="deco" to="/">About</b-nav-item>
+          <li class="nav-item">
+            <b-link class="nav-link deco" to="/map">Map</b-link>
+          </li>
+          <li class="nav-item">
+            <b-link class="nav-link deco" to="/addResto"
+              >Add a Restaurant</b-link
+            >
+          </li>
+          <li class="nav-item">
+            <b-link class="nav-link deco" to="/about">About</b-link>
+          </li>
         </b-navbar-nav>
       </b-collapse>
-    </div>
+    </b-container>
   </b-navbar>
 </template>
 
@@ -46,7 +54,7 @@ export default {
 
 <style scoped>
 #navBar {
-  background-color: #1a1a1a;
+  background-color: #222222;
 }
 
 #logo {
@@ -69,7 +77,8 @@ export default {
   color: #08d9d6;
   transition: all 0.3s ease-in-out;
 }
-.navbar-nav .nav-link:hover {
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
   color: #0aa7a4;
   transition: all 0.3s ease-in-out;
 }
@@ -78,7 +87,7 @@ export default {
   position: relative;
 }
 
-.navbar-nav .deco:before {
+.navbar-nav .deco::before {
   content: '';
   position: absolute;
   width: 100%;
@@ -91,8 +100,8 @@ export default {
   transition: all 0.3s ease-in-out 0s;
 }
 
-.navbar-nav .deco:hover:before,
-.navbar-nav .deco.active:before {
+.navbar-nav .deco:hover::before,
+.nuxt-link-exact-active.deco::before {
   visibility: visible;
   transform: scaleX(1);
 }

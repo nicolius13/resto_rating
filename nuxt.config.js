@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-keys */
 import pkg from './package'
 
 export default {
@@ -54,10 +55,6 @@ export default {
    */
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
-  },
-  bootstrapVue: {
-    // bootstrapCSS: false, // Or `css: false`
-    // bootstrapVueCSS: false, // Or `bvCSS: false`
   },
 
   /*

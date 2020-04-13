@@ -1,6 +1,5 @@
 <template>
   <div>
-    <Header />
     <section class="main">
       <div class="searchWrapper">
         <h1>Find Restaurant</h1>
@@ -15,11 +14,7 @@
 </template>
 
 <script>
-import Header from '../components/Header'
 export default {
-  components: {
-    Header,
-  },
   data() {
     return {
       message: 'Init of a great app !',

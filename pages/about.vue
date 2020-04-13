@@ -1,6 +1,6 @@
 <template>
   <div>
-    This is a map page
+    This is an an About Page
   </div>
 </template>
 
