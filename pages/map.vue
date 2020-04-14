@@ -3,10 +3,10 @@
     <b-container id="mapContainer" fluid>
       <b-row class="mapRow">
         <b-col cols="8" class="mapCol">
-          <Map />
+          <RestoMap :restoList="restoList" />
         </b-col>
         <b-col cols="4">
-          This is a map page
+          This is a resto list
         </b-col>
       </b-row>
     </b-container>
@@ -14,10 +14,19 @@
 </template>
 
 <script>
-import Map from '../components/Map'
+// import the list of restaurants
+import restos from '../restoList.json'
+
+import RestoMap from '../components/RestoMap'
+
 export default {
   components: {
-    Map,
+    RestoMap,
+  },
+  data() {
+    return {
+      restoList: restos,
+    }
   },
 }
 </script>
@@ -26,9 +35,6 @@ export default {
 #mapContainer,
 .mapRow,
 .mapCol {
-  height: 100%;
-}
-#map {
   height: 100%;
 }
 </style>

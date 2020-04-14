@@ -20,12 +20,6 @@ export default {
       type: String,
       default: '',
     },
-    mapCenter: {
-      type: Object,
-      default: () => {
-        return {}
-      },
-    },
   },
   data() {
     return {
@@ -34,12 +28,12 @@ export default {
     }
   },
   watch: {
-    'mapCenter.lat'() {
+    'mapConfig.center.lat'() {
       this.reCenterMap()
     },
-    'mapCenter.lng'() {
-      this.reCenterMap()
-    },
+    // 'mapCenter.lng'() {
+    //   this.reCenterMap()
+    // },
   },
   async mounted() {
     const googleMapApi = await GoogleMapsApiLoader({
@@ -54,7 +48,7 @@ export default {
       this.map = new this.google.maps.Map(mapContainer, this.mapConfig)
     },
     reCenterMap() {
-      this.map.setCenter(this.mapCenter)
+      this.map.setCenter(this.mapConfig.center)
     },
   },
 }

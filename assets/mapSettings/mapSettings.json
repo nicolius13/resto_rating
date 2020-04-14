@@ -1,0 +1,13 @@
+{
+  "zoom": 14,
+  "styles": [
+    {
+      "featureType": "poi.business",
+      "stylers": [
+        {
+          "visibility": "off"
+        }
+      ]
+    }
+  ]
+}

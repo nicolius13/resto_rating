@@ -37,7 +37,7 @@ body {
 }
 .landing::after {
   content: '';
-  background: url('../assets/asian-d.jpg');
+  background: url('../assets/img/asian-d.jpg');
   background-size: cover;
   background-repeat: no-repeat;
   box-shadow: inset 0 0 10em 2em #1d1d1d;

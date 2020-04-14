@@ -1,0 +1,122 @@
+[
+  {
+    "restaurantName": "ຮ້ານ keddee ຕຳຫມີ່, ກະແລ້ມ, ນ້ຳປັ່ນ",
+    "address": "Unnamed Road, Vientiane, Laos",
+    "lat": 17.984052,
+    "lng": 102.539655,
+    "ratings": [
+      {
+        "stars": 5,
+        "comment": "Fabriqué avec des saucisses, placé sur le trottoir, district de Bublak Chee"
+      },
+      {
+        "stars": 3,
+        "comment": "Comme le menu sort quelque chose que vous pouvez manger en toute confiance. Cospa est moyenne."
+      },
+      {
+        "stars": 5,
+        "comment": "Un bon endroit pour manger, délicieux, propre, chaud"
+      },
+      {
+        "stars": 4,
+        "comment": "Ok"
+      }
+    ]
+  },
+  {
+    "restaurantName": "Kako BBQ Restaurant ກາໂກ້ ບາບີຄິວ",
+    "address": "Vientiane, Laos",
+    "lat": 17.998529,
+    "lng": 102.53949,
+    "ratings": [
+      {
+        "stars": 5,
+        "comment": "Avec tattoo en prime 😁"
+      },
+      {
+        "stars": 4,
+        "comment": ""
+      },
+      {
+        "stars": 5,
+        "comment": "Multi-cuisine"
+      },
+      {
+        "stars": 4,
+        "comment": "Ok"
+      }
+    ]
+  },
+  {
+    "restaurantName": "Luckyla",
+    "address": "นครหวงเวียงจัน, เวียงจัน, Laos",
+    "lat": 17.983216,
+    "lng": 102.538224,
+    "ratings": [
+      {
+        "stars": 4,
+        "comment": "Hai Nan chicken rice is very good"
+      },
+      {
+        "stars": 3,
+        "comment": ""
+      },
+      {
+        "stars": 5,
+        "comment": "nice"
+      },
+      {
+        "stars": 4,
+        "comment": "Ok"
+      }
+    ]
+  },
+  {
+    "restaurantName": "ຮ້ານຊີ້ນດາດໂລ ໂອເຄ",
+    "address": "Vientiane, Laos",
+    "lat": 17.991379,
+    "lng": 102.547663,
+    "ratings": [
+      {
+        "stars": 3,
+        "comment": "This is a hotpot restaurant which is not expensive. It is only 75,000 kip per Kg. The soup is good. There are shrimp, crab, meat, poke, hotdogs, squid, shell... the parking is ok."
+      },
+      {
+        "stars": 5,
+        "comment": "Dessert Dessert Shampooing Servir Bien Servi Bien Recommandé Ce restaurant est délicieux personne n'a jamais essayé celui-ci."
+      },
+      {
+        "stars": 5,
+        "comment": "Très bien"
+      },
+      {
+        "stars": 4,
+        "comment": "Personnel enthousiaste"
+      }
+    ]
+  },
+  {
+    "restaurantName": "ຮ້ານ ຊີ້ນດາດທົ່ງປົ່ງ ZAFANY",
+    "address": "Vientiane, Laos",
+    "lat": 17.993663,
+    "lng": 102.544085,
+    "ratings": [
+      {
+        "stars": 4,
+        "comment": "Délicieux bon service Le magasin propre veut du saumon frais"
+      },
+      {
+        "stars": 5,
+        "comment": "a bonne nourriture est toujours là, pas de pénurie, 55"
+      },
+      {
+        "stars": 5,
+        "comment": "Nice!!"
+      },
+      {
+        "stars": 4,
+        "comment": " L'ambiance est délicieuse et la musique est ouverte"
+      }
+    ]
+  }
+]
