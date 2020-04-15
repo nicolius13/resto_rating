@@ -5,9 +5,7 @@
         <b-col cols="8" class="mapCol">
           <RestoMap :restoList="restoList" />
         </b-col>
-        <b-col cols="4">
-          This is a resto list
-        </b-col>
+        <RestoList :restoList="restoList" class="col-4 mapCol list" />
       </b-row>
     </b-container>
   </div>
@@ -15,20 +13,22 @@
 
 <script>
 // import the list of restaurants
-import restos from '../restoList.json'
+import restos from '../restoList.json';
 
-import RestoMap from '../components/RestoMap'
+import RestoMap from '../components/maps/RestoMap';
+import RestoList from '../components/restoList/RestoList';
 
 export default {
   components: {
     RestoMap,
+    RestoList,
   },
   data() {
     return {
       restoList: restos,
-    }
+    };
   },
-}
+};
 </script>
 
 <style scoped>
@@ -36,5 +36,21 @@ export default {
 .mapRow,
 .mapCol {
   height: 100%;
+}
+.list {
+  overflow: auto;
+  /* firefox 64 */
+  scrollbar-width: thin;
+  scrollbar-color: #ff2e63 #292929;
+}
+/* webkit */
+.list::-webkit-scrollbar {
+  width: 8px;
+}
+.list::-webkit-scrollbar-thumb {
+  background: #ff2e63;
+}
+.list::-webkit-scrollbar-track {
+  background: #292929;
 }
 </style>

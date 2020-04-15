@@ -1,5 +1,5 @@
 <template>
-  <GoogleMapLoader :map-config="mapConfig" :api-key="apiKey">
+  <GoogleMapLoader :map-config="mapConfig">
     <template slot-scope="{ google, map }">
       <GoogleMapMarker
         v-for="marker in markers"
@@ -13,11 +13,11 @@
 </template>
 
 <script>
-import GoogleMapLoader from '../components/googleMapsGenerator/GoogleMapLoader'
-import GoogleMapMarker from '../components/googleMapsGenerator/GoogleMapMarker'
-
 // map settings
-import mapSettings from '../assets/mapSettings/mapSettings.json'
+import mapSettings from '@/assets/mapSettings/mapSettings.json';
+
+import GoogleMapLoader from '../googleMapsGenerator/GoogleMapLoader';
+import GoogleMapMarker from '../googleMapsGenerator/GoogleMapMarker';
 
 export default {
   components: {
@@ -27,7 +27,7 @@ export default {
   // get the restaurants list from the parent
   props: {
     restoList: {
-      type: Object,
+      type: Array,
       required: true,
     },
   },
@@ -40,15 +40,15 @@ export default {
         lat: 17.984052,
         lng: 102.539655,
       },
-      restoIcon: require('../assets/img/resto-icon.png'),
-    }
+      restoIcon: require('@/assets/img/resto-icon.png'),
+    };
   },
   computed: {
     mapConfig() {
       return {
         ...this.mapSettings,
         center: this.mapCenter,
-      }
+      };
     },
   },
   mounted() {
@@ -56,18 +56,18 @@ export default {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         position => {
-          this.mapConfig.center.lat = position.coords.latitude
-          this.mapConfig.center.lng = position.coords.longitude
+          this.mapConfig.center.lat = position.coords.latitude;
+          this.mapConfig.center.lng = position.coords.longitude;
         },
         () => {
-          this.handleLocationError(true)
+          this.handleLocationError(true);
         }
-      )
+      );
     } else {
-      this.handleLocationError(false)
+      this.handleLocationError(false);
     }
     // get the restos list from the JSON file
-    this.getMarkers()
+    this.getMarkers();
   },
   methods: {
     // throw an alert if the geoloc is refuse or not supported
@@ -76,7 +76,7 @@ export default {
         browserHasGeoloc
           ? 'Error: The Geolocation service failed.'
           : "Error: Your browser doesn't support geolocation."
-      )
+      );
     },
     getMarkers() {
       this.restoList.forEach((resto, index) => {
@@ -84,11 +84,11 @@ export default {
           id: index,
           position: { lat: resto.lat, lng: resto.lng },
           icon: this.restoIcon,
-        })
-      })
+        });
+      });
     },
   },
-}
+};
 </script>
 
 <style scoped></style>

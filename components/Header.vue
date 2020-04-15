@@ -42,14 +42,14 @@ export default {
   data() {
     return {
       mobileOpen: false,
-    }
+    };
   },
   methods: {
     mobileBtn() {
-      this.mobileOpen = !this.mobileOpen
+      this.mobileOpen = !this.mobileOpen;
     },
   },
-}
+};
 </script>
 
 <style scoped>

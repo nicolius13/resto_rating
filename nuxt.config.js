@@ -1,5 +1,5 @@
 /* eslint-disable no-dupe-keys */
-import pkg from './package'
+import pkg from './package';
 
 export default {
   mode: 'universal',
@@ -59,6 +59,12 @@ export default {
     '@nuxtjs/dotenv',
   ],
   /*
+   ** bootstrapVue module configuration
+   */
+  bootstrapVue: {
+    icons: true,
+  },
+  /*
    ** Axios module configuration
    */
   axios: {
@@ -80,8 +86,8 @@ export default {
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
           exclude: /(node_modules)/,
-        })
+        });
       }
     },
   },
-}
+};

@@ -24,9 +24,9 @@ export default {
       map: this.map,
       position: this.marker.position,
       icon: this.marker.icon,
-    })
+    });
   },
-}
+};
 </script>
 
 <style scoped></style>

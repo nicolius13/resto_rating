@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import GoogleMapsApiLoader from 'google-maps-api-loader'
+import GoogleMapsApiLoader from 'google-maps-api-loader';
 
 export default {
   props: {
@@ -25,33 +25,34 @@ export default {
     return {
       google: null,
       map: null,
-    }
+    };
   },
   watch: {
+    // watch modification of the map center and re center it
     'mapConfig.center.lat'() {
-      this.reCenterMap()
+      this.reCenterMap();
     },
-    // 'mapCenter.lng'() {
-    //   this.reCenterMap()
-    // },
+    'mapConfig.center.lng'() {
+      this.reCenterMap();
+    },
   },
   async mounted() {
     const googleMapApi = await GoogleMapsApiLoader({
       apiKey: this.apiKey,
-    })
-    this.google = googleMapApi
-    this.initializeMap()
+    });
+    this.google = googleMapApi;
+    this.initializeMap();
   },
   methods: {
     initializeMap() {
-      const mapContainer = this.$refs.googleMap
-      this.map = new this.google.maps.Map(mapContainer, this.mapConfig)
+      const mapContainer = this.$refs.googleMap;
+      this.map = new this.google.maps.Map(mapContainer, this.mapConfig);
     },
     reCenterMap() {
-      this.map.setCenter(this.mapConfig.center)
+      this.map.setCenter(this.mapConfig.center);
     },
   },
-}
+};
 </script>
 
 <style scoped>
