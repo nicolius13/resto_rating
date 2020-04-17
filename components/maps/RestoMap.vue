@@ -1,15 +1,5 @@
 <template>
-  <GoogleMapLoader :map-config="mapConfig">
-    <template slot-scope="{ google, map }">
-      <GoogleMapMarker
-        v-for="marker in markers"
-        :key="marker.id"
-        :marker="marker"
-        :google="google"
-        :map="map"
-      />
-    </template>
-  </GoogleMapLoader>
+  <GoogleMapLoader :map-config="mapConfig" @map="mapSetter" />
 </template>
 
 <script>
@@ -17,12 +7,10 @@
 import mapSettings from '@/assets/mapSettings/mapSettings.json';
 
 import GoogleMapLoader from '../googleMapsGenerator/GoogleMapLoader';
-import GoogleMapMarker from '../googleMapsGenerator/GoogleMapMarker';
 
 export default {
   components: {
     GoogleMapLoader,
-    GoogleMapMarker,
   },
   // get the restaurants list from the parent
   props: {
@@ -35,6 +23,8 @@ export default {
     return {
       // apiKey: process.env.GOOGLE_MAPS_API_KEY,
       mapSettings: mapSettings,
+      map: null,
+      google: null,
       markers: [],
       mapCenter: {
         lat: 17.984052,
@@ -49,6 +39,11 @@ export default {
         ...this.mapSettings,
         center: this.mapCenter,
       };
+    },
+  },
+  watch: {
+    restoList() {
+      this.filterMarker();
     },
   },
   mounted() {
@@ -66,8 +61,10 @@ export default {
     } else {
       this.handleLocationError(false);
     }
-    // get the restos list from the JSON file
-    this.getMarkers();
+    // dirty wait for the google object to be passed
+    setTimeout(() => {
+      this.buildMarkers();
+    }, 1000);
   },
   methods: {
     // throw an alert if the geoloc is refuse or not supported
@@ -78,13 +75,40 @@ export default {
           : "Error: Your browser doesn't support geolocation."
       );
     },
-    getMarkers() {
-      this.restoList.forEach((resto, index) => {
-        this.markers.push({
-          id: index,
+    mapSetter(event) {
+      this.map = event.map;
+      this.google = event.google;
+    },
+    buildMarkers() {
+      this.markers = [];
+      this.restoList.forEach(resto => {
+        const marker = new this.google.maps.Marker({
+          map: this.map,
+          id: resto.id,
           position: { lat: resto.lat, lng: resto.lng },
           icon: this.restoIcon,
         });
+        this.markers.push(marker);
+      });
+    },
+    clearMarkers() {
+      this.markers.forEach(marker => {
+        marker.setMap(null);
+      });
+    },
+    filterMarker() {
+      this.markers.forEach(marker => {
+        let isListed = false;
+        this.restoList.forEach(resto => {
+          if (resto.id === marker.id) {
+            isListed = true;
+          }
+        });
+        if (isListed) {
+          marker.setVisible(true);
+        } else {
+          marker.setVisible(false);
+        }
       });
     },
   },

@@ -17,12 +17,7 @@
         </div>
       </div>
     </div>
-    <RestaurantCard
-      v-for="(resto, index) in restoList"
-      :key="index"
-      :resto="resto"
-      :restoId="index"
-    />
+    <RestaurantCard v-for="resto in list" :key="resto.id" :resto="resto" />
   </div>
 </template>
 
@@ -32,8 +27,8 @@ import RestaurantCard from './RestaurantCard';
 
 export default {
   components: {
-    RestaurantCard,
     StarPick,
+    RestaurantCard,
   },
   props: {
     restoList: {
@@ -43,9 +38,60 @@ export default {
   },
   data() {
     return {
+      ratingAverages: [],
+      filteredAverages: [],
       lowerLimit: 0,
       higherLimit: 5,
+      list: this.restoList,
     };
+  },
+  // check if we change ratings limit and filter restaurants if so
+  watch: {
+    lowerLimit() {
+      this.filterList();
+    },
+    higherLimit() {
+      this.filterList();
+    },
+  },
+  created() {
+    this.ratingAverage();
+    this.filterList();
+  },
+  methods: {
+    // calculate the average rating
+    ratingAverage() {
+      this.list.forEach((resto, i) => {
+        let averages = 0;
+        resto.ratings.forEach(rating => {
+          averages += rating.stars;
+        });
+        averages = averages / resto.ratings.length;
+        this.ratingAverages[i] = { restoId: resto.id, average: averages };
+      });
+    },
+    filterList() {
+      let lowerLimit = this.lowerLimit;
+      let higherLimit = this.higherLimit;
+      // inverse limits if the lower limit is higher than the higer limit
+      if (this.lowerLimit > this.higherLimit) {
+        lowerLimit = this.higherLimit;
+        higherLimit = this.lowerLimit;
+      }
+      // reset the filteredAverages array
+      this.filteredAverages = [];
+      // put the id of the restaurant if it's in the range selected
+      this.ratingAverages.forEach(rating => {
+        if (rating.average >= lowerLimit && rating.average <= higherLimit) {
+          this.filteredAverages.push(rating.restoId);
+        }
+      });
+      // filter the restaurant list with the resto id put in the filteredAverages array
+      this.list = this.restoList.filter(resto => {
+        return this.filteredAverages.includes(resto.id);
+      });
+      this.$emit('filteredRestoList', this.list);
+    },
   },
 };
 </script>

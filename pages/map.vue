@@ -3,9 +3,16 @@
     <b-container id="mapContainer" fluid>
       <b-row class="mapRow">
         <b-col cols="8" class="mapCol">
-          <RestoMap :restoList="restoList" />
+          <RestoMap
+            :restoList="filteredRestos"
+            :filteredRestoList="filteredRestos"
+          />
         </b-col>
-        <RestoList :restoList="restoList" class="col-4 mapCol list" />
+        <RestoList
+          @filteredRestoList="filteredRestos = $event"
+          :restoList="restoList"
+          class="col-4 mapCol list"
+        />
       </b-row>
     </b-container>
   </div>
@@ -26,6 +33,7 @@ export default {
   data() {
     return {
       restoList: restos,
+      filteredRestos: [],
     };
   },
 };

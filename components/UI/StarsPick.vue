@@ -98,8 +98,6 @@
 </template>
 
 <script>
-import Vue from 'vue';
-
 export default {
   props: {
     stars: {
@@ -119,7 +117,7 @@ export default {
       const starIndex = parseInt(event.target.dataset.star);
 
       for (let i = 0; i <= starIndex; i++) {
-        Vue.set(this.isHovered, i, !this.isHovered[i]);
+        this.$set(this.isHovered, i, !this.isHovered[i]);
       }
     },
     // manage the star clickings

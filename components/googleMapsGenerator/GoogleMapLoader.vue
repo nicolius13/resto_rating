@@ -42,6 +42,7 @@ export default {
     });
     this.google = googleMapApi;
     this.initializeMap();
+    this.$emit('map', { map: this.map, google: this.google });
   },
   methods: {
     initializeMap() {

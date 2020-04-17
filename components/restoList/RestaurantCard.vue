@@ -1,6 +1,6 @@
 <template>
   <b-card>
-    <b-card-title v-b-toggle="'collapseInner-' + restoId">{{
+    <b-card-title v-b-toggle="'collapseInner-' + resto.id">{{
       resto.restaurantName
     }}</b-card-title>
     <b-card-text>
@@ -14,7 +14,7 @@
       </span>
       <span class="ratingsNumber"> ({{ resto.ratings.length }}) </span>
     </b-card-text>
-    <b-collapse :id="'collapseInner-' + restoId" accordion="restoDetails">
+    <b-collapse :id="'collapseInner-' + resto.id" accordion="restoDetails">
       <b-img :src="img" fluid></b-img>
       <b-card-text>Reviews :</b-card-text>
       <div v-for="(review, index) in resto.ratings" :key="index">
@@ -38,10 +38,6 @@ export default {
   props: {
     resto: {
       type: Object,
-      required: true,
-    },
-    restoId: {
-      type: Number,
       required: true,
     },
   },
