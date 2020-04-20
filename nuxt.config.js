@@ -1,4 +1,5 @@
-import pkg from './package'
+/* eslint-disable no-dupe-keys */
+import pkg from './package';
 
 export default {
   mode: 'universal',
@@ -10,10 +11,20 @@ export default {
     title: pkg.name,
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1 shrink-to-fit=no',
+      },
       { hid: 'description', name: 'description', content: pkg.description },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [
+      {
+        rel: 'stylesheet',
+        href:
+          'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap',
+      },
+    ],
   },
 
   /*
@@ -27,6 +38,13 @@ export default {
   css: [],
 
   /*
+   ** Env
+   */
+  env: {
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+  },
+
+  /*
    ** Plugins to load before mounting the App
    */
   plugins: [],
@@ -37,7 +55,15 @@ export default {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    'bootstrap-vue/nuxt',
+    '@nuxtjs/dotenv',
   ],
+  /*
+   ** bootstrapVue module configuration
+   */
+  bootstrapVue: {
+    icons: true,
+  },
   /*
    ** Axios module configuration
    */
@@ -60,8 +86,8 @@ export default {
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
           exclude: /(node_modules)/,
-        })
+        });
       }
     },
   },
-}
+};
