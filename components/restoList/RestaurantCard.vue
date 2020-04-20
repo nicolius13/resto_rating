@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   props: {
     resto: {
@@ -43,6 +45,7 @@ export default {
   },
   data() {
     return {
+      // apiKey: process.env.GOOGLE_MAPS_API_KEY,
       averageRating: 5,
       stars: {
         average: [],
@@ -61,6 +64,8 @@ export default {
     this.resto.ratings.forEach((rating, index) => {
       this.stars.comments[index] = this.starRating(rating.stars);
     });
+    // get street view img
+    this.getImg();
   },
   methods: {
     // calculate the average rating
@@ -91,6 +96,30 @@ export default {
         starsRating.push('star');
       }
       return starsRating;
+    },
+    getImg() {
+      const lat = this.resto.lat;
+      const lng = this.resto.lng;
+      // check if the google street static img exist
+      axios
+        .get(
+          `https://maps.googleapis.com/maps/api/streetview/metadata?size=600x400&location=${lat}${lng}&key=${this.apiKey}`
+        )
+        .then(response => {
+          // if the img exist get the img
+          if (response.data.status === 'OK') {
+            axios
+              .get(
+                `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${lat}${lng}&key=${this.apiKey}`
+              )
+              .then(res => {
+                this.img = res.config.url;
+              });
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
   },
 };
