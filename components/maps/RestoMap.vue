@@ -81,14 +81,18 @@ export default {
     },
     buildMarkers() {
       this.markers = [];
-      this.restoList.forEach(resto => {
-        const marker = new this.google.maps.Marker({
-          map: this.map,
-          id: resto.id,
-          position: { lat: resto.lat, lng: resto.lng },
-          icon: this.restoIcon,
-        });
-        this.markers.push(marker);
+      this.restoList.forEach((resto, i) => {
+        // set the drop animation delay between each marker
+        setTimeout(() => {
+          const marker = new this.google.maps.Marker({
+            map: this.map,
+            id: resto.id,
+            position: { lat: resto.lat, lng: resto.lng },
+            icon: this.restoIcon,
+            animation: this.google.maps.Animation.DROP,
+          });
+          this.markers.push(marker);
+        }, i * 200);
       });
     },
     clearMarkers() {

@@ -73,7 +73,7 @@ export default {
     filterList() {
       let lowerLimit = this.lowerLimit;
       let higherLimit = this.higherLimit;
-      // inverse limits if the lower limit is higher than the higer limit
+      // inverse limits if the lowerlimit is higher than the higer limit
       if (this.lowerLimit > this.higherLimit) {
         lowerLimit = this.higherLimit;
         higherLimit = this.lowerLimit;
