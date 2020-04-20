@@ -6,7 +6,6 @@
         <div class="searchBar"></div>
         <div class="searchBtn">GO</div>
       </div>
-      <p>{{ message }}</p>
     </div>
   </div>
 </template>
@@ -14,11 +13,9 @@
 <script>
 export default {
   data() {
-    return {
-      message: 'Init of a great app !',
-    }
+    return {};
   },
-}
+};
 </script>
 
 <style>
@@ -65,9 +62,7 @@ h1 {
 }
 
 /* PlaceHolder */
-p {
-  text-align: center;
-}
+
 .search {
   display: flex;
   justify-content: center;

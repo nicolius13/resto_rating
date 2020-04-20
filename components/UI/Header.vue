@@ -2,7 +2,7 @@
   <b-navbar id="navBar" type="muted" toggleable="md">
     <b-container>
       <b-navbar-brand id="logo" to="/">
-        <img src="../assets/img/logo.png" alt="logo" />
+        <img src="@/assets/img/logo.png" alt="logo" />
         <span>Resto Finder</span>
       </b-navbar-brand>
 
@@ -42,14 +42,14 @@ export default {
   data() {
     return {
       mobileOpen: false,
-    }
+    };
   },
   methods: {
     mobileBtn() {
-      this.mobileOpen = !this.mobileOpen
+      this.mobileOpen = !this.mobileOpen;
     },
   },
-}
+};
 </script>
 
 <style scoped>
