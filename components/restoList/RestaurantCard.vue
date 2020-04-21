@@ -1,8 +1,11 @@
 <template>
   <b-card>
-    <b-card-title v-b-toggle="'collapseInner-' + resto.id">{{
-      resto.restaurantName
-    }}</b-card-title>
+    <b-card-title
+      @click="bounceMarker"
+      v-b-toggle="'collapseInner-' + resto.id"
+      :data-id="resto.id"
+      >{{ resto.restaurantName }}</b-card-title
+    >
     <b-card-text>
       {{ averageRating.toFixed(1) }}
       <span class="stars">
@@ -34,6 +37,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import axios from 'axios';
 
 export default {
@@ -54,6 +58,11 @@ export default {
       // placeholder
       img: require('@/assets/img/asian-d.jpg'),
     };
+  },
+  computed: {
+    ...mapState({
+      markers: state => state.restoMap.markers,
+    }),
   },
   created() {
     // calculate the average rating
@@ -121,6 +130,16 @@ export default {
           // eslint-disable-next-line no-console
           console.log(error);
         });
+    },
+    bounceMarker($event) {
+      const markId = parseInt($event.target.getAttribute('data-id'));
+      this.markers.forEach((marker, i) => {
+        if (marker.id === markId) {
+          this.$store.commit('restoMap/toggleBounce', { i: i, bounce: true });
+        } else {
+          this.$store.commit('restoMap/toggleBounce', { i: i, bounce: false });
+        }
+      });
     },
   },
 };

@@ -28,4 +28,11 @@ export const mutations = {
   resetMarkers(state) {
     state.markers = [];
   },
+  toggleBounce(state, { i, bounce }) {
+    if (bounce) {
+      state.markers[i].bouncing = !state.markers[i].bouncing;
+    } else {
+      state.markers[i].bouncing = bounce;
+    }
+  },
 };

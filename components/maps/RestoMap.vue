@@ -41,6 +41,14 @@ export default {
     restoList() {
       this.filterMarker();
     },
+    markerArr: {
+      handler(newVal) {
+        this.bounceMarker(newVal);
+      },
+      deep: true,
+      immediate: false,
+      // this.bounceMarker(),
+    },
     // watch modification of the map center and re center it
     'mapConfig.center.lat'() {
       this.reCenterMap();
@@ -63,6 +71,7 @@ export default {
           position: { lat: resto.lat, lng: resto.lng },
           icon: this.restoIcon,
           animation: this.google.maps.Animation.DROP,
+          bouncing: false,
         });
       });
       this.buildMarkers();
@@ -104,16 +113,15 @@ export default {
       // reset the markers arrays
       this.markers = [];
 
-      this.markerArr.forEach((resto, i) => {
+      this.markerArr.forEach((mark, i) => {
         // set the drop animation delay between each marker
-
         setTimeout(() => {
           const marker = new this.google.maps.Marker({
             map: this.map,
-            id: this.markerArr[i].id,
-            position: this.markerArr[i].position,
-            icon: this.markerArr[i].icon,
-            animation: this.markerArr[i].animation,
+            id: mark.id,
+            position: mark.position,
+            icon: mark.icon,
+            animation: mark.animation,
           });
           this.markers.push(marker);
         }, i * 200);
@@ -136,6 +144,23 @@ export default {
           marker.setVisible(true);
         } else {
           marker.setVisible(false);
+        }
+      });
+    },
+    bounceMarker(arr) {
+      arr.forEach(marker => {
+        if (marker.bouncing) {
+          this.markers.forEach(mark => {
+            if (marker.id === mark.id) {
+              mark.setAnimation(this.google.maps.Animation.BOUNCE);
+            }
+          });
+        } else {
+          this.markers.forEach(mark => {
+            if (marker.id === mark.id) {
+              mark.setAnimation(null);
+            }
+          });
         }
       });
     },
