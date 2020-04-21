@@ -17,11 +17,17 @@
         </div>
       </div>
     </div>
-    <RestaurantCard v-for="resto in list" :key="resto.id" :resto="resto" />
+    <RestaurantCard
+      v-for="resto in filteredList"
+      :key="resto.id"
+      :resto="resto"
+    />
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import StarPick from '../UI/StarsPick';
 import RestaurantCard from './RestaurantCard';
 
@@ -30,21 +36,21 @@ export default {
     StarPick,
     RestaurantCard,
   },
-  props: {
-    restoList: {
-      type: Array,
-      required: true,
-    },
-  },
   data() {
     return {
-      ratingAverages: [],
-      filteredAverages: [],
       lowerLimit: 0,
       higherLimit: 5,
-      list: this.restoList,
     };
   },
+
+  computed: {
+    ...mapState({
+      restoList: state => state.restoMap.restoList,
+      filteredList: state => state.restoMap.filteredList,
+      ratingAverages: state => state.restoMap.ratingAverage,
+    }),
+  },
+
   // check if we change ratings limit and filter restaurants if so
   watch: {
     lowerLimit() {
@@ -54,20 +60,23 @@ export default {
       this.filterList();
     },
   },
-  created() {
-    this.ratingAverage();
+  fetch() {
+    this.calAverage();
     this.filterList();
   },
   methods: {
     // calculate the average rating
-    ratingAverage() {
-      this.list.forEach((resto, i) => {
+    calAverage() {
+      this.restoList.forEach(resto => {
         let averages = 0;
         resto.ratings.forEach(rating => {
           averages += rating.stars;
         });
         averages = averages / resto.ratings.length;
-        this.ratingAverages[i] = { restoId: resto.id, average: averages };
+        this.$store.commit('restoMap/addRattingAverage', {
+          averages,
+          id: resto.id,
+        });
       });
     },
     filterList() {
@@ -79,18 +88,15 @@ export default {
         higherLimit = this.lowerLimit;
       }
       // reset the filteredAverages array
-      this.filteredAverages = [];
+      const filteredAverages = [];
       // put the id of the restaurant if it's in the range selected
       this.ratingAverages.forEach(rating => {
         if (rating.average >= lowerLimit && rating.average <= higherLimit) {
-          this.filteredAverages.push(rating.restoId);
+          filteredAverages.push(rating.restoId);
         }
       });
       // filter the restaurant list with the resto id put in the filteredAverages array
-      this.list = this.restoList.filter(resto => {
-        return this.filteredAverages.includes(resto.id);
-      });
-      this.$emit('filteredRestoList', this.list);
+      this.$store.commit('restoMap/filteringList', filteredAverages);
     },
   },
 };

@@ -3,25 +3,15 @@
     <b-container id="mapContainer" fluid>
       <b-row class="mapRow">
         <b-col cols="8" class="mapCol">
-          <RestoMap
-            :restoList="filteredRestos"
-            :filteredRestoList="filteredRestos"
-          />
+          <RestoMap />
         </b-col>
-        <RestoList
-          @filteredRestoList="filteredRestos = $event"
-          :restoList="restoList"
-          class="col-4 mapCol list"
-        />
+        <RestoList class="col-4 mapCol list" />
       </b-row>
     </b-container>
   </div>
 </template>
 
 <script>
-// import the list of restaurants
-import restos from '../restoList.json';
-
 import RestoMap from '../components/maps/RestoMap';
 import RestoList from '../components/restoList/RestoList';
 
@@ -29,12 +19,6 @@ export default {
   components: {
     RestoMap,
     RestoList,
-  },
-  data() {
-    return {
-      restoList: restos,
-      filteredRestos: [],
-    };
   },
 };
 </script>

@@ -1,24 +1,16 @@
 <template>
-  <GoogleMapLoader :map-config="mapConfig" @map="mapSetter" />
+  <div ref="googleMap" class="google-map"></div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
+import GoogleMapsApiLoader from 'google-maps-api-loader';
+
 // map settings
 import mapSettings from '@/assets/mapSettings/mapSettings.json';
 
-import GoogleMapLoader from '../googleMapsGenerator/GoogleMapLoader';
-
 export default {
-  components: {
-    GoogleMapLoader,
-  },
-  // get the restaurants list from the parent
-  props: {
-    restoList: {
-      type: Array,
-      required: true,
-    },
-  },
   data() {
     return {
       // apiKey: process.env.GOOGLE_MAPS_API_KEY,
@@ -40,13 +32,30 @@ export default {
         center: this.mapCenter,
       };
     },
+    ...mapState({
+      restoList: state => state.restoMap.filteredList,
+    }),
   },
   watch: {
     restoList() {
       this.filterMarker();
     },
+    // watch modification of the map center and re center it
+    'mapConfig.center.lat'() {
+      this.reCenterMap();
+    },
+    'mapConfig.center.lng'() {
+      this.reCenterMap();
+    },
   },
   mounted() {
+    GoogleMapsApiLoader({
+      apiKey: this.apiKey,
+    }).then(googleMapApi => {
+      this.google = googleMapApi;
+      this.initializeMap();
+      this.buildMarkers();
+    });
     // Try HTML geolocation
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -61,12 +70,15 @@ export default {
     } else {
       this.handleLocationError(false);
     }
-    // dirty wait for the google object to be passed
-    setTimeout(() => {
-      this.buildMarkers();
-    }, 1000);
   },
   methods: {
+    initializeMap() {
+      const mapContainer = this.$refs.googleMap;
+      this.map = new this.google.maps.Map(mapContainer, this.mapConfig);
+    },
+    reCenterMap() {
+      this.map.setCenter(this.mapConfig.center);
+    },
     // throw an alert if the geoloc is refuse or not supported
     handleLocationError(browserHasGeoloc) {
       alert(
@@ -75,10 +87,7 @@ export default {
           : "Error: Your browser doesn't support geolocation."
       );
     },
-    mapSetter(event) {
-      this.map = event.map;
-      this.google = event.google;
-    },
+
     buildMarkers() {
       this.markers = [];
       this.restoList.forEach((resto, i) => {
@@ -119,4 +128,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.mapContainer,
+.google-map {
+  height: inherit;
+}
+</style>
