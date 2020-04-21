@@ -4,6 +4,7 @@ export const state = () => ({
   restoList: restos,
   filteredList: [],
   ratingAverage: [],
+  markers: [],
 });
 
 export const mutations = {
@@ -18,5 +19,13 @@ export const mutations = {
     state.filteredList = state.restoList.filter(resto => {
       return filteredAverages.includes(resto.id);
     });
+  },
+
+  // MARKER
+  addMarker(state, marker) {
+    state.markers.push(marker);
+  },
+  resetMarkers(state) {
+    state.markers = [];
   },
 };

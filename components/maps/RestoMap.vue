@@ -34,6 +34,7 @@ export default {
     },
     ...mapState({
       restoList: state => state.restoMap.filteredList,
+      markerArr: state => state.restoMap.markers,
     }),
   },
   watch: {
@@ -54,6 +55,16 @@ export default {
     }).then(googleMapApi => {
       this.google = googleMapApi;
       this.initializeMap();
+      this.$store.commit('restoMap/resetMarkers');
+
+      this.restoList.forEach(resto => {
+        this.$store.commit('restoMap/addMarker', {
+          id: resto.id,
+          position: { lat: resto.lat, lng: resto.lng },
+          icon: this.restoIcon,
+          animation: this.google.maps.Animation.DROP,
+        });
+      });
       this.buildMarkers();
     });
     // Try HTML geolocation
@@ -71,6 +82,7 @@ export default {
       this.handleLocationError(false);
     }
   },
+
   methods: {
     initializeMap() {
       const mapContainer = this.$refs.googleMap;
@@ -89,26 +101,29 @@ export default {
     },
 
     buildMarkers() {
+      // reset the markers arrays
       this.markers = [];
-      this.restoList.forEach((resto, i) => {
+
+      this.markerArr.forEach((resto, i) => {
         // set the drop animation delay between each marker
+
         setTimeout(() => {
           const marker = new this.google.maps.Marker({
             map: this.map,
-            id: resto.id,
-            position: { lat: resto.lat, lng: resto.lng },
-            icon: this.restoIcon,
-            animation: this.google.maps.Animation.DROP,
+            id: this.markerArr[i].id,
+            position: this.markerArr[i].position,
+            icon: this.markerArr[i].icon,
+            animation: this.markerArr[i].animation,
           });
           this.markers.push(marker);
         }, i * 200);
       });
     },
-    clearMarkers() {
-      this.markers.forEach(marker => {
-        marker.setMap(null);
-      });
-    },
+    // clearMarkers() {
+    //   this.markers.forEach(marker => {
+    //     marker.setMap(null);
+    //   });
+    // },
     filterMarker() {
       this.markers.forEach(marker => {
         let isListed = false;
