@@ -40,7 +40,7 @@ export default {
   },
   watch: {
     restoList() {
-      this.filterMarker();
+      this.handleMapIdle();
     },
     markersDisplayed: {
       handler(newVal) {
@@ -63,7 +63,7 @@ export default {
     }).then(googleMapApi => {
       this.google = googleMapApi;
       this.initializeMap();
-      // wait until the map is ready
+      // wait until the map is ready to initialise the markers
       this.google.maps.event.addListenerOnce(
         this.map,
         'idle',
@@ -115,28 +115,22 @@ export default {
 
     initMarkers() {
       // check if the list of all marker is already populated
-      let markerListIsEmpty = true;
-      if (this.allMarkersList.length > 0) {
-        markerListIsEmpty = false;
-      }
-
-      this.restoList.forEach(resto => {
-        const markerOptions = {
-          id: resto.id,
-          position: { lat: resto.lat, lng: resto.lng },
-          icon: this.restoIcon,
-          animation: this.google.maps.Animation.DROP,
-          bouncing: false,
-        };
-        // pass if the array is alredy populated with all markers
-        if (markerListIsEmpty) {
+      if (!this.allMarkersList.length > 0) {
+        this.restoList.forEach(resto => {
+          const markerOptions = {
+            id: resto.id,
+            position: { lat: resto.lat, lng: resto.lng },
+            icon: this.restoIcon,
+            animation: this.google.maps.Animation.DROP,
+            bouncing: false,
+          };
           // put all resto markers into an array
           this.$store.commit('restoMap/addMarker', {
             markerOptions: markerOptions,
             markerList: 'allMarkersList',
           });
-        }
-      });
+        });
+      }
     },
 
     handleMapIdle() {
@@ -145,31 +139,37 @@ export default {
       // get the map bounds
       const mapBounds = this.map.getBounds();
 
-      this.allMarkersList.forEach(marker => {
+      this.restoList.forEach(resto => {
         // create a latLng object of the resto coord
-        const latLng = new this.google.maps.LatLng(marker.position);
+        const latLng = new this.google.maps.LatLng({
+          lat: resto.lat,
+          lng: resto.lng,
+        });
+        const markerOptions = {
+          id: resto.id,
+          position: latLng,
+          icon: this.restoIcon,
+          animation: this.google.maps.Animation.DROP,
+          bouncing: false,
+        };
         // check if the restaurant is in the map bounds if true add it to the displayed markers array
         if (mapBounds.contains(latLng)) {
           this.$store.commit('restoMap/addMarker', {
-            markerOptions: marker,
+            markerOptions: markerOptions,
             markerList: 'markersDisplayed',
           });
         }
       });
+      // remove the markers that are not needed
+      this.trimMarkers();
       // build the markers
       this.buildMarkers();
     },
 
-    buildMarkers() {
+    trimMarkers() {
       // find the markers alredy rendered
       const alreadyRendered = this.markersDisplayed.filter(marker => {
         return this.markers.some(mark => {
-          return marker.id === mark.id;
-        });
-      });
-      // find the markers that need to be renered
-      const markerToRender = this.markersDisplayed.filter(marker => {
-        return !this.markers.some(mark => {
           return marker.id === mark.id;
         });
       });
@@ -189,7 +189,16 @@ export default {
           i--;
         }
       }
+    },
 
+    buildMarkers() {
+      // find the markers that need to be rendered
+      const markerToRender = this.markersDisplayed.filter(marker => {
+        return !this.markers.some(mark => {
+          return marker.id === mark.id;
+        });
+      });
+      // build the needed markers
       markerToRender.forEach((mark, i) => {
         // set the drop animation delay between each marker
         setTimeout(() => {
@@ -204,22 +213,7 @@ export default {
         }, i * 100);
       });
     },
-    // filter the displayed markers by rating
-    filterMarker() {
-      this.markers.forEach(marker => {
-        let isListed = false;
-        this.restoList.forEach(resto => {
-          if (resto.id === marker.id) {
-            isListed = true;
-          }
-        });
-        if (isListed) {
-          marker.setVisible(true);
-        } else {
-          marker.setVisible(false);
-        }
-      });
-    },
+
     // make the marker bounce when it's selected in the list
     bounceMarker(arr) {
       arr.forEach(marker => {
