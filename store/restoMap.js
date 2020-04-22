@@ -4,7 +4,8 @@ export const state = () => ({
   restoList: restos,
   filteredList: [],
   ratingAverage: [],
-  markers: [],
+  allMarkersList: [],
+  markersDisplayed: [],
 });
 
 export const mutations = {
@@ -23,16 +24,16 @@ export const mutations = {
 
   // MARKER
   addMarker(state, marker) {
-    state.markers.push(marker);
+    state[marker.markerList].push(marker.markerOptions);
   },
   resetMarkers(state) {
-    state.markers = [];
+    state.markersDisplayed = [];
   },
   toggleBounce(state, { i, bounce }) {
     if (bounce) {
-      state.markers[i].bouncing = !state.markers[i].bouncing;
+      state.markersDisplayed[i].bouncing = !state.markersDisplayed[i].bouncing;
     } else {
-      state.markers[i].bouncing = bounce;
+      state.markersDisplayed[i].bouncing = bounce;
     }
   },
 };

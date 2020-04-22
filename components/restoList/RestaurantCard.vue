@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     ...mapState({
-      markers: state => state.restoMap.markers,
+      markers: state => state.restoMap.markersDisplayed,
     }),
   },
   created() {
