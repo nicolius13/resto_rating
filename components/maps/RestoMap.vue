@@ -99,6 +99,14 @@ export default {
     },
     reCenterMap() {
       this.map.setCenter(this.mapConfig.center);
+      // create a marker in the center position
+      // eslint-disable-next-line no-new
+      new this.google.maps.Marker({
+        map: this.map,
+        id: 'you_here',
+        position: this.mapConfig.center,
+        icon: require('@/assets/img/here.png'),
+      });
     },
     // throw an alert if the geoloc is refuse or not supported
     handleLocationError(browserHasGeoloc) {
