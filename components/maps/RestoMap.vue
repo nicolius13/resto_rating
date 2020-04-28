@@ -40,7 +40,9 @@ export default {
   },
   watch: {
     restoList() {
-      this.handleMapIdle();
+      if (this.map) {
+        this.handleMapIdle();
+      }
     },
     markersDisplayed: {
       handler(newVal) {
