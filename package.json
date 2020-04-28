@@ -13,6 +13,7 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
+    "@google/markerclustererplus": "^5.0.3",
     "@nuxtjs/axios": "^5.3.6",
     "bootstrap-vue": "^2.11.0",
     "cross-env": "^5.2.0",

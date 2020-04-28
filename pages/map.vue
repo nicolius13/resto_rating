@@ -3,25 +3,15 @@
     <b-container id="mapContainer" fluid>
       <b-row class="mapRow">
         <b-col cols="8" class="mapCol">
-          <RestoMap
-            :restoList="filteredRestos"
-            :filteredRestoList="filteredRestos"
-          />
+          <RestoMap />
         </b-col>
-        <RestoList
-          @filteredRestoList="filteredRestos = $event"
-          :restoList="restoList"
-          class="col-4 mapCol list"
-        />
+        <RestoList id="list" class="col-4 mapCol" />
       </b-row>
     </b-container>
   </div>
 </template>
 
 <script>
-// import the list of restaurants
-import restos from '../restoList.json';
-
 import RestoMap from '../components/maps/RestoMap';
 import RestoList from '../components/restoList/RestoList';
 
@@ -29,12 +19,6 @@ export default {
   components: {
     RestoMap,
     RestoList,
-  },
-  data() {
-    return {
-      restoList: restos,
-      filteredRestos: [],
-    };
   },
 };
 </script>
@@ -45,20 +29,20 @@ export default {
 .mapCol {
   height: 100%;
 }
-.list {
+#list {
   overflow: auto;
   /* firefox 64 */
   scrollbar-width: thin;
   scrollbar-color: #ff2e63 #292929;
 }
 /* webkit */
-.list::-webkit-scrollbar {
+#list::-webkit-scrollbar {
   width: 8px;
 }
-.list::-webkit-scrollbar-thumb {
+#list::-webkit-scrollbar-thumb {
   background: #ff2e63;
 }
-.list::-webkit-scrollbar-track {
+#list::-webkit-scrollbar-track {
   background: #292929;
 }
 </style>

@@ -1,24 +1,17 @@
 <template>
-  <GoogleMapLoader :map-config="mapConfig" @map="mapSetter" />
+  <div ref="googleMap" class="google-map"></div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import MarkerClusterer from '@google/markerclustererplus';
+
+import GoogleMapsApiLoader from 'google-maps-api-loader';
+
 // map settings
 import mapSettings from '@/assets/mapSettings/mapSettings.json';
 
-import GoogleMapLoader from '../googleMapsGenerator/GoogleMapLoader';
-
 export default {
-  components: {
-    GoogleMapLoader,
-  },
-  // get the restaurants list from the parent
-  props: {
-    restoList: {
-      type: Array,
-      required: true,
-    },
-  },
   data() {
     return {
       // apiKey: process.env.GOOGLE_MAPS_API_KEY,
@@ -26,6 +19,7 @@ export default {
       map: null,
       google: null,
       markers: [],
+      markerCluster: null,
       mapCenter: {
         lat: 17.984052,
         lng: 102.539655,
@@ -40,13 +34,49 @@ export default {
         center: this.mapCenter,
       };
     },
+    ...mapState({
+      restoList: state => state.restoMap.filteredList,
+      allMarkersList: state => state.restoMap.allMarkersList,
+      markersDisplayed: state => state.restoMap.markersDisplayed,
+      selectedRestaurant: state => state.restoMap.selectedRestaurant,
+    }),
   },
   watch: {
     restoList() {
-      this.filterMarker();
+      if (this.map) {
+        this.handleMapIdle();
+      }
+    },
+    selectedRestaurant() {
+      this.bounceMarker();
+    },
+    // watch modification of the map center and re center it
+    'mapConfig.center.lat'() {
+      if (this.map) {
+        this.reCenterMap();
+      }
+    },
+    'mapConfig.center.lng'() {
+      if (this.map) {
+        this.reCenterMap();
+      }
     },
   },
   mounted() {
+    GoogleMapsApiLoader({
+      apiKey: this.apiKey,
+    }).then(googleMapApi => {
+      this.google = googleMapApi;
+      this.initializeMap();
+      // wait until the map is ready to initialise the markers
+      this.google.maps.event.addListenerOnce(
+        this.map,
+        'idle',
+        this.initMarkers
+      );
+      // add event listener (when the map is still)
+      this.google.maps.event.addListener(this.map, 'idle', this.handleMapIdle);
+    });
     // Try HTML geolocation
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -55,18 +85,36 @@ export default {
           this.mapConfig.center.lng = position.coords.longitude;
         },
         () => {
+          // denied geoloc
           this.handleLocationError(true);
         }
       );
     } else {
+      // browser don't support geoloc
       this.handleLocationError(false);
     }
-    // dirty wait for the google object to be passed
-    setTimeout(() => {
-      this.buildMarkers();
-    }, 1000);
   },
+
   methods: {
+    // ////////////////////////
+    //          MAP
+    // ///////////////////////
+
+    initializeMap() {
+      const mapContainer = this.$refs.googleMap;
+      this.map = new this.google.maps.Map(mapContainer, this.mapConfig);
+    },
+    reCenterMap() {
+      this.map.setCenter(this.mapConfig.center);
+      // create a marker in the center position
+      // eslint-disable-next-line no-new
+      new this.google.maps.Marker({
+        map: this.map,
+        id: 'you_here',
+        position: this.mapConfig.center,
+        icon: require('@/assets/img/here.png'),
+      });
+    },
     // throw an alert if the geoloc is refuse or not supported
     handleLocationError(browserHasGeoloc) {
       alert(
@@ -75,43 +123,153 @@ export default {
           : "Error: Your browser doesn't support geolocation."
       );
     },
-    mapSetter(event) {
-      this.map = event.map;
-      this.google = event.google;
-    },
-    buildMarkers() {
-      this.markers = [];
-      this.restoList.forEach((resto, i) => {
-        // set the drop animation delay between each marker
-        setTimeout(() => {
-          const marker = new this.google.maps.Marker({
-            map: this.map,
+
+    // ////////////////////////
+    //          MARKERS
+    // ///////////////////////
+
+    initMarkers() {
+      // check if the list of all marker is already populated
+      if (!this.allMarkersList.length > 0) {
+        this.restoList.forEach(resto => {
+          const markerOptions = {
             id: resto.id,
             position: { lat: resto.lat, lng: resto.lng },
             icon: this.restoIcon,
             animation: this.google.maps.Animation.DROP,
+            bouncing: false,
+          };
+          // put all resto markers into an array
+          this.$store.commit('restoMap/addMarker', {
+            markerOptions: markerOptions,
+            markerList: 'allMarkersList',
           });
-          this.markers.push(marker);
-        }, i * 200);
+        });
+      }
+      // build an empty markers cluster
+      this.markerCluster = new MarkerClusterer(this.map, [], {
+        maxZoom: 12,
+        clusterClass: 'custom-clustericon',
+        styles: [
+          {
+            width: 30,
+            height: 30,
+          },
+        ],
       });
     },
-    clearMarkers() {
-      this.markers.forEach(marker => {
-        marker.setMap(null);
+
+    handleMapIdle() {
+      // reset the markerDisplayed array
+      this.$store.commit('restoMap/resetMarkers');
+      // get the map bounds
+      const mapBounds = this.map.getBounds();
+
+      this.restoList.forEach(resto => {
+        // create a latLng object of the resto coord
+        const latLng = new this.google.maps.LatLng({
+          lat: resto.lat,
+          lng: resto.lng,
+        });
+        const markerOptions = {
+          id: resto.id,
+          position: latLng,
+          icon: this.restoIcon,
+          animation: this.google.maps.Animation.DROP,
+          bouncing: false,
+        };
+        // check if the restaurant is in the map bounds if true add it to the displayed markers array
+        if (mapBounds.contains(latLng)) {
+          this.$store.commit('restoMap/addMarker', {
+            markerOptions: markerOptions,
+            markerList: 'markersDisplayed',
+          });
+        }
       });
+      // remove the markers that are not needed
+      this.trimMarkers();
+      // build the markers
+      this.buildMarkers();
     },
-    filterMarker() {
-      this.markers.forEach(marker => {
+
+    trimMarkers() {
+      // find the markers alredy rendered
+      const alreadyRendered = this.markersDisplayed.filter(marker => {
+        return this.markers.some(mark => {
+          return marker.id === mark.id;
+        });
+      });
+
+      // remove markers that are not needed from the map and the markers array
+      for (let i = 0; i < this.markers.length; i++) {
         let isListed = false;
-        this.restoList.forEach(resto => {
-          if (resto.id === marker.id) {
+        alreadyRendered.forEach(mark => {
+          if (this.markers[i].id === mark.id) {
             isListed = true;
           }
         });
-        if (isListed) {
-          marker.setVisible(true);
+        if (!isListed) {
+          // remove unecessary marker from the cluster
+          this.markerCluster.removeMarker(this.markers[i]);
+          // remove unecessary marker form the map
+          this.markers[i].setMap(null);
+          // delete marker from the marker array
+          this.markers.splice(i, 1);
+          // decrement i to not jump one element after the splice
+          i--;
+        }
+      }
+    },
+
+    buildMarkers() {
+      // find the markers that need to be rendered
+      const markerToRender = this.markersDisplayed.filter(marker => {
+        return !this.markers.some(mark => {
+          return marker.id === mark.id;
+        });
+      });
+
+      // build the needed markers
+      markerToRender.forEach((mark, i) => {
+        // set the drop animation delay between each marker
+        setTimeout(() => {
+          const marker = new this.google.maps.Marker({
+            map: this.map,
+            id: mark.id,
+            position: mark.position,
+            icon: mark.icon,
+            animation: mark.animation,
+          });
+          // add click listener to make the resto card visible when clicked
+          marker.addListener('click', () => {
+            this.clickMarker(marker);
+          });
+          // if was open before and a resto selected make it bounce if needed
+          if (marker.id === this.selectedRestaurant) {
+            marker.setAnimation(this.google.maps.Animation.BOUNCE);
+          }
+          // push the new marker in the array
+          this.markers.push(marker);
+          // put the marker into the marker cluster
+          this.markerCluster.addMarker(marker);
+        }, i * 100);
+      });
+    },
+
+    clickMarker(marker) {
+      this.$store.commit('restoMap/setSelectedRestaurant', marker.id);
+      // scroll to the restaurant card
+      const resto = document.getElementById('resto-' + marker.id);
+      resto.scrollIntoView(true);
+    },
+
+    // make the marker bounce when it's selected in the list
+    bounceMarker() {
+      this.markers.forEach(marker => {
+        if (marker.id === this.selectedRestaurant) {
+          marker.setAnimation(this.google.maps.Animation.BOUNCE);
         } else {
-          marker.setVisible(false);
+          marker.setAnimation(null);
         }
       });
     },
@@ -119,4 +277,21 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+.mapContainer,
+.google-map {
+  height: inherit;
+}
+
+.custom-clustericon {
+  background: #ff2e63;
+  color: #fff;
+  border-radius: 100%;
+  font-weight: bold;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0px 0px 0px 5px rgba(255, 46, 99, 0.6),
+    0px 0px 0px 10px rgba(255, 46, 99, 0.4);
+}
+</style>
