@@ -4,6 +4,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import MarkerClusterer from '@google/markerclustererplus';
 
 import GoogleMapsApiLoader from 'google-maps-api-loader';
 
@@ -18,6 +19,7 @@ export default {
       map: null,
       google: null,
       markers: [],
+      markerCluster: null,
       mapCenter: {
         lat: 17.984052,
         lng: 102.539655,
@@ -82,10 +84,12 @@ export default {
           this.mapConfig.center.lng = position.coords.longitude;
         },
         () => {
+          // denied geoloc
           this.handleLocationError(true);
         }
       );
     } else {
+      // browser don't support geoloc
       this.handleLocationError(false);
     }
   },
@@ -141,6 +145,17 @@ export default {
           });
         });
       }
+      // build an empty markers cluster
+      this.markerCluster = new MarkerClusterer(this.map, [], {
+        maxZoom: 12,
+        clusterClass: 'custom-clustericon',
+        styles: [
+          {
+            width: 30,
+            height: 30,
+          },
+        ],
+      });
     },
 
     handleMapIdle() {
@@ -193,7 +208,11 @@ export default {
           }
         });
         if (!isListed) {
+          // remove unecessary marker from the cluster
+          this.markerCluster.removeMarker(this.markers[i]);
+          // remove unecessary marker form the map
           this.markers[i].setMap(null);
+          // delete marker from the marker array
           this.markers.splice(i, 1);
           // decrement i to not jump one element after the splice
           i--;
@@ -208,6 +227,7 @@ export default {
           return marker.id === mark.id;
         });
       });
+
       // build the needed markers
       markerToRender.forEach((mark, i) => {
         // set the drop animation delay between each marker
@@ -219,7 +239,10 @@ export default {
             icon: mark.icon,
             animation: mark.animation,
           });
+          // push the new marker in the array
           this.markers.push(marker);
+          // put the marker into the marker cluster
+          this.markerCluster.addMarker(marker);
         }, i * 100);
       });
     },
@@ -246,9 +269,21 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .mapContainer,
 .google-map {
   height: inherit;
+}
+
+.custom-clustericon {
+  background: #ff2e63;
+  color: #fff;
+  border-radius: 100%;
+  font-weight: bold;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0px 0px 0px 5px rgba(255, 46, 99, 0.6),
+    0px 0px 0px 10px rgba(255, 46, 99, 0.4);
 }
 </style>
