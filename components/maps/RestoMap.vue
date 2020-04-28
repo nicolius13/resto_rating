@@ -38,6 +38,7 @@ export default {
       restoList: state => state.restoMap.filteredList,
       allMarkersList: state => state.restoMap.allMarkersList,
       markersDisplayed: state => state.restoMap.markersDisplayed,
+      selectedRestaurant: state => state.restoMap.selectedRestaurant,
     }),
   },
   watch: {
@@ -46,19 +47,19 @@ export default {
         this.handleMapIdle();
       }
     },
-    markersDisplayed: {
-      handler(newVal) {
-        this.bounceMarker(newVal);
-      },
-      deep: true,
-      immediate: false,
+    selectedRestaurant() {
+      this.bounceMarker();
     },
     // watch modification of the map center and re center it
     'mapConfig.center.lat'() {
-      this.reCenterMap();
+      if (this.map) {
+        this.reCenterMap();
+      }
     },
     'mapConfig.center.lng'() {
-      this.reCenterMap();
+      if (this.map) {
+        this.reCenterMap();
+      }
     },
   },
   mounted() {
@@ -239,6 +240,14 @@ export default {
             icon: mark.icon,
             animation: mark.animation,
           });
+          // add click listener to make the resto card visible when clicked
+          marker.addListener('click', () => {
+            this.clickMarker(marker);
+          });
+          // if was open before and a resto selected make it bounce if needed
+          if (marker.id === this.selectedRestaurant) {
+            marker.setAnimation(this.google.maps.Animation.BOUNCE);
+          }
           // push the new marker in the array
           this.markers.push(marker);
           // put the marker into the marker cluster
@@ -247,21 +256,20 @@ export default {
       });
     },
 
+    clickMarker(marker) {
+      this.$store.commit('restoMap/setSelectedRestaurant', marker.id);
+      // scroll to the restaurant card
+      const resto = document.getElementById('resto-' + marker.id);
+      resto.scrollIntoView(true);
+    },
+
     // make the marker bounce when it's selected in the list
-    bounceMarker(arr) {
-      arr.forEach(marker => {
-        if (marker.bouncing) {
-          this.markers.forEach(mark => {
-            if (marker.id === mark.id) {
-              mark.setAnimation(this.google.maps.Animation.BOUNCE);
-            }
-          });
+    bounceMarker() {
+      this.markers.forEach(marker => {
+        if (marker.id === this.selectedRestaurant) {
+          marker.setAnimation(this.google.maps.Animation.BOUNCE);
         } else {
-          this.markers.forEach(mark => {
-            if (marker.id === mark.id) {
-              mark.setAnimation(null);
-            }
-          });
+          marker.setAnimation(null);
         }
       });
     },

@@ -1,8 +1,8 @@
 <template>
-  <b-card>
+  <b-card :id="'resto-' + resto.id">
     <b-card-title
       @click="bounceMarker"
-      v-b-toggle="'collapseInner-' + resto.id"
+      :class="selectedRestaurant === resto.id ? '' : 'collapsed'"
       :data-id="resto.id"
       >{{ resto.restaurantName }}</b-card-title
     >
@@ -17,7 +17,11 @@
       </span>
       <span class="ratingsNumber"> ({{ resto.ratings.length }}) </span>
     </b-card-text>
-    <b-collapse :id="'collapseInner-' + resto.id" accordion="restoDetails">
+    <b-collapse
+      :id="'collapseInner-' + resto.id"
+      :visible="selectedRestaurant === resto.id"
+      accordion="restoDetails"
+    >
       <b-img :src="img" fluid></b-img>
       <b-card-text>Reviews :</b-card-text>
       <div v-for="(review, index) in resto.ratings" :key="index">
@@ -61,9 +65,10 @@ export default {
   },
   computed: {
     ...mapState({
-      markers: state => state.restoMap.markersDisplayed,
+      selectedRestaurant: state => state.restoMap.selectedRestaurant,
     }),
   },
+
   created() {
     // calculate the average rating
     this.ratingAverage();
@@ -133,13 +138,14 @@ export default {
     },
     bounceMarker($event) {
       const markId = parseInt($event.target.getAttribute('data-id'));
-      this.markers.forEach((marker, i) => {
-        if (marker.id === markId) {
-          this.$store.commit('restoMap/toggleBounce', { i: i, bounce: true });
-        } else {
-          this.$store.commit('restoMap/toggleBounce', { i: i, bounce: false });
-        }
-      });
+
+      const isCollapsed = $event.target.classList.contains('collapsed');
+      // check if the restaurant card is alredy open if not change the selected restaurant otherwise put null
+      if (isCollapsed) {
+        this.$store.commit('restoMap/setSelectedRestaurant', markId);
+      } else {
+        this.$store.commit('restoMap/setSelectedRestaurant', null);
+      }
     },
   },
 };

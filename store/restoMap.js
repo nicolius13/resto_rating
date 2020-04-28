@@ -6,6 +6,7 @@ export const state = () => ({
   ratingAverage: [],
   allMarkersList: [],
   markersDisplayed: [],
+  selectedRestaurant: null,
 });
 
 export const mutations = {
@@ -22,18 +23,15 @@ export const mutations = {
     });
   },
 
+  setSelectedRestaurant(state, resto) {
+    state.selectedRestaurant = resto;
+  },
+
   // MARKER
   addMarker(state, marker) {
     state[marker.markerList].push(marker.markerOptions);
   },
   resetMarkers(state) {
     state.markersDisplayed = [];
-  },
-  toggleBounce(state, { i, bounce }) {
-    if (bounce) {
-      state.markersDisplayed[i].bouncing = !state.markersDisplayed[i].bouncing;
-    } else {
-      state.markersDisplayed[i].bouncing = bounce;
-    }
   },
 };
