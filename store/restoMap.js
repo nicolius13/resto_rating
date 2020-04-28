@@ -4,6 +4,9 @@ export const state = () => ({
   restoList: restos,
   filteredList: [],
   ratingAverage: [],
+  allMarkersList: [],
+  markersDisplayed: [],
+  selectedRestaurant: null,
 });
 
 export const mutations = {
@@ -18,5 +21,17 @@ export const mutations = {
     state.filteredList = state.restoList.filter(resto => {
       return filteredAverages.includes(resto.id);
     });
+  },
+
+  setSelectedRestaurant(state, resto) {
+    state.selectedRestaurant = resto;
+  },
+
+  // MARKER
+  addMarker(state, marker) {
+    state[marker.markerList].push(marker.markerOptions);
+  },
+  resetMarkers(state) {
+    state.markersDisplayed = [];
   },
 };

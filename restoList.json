@@ -160,5 +160,59 @@
         "comment": "ça pue"
       }
     ]
+  },
+  {
+    "restaurantName": "Easy Bar Vientiane - Laos",
+    "id": 6,
+    "address": "Vientiane, Laos",
+    "lat": 17.968394,
+    "lng": 102.600358,
+    "ratings": [
+      {
+        "stars": 5,
+        "comment": "Excellente expérience culinaire dans ce restaurant. Nous sommes reçu comme un roi et une reine dans ce restaurant. Beau décor et belle ambiance. Je vous le recommande sans hésiter."
+      },
+      {
+        "stars": 5,
+        "comment": "Great food, kinda inspires you to travel Egypt! Really hearty and filling meals, good for a change from Lao food, which is more light. The owner is very cool, friendly man. Totally recommend this place."
+      },
+      {
+        "stars": 4,
+        "comment": "Not badly priced & the food is enjoyable.. A lot better than most had meatball sandwiche. Very filling"
+      },
+      {
+        "stars": 5,
+        "comment": "Came here looking for some Middle Eastern food and boy, were we not disappointed: great mezze and very tasty chicken fatteh. For an evening, we felt like we were back in the Middle East in the middle of Vientiane. On top of the great food …"
+      }
+    ]
+  },
+  {
+    "restaurantName": "Lao Kitchen",
+    "id": 7,
+    "address": "Vientiane, Laos",
+    "lat": 17.96702,
+    "lng": 102.605699,
+    "ratings": [
+      {
+        "stars": 4,
+        "comment": "Bon petit déjeuner"
+      },
+      {
+        "stars": 4,
+        "comment": "Bon restaurant de plats lao. Bon rapport qualité/prix. Cadre sympa. Service avenant. A recommander"
+      },
+      {
+        "stars": 5,
+        "comment": " Excellent, saveur prix top !"
+      },
+      {
+        "stars": 5,
+        "comment": "C une excellente adresse à Vientane"
+      },
+      {
+        "stars": 4,
+        "comment": "Bon restaurant qui permet de tester des plats locaux dans un lieu accueillant et propre. Les prix ne sont pas les plus intéressants de la ville. "
+      }
+    ]
   }
 ]

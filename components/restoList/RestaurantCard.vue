@@ -1,8 +1,11 @@
 <template>
-  <b-card>
-    <b-card-title v-b-toggle="'collapseInner-' + resto.id">{{
-      resto.restaurantName
-    }}</b-card-title>
+  <b-card :id="'resto-' + resto.id">
+    <b-card-title
+      @click="bounceMarker"
+      :class="selectedRestaurant === resto.id ? '' : 'collapsed'"
+      :data-id="resto.id"
+      >{{ resto.restaurantName }}</b-card-title
+    >
     <b-card-text>
       {{ averageRating.toFixed(1) }}
       <span class="stars">
@@ -14,7 +17,11 @@
       </span>
       <span class="ratingsNumber"> ({{ resto.ratings.length }}) </span>
     </b-card-text>
-    <b-collapse :id="'collapseInner-' + resto.id" accordion="restoDetails">
+    <b-collapse
+      :id="'collapseInner-' + resto.id"
+      :visible="selectedRestaurant === resto.id"
+      accordion="restoDetails"
+    >
       <b-img :src="img" fluid></b-img>
       <b-card-text>Reviews :</b-card-text>
       <div v-for="(review, index) in resto.ratings" :key="index">
@@ -34,6 +41,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import axios from 'axios';
 
 export default {
@@ -55,6 +63,12 @@ export default {
       img: require('@/assets/img/asian-d.jpg'),
     };
   },
+  computed: {
+    ...mapState({
+      selectedRestaurant: state => state.restoMap.selectedRestaurant,
+    }),
+  },
+
   created() {
     // calculate the average rating
     this.ratingAverage();
@@ -121,6 +135,17 @@ export default {
           // eslint-disable-next-line no-console
           console.log(error);
         });
+    },
+    bounceMarker($event) {
+      const markId = parseInt($event.target.getAttribute('data-id'));
+
+      const isCollapsed = $event.target.classList.contains('collapsed');
+      // check if the restaurant card is alredy open if not change the selected restaurant otherwise put null
+      if (isCollapsed) {
+        this.$store.commit('restoMap/setSelectedRestaurant', markId);
+      } else {
+        this.$store.commit('restoMap/setSelectedRestaurant', null);
+      }
     },
   },
 };

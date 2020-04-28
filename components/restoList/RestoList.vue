@@ -18,7 +18,7 @@
       </div>
     </div>
     <RestaurantCard
-      v-for="resto in filteredList"
+      v-for="resto in displayedResto"
       :key="resto.id"
       :resto="resto"
     />
@@ -44,9 +44,17 @@ export default {
   },
 
   computed: {
+    displayedResto() {
+      return this.filteredList.filter(marker => {
+        return this.markersDisplayed.some(mark => {
+          return marker.id === mark.id;
+        });
+      });
+    },
     ...mapState({
       restoList: state => state.restoMap.restoList,
       filteredList: state => state.restoMap.filteredList,
+      markersDisplayed: state => state.restoMap.markersDisplayed,
       ratingAverages: state => state.restoMap.ratingAverage,
     }),
   },
