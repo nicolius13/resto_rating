@@ -63,6 +63,7 @@ export default {
     },
   },
   mounted() {
+    // MAP INIT
     GoogleMapsApiLoader({
       apiKey: this.apiKey,
     }).then(googleMapApi => {
@@ -74,9 +75,21 @@ export default {
         'idle',
         this.initMarkers
       );
+
+      // EVENT LISTENER
       // add event listener (when the map is still)
       this.google.maps.event.addListener(this.map, 'idle', this.handleMapIdle);
+
+      this.google.maps.event.addListener(
+        this.map,
+        'rightclick',
+        mapsMouseEvent => {
+          this.addResto(mapsMouseEvent);
+        }
+      );
     });
+
+    //  GEOLOC
     // Try HTML geolocation
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -272,6 +285,13 @@ export default {
           marker.setAnimation(null);
         }
       });
+    },
+
+    // ////////////////////////
+    //        ADD RESTO
+    // ///////////////////////
+    addResto(event) {
+      console.log(event.latLng.lat);
     },
   },
 };

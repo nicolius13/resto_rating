@@ -24,22 +24,27 @@
     >
       <b-img :src="img" fluid></b-img>
       <b-card-text class="reviewTitle">Reviews :</b-card-text>
-      <div
-        v-for="(review, index) in commentList"
-        :key="index"
-        :class="index === commentList.length - 1 ? '' : 'separator'"
-        class="reviewsComment"
-      >
-        <b-card-text class="reviewsStars">
-          <span class="stars">
-            <b-icon :icon="stars.comments[index][0]"></b-icon>
-            <b-icon :icon="stars.comments[index][1]"></b-icon>
-            <b-icon :icon="stars.comments[index][2]"></b-icon>
-            <b-icon :icon="stars.comments[index][3]"></b-icon>
-            <b-icon :icon="stars.comments[index][4]"></b-icon>
-          </span>
-        </b-card-text>
-        <b-card-text>{{ review.comment }}</b-card-text>
+      <div v-if="resto.ratings.length !== 0">
+        <div
+          v-for="(review, index) in commentList"
+          :key="index"
+          :class="index === commentList.length - 1 ? '' : 'separator'"
+          class="reviewsComment"
+        >
+          <b-card-text class="reviewsStars">
+            <span class="stars">
+              <b-icon :icon="stars.comments[index][0]"></b-icon>
+              <b-icon :icon="stars.comments[index][1]"></b-icon>
+              <b-icon :icon="stars.comments[index][2]"></b-icon>
+              <b-icon :icon="stars.comments[index][3]"></b-icon>
+              <b-icon :icon="stars.comments[index][4]"></b-icon>
+            </span>
+          </b-card-text>
+          <b-card-text>{{ review.comment }}</b-card-text>
+        </div>
+      </div>
+      <div v-else>
+        <b-card-text class="reviewsComment">No comment yet</b-card-text>
       </div>
       <b-row class="justify-content-around">
         <button
@@ -116,8 +121,13 @@ export default {
   },
   methods: {
     handleAverages() {
-      // calculate the average rating
-      this.ratingAverage();
+      // if there is no comment put 0 as average rating
+      if (this.comments.length === 0) {
+        this.averageRating = 0;
+      } else {
+        // calculate the average rating
+        this.ratingAverage();
+      }
       // stars for the  average rating
       this.stars.average = this.starRating(this.averageRating);
       // stars for the reviews
@@ -242,8 +252,7 @@ export default {
   font-size: 1rem;
 }
 .reviewsComment {
-  padding-top: 0.8rem;
-  padding-bottom: 0.8rem;
+  padding: 0.8rem 0;
 }
 .separator {
   border-bottom: 1px solid #797979;

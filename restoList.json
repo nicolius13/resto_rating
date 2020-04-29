@@ -158,20 +158,7 @@
     "address": "Vientiane, Laos",
     "lat": 17.988258,
     "lng": 102.544237,
-    "ratings": [
-      {
-        "stars": 0,
-        "comment": "ça n'existe pas !"
-      },
-      {
-        "stars": 1,
-        "comment": "Nice!! not"
-      },
-      {
-        "stars": 3,
-        "comment": "ça pue"
-      }
-    ]
+    "ratings": []
   },
   {
     "restaurantName": "Easy Bar Vientiane - Laos",
