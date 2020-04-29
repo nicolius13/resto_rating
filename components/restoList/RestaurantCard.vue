@@ -8,14 +8,14 @@
     >
     <b-card-text>
       {{ averageRating.toFixed(1) }}
-      <span class="stars">
+      <span class="stars mainStar">
         <b-icon :icon="stars.average[0]"></b-icon>
         <b-icon :icon="stars.average[1]"></b-icon>
         <b-icon :icon="stars.average[2]"></b-icon>
         <b-icon :icon="stars.average[3]"></b-icon>
         <b-icon :icon="stars.average[4]"></b-icon>
       </span>
-      <span class="ratingsNumber"> ({{ resto.ratings.length }}) </span>
+      <span class="ratingsNumber"> ({{ comments.length }}) </span>
     </b-card-text>
     <b-collapse
       :id="'collapseInner-' + resto.id"
@@ -23,8 +23,13 @@
       accordion="restoDetails"
     >
       <b-img :src="img" fluid></b-img>
-      <b-card-text>Reviews :</b-card-text>
-      <div v-for="(review, index) in resto.ratings" :key="index">
+      <b-card-text class="reviewTitle">Reviews :</b-card-text>
+      <div
+        v-for="(review, index) in commentList"
+        :key="index"
+        :class="index === commentList.length - 1 ? '' : 'separator'"
+        class="reviewsComment"
+      >
         <b-card-text class="reviewsStars">
           <span class="stars">
             <b-icon :icon="stars.comments[index][0]"></b-icon>
@@ -34,9 +39,22 @@
             <b-icon :icon="stars.comments[index][4]"></b-icon>
           </span>
         </b-card-text>
-        <b-card-text class="reviewsComment">{{ review.comment }}</b-card-text>
+        <b-card-text>{{ review.comment }}</b-card-text>
       </div>
+      <b-row class="justify-content-around">
+        <button
+          v-if="resto.ratings.length > 5 && commentLimit !== null"
+          @click="commentLimit = null"
+          class="outlineBtn addCommBtnBtn"
+        >
+          See All Comments
+        </button>
+        <button v-b-modal="'modal-' + resto.id" class="outlineBtn seeMoreBtn ">
+          Add Comment
+        </button>
+      </b-row>
     </b-collapse>
+    <AddCommentModal :restoId="resto.id" @addingComment="addComment" />
   </b-card>
 </template>
 
@@ -44,7 +62,12 @@
 import { mapState } from 'vuex';
 import axios from 'axios';
 
+import AddCommentModal from './AddCommentModal';
+
 export default {
+  components: {
+    AddCommentModal,
+  },
   props: {
     resto: {
       type: Object,
@@ -55,6 +78,8 @@ export default {
     return {
       // apiKey: process.env.GOOGLE_MAPS_API_KEY,
       averageRating: 5,
+      comments: [...this.resto.ratings],
+      commentLimit: 5,
       stars: {
         average: [],
         comments: [],
@@ -64,31 +89,49 @@ export default {
     };
   },
   computed: {
+    commentList() {
+      return this.commentLimit
+        ? this.comments.slice(0, this.commentLimit)
+        : this.comments;
+    },
     ...mapState({
       selectedRestaurant: state => state.restoMap.selectedRestaurant,
     }),
   },
+  watch: {
+    // reset the comment displayed each time the selected restaurant change
+    selectedRestaurant() {
+      this.commentLimit = 5;
+    },
+    // watch if a comment is added
+    comments() {
+      this.handleAverages();
+    },
+  },
 
   created() {
-    // calculate the average rating
-    this.ratingAverage();
-    // stars for the  average rating
-    this.stars.average = this.starRating(this.averageRating);
-    // stars for the reviews
-    this.resto.ratings.forEach((rating, index) => {
-      this.stars.comments[index] = this.starRating(rating.stars);
-    });
+    this.handleAverages();
     // get street view img
     this.getImg();
   },
   methods: {
+    handleAverages() {
+      // calculate the average rating
+      this.ratingAverage();
+      // stars for the  average rating
+      this.stars.average = this.starRating(this.averageRating);
+      // stars for the reviews
+      this.comments.forEach((rating, index) => {
+        this.stars.comments[index] = this.starRating(rating.stars);
+      });
+    },
     // calculate the average rating
     ratingAverage() {
       let averages = 0;
-      this.resto.ratings.forEach(rating => {
+      this.comments.forEach(rating => {
         averages += rating.stars;
       });
-      averages = averages / this.resto.ratings.length;
+      averages = averages / this.comments.length;
 
       this.averageRating = averages;
     },
@@ -147,6 +190,10 @@ export default {
         this.$store.commit('restoMap/setSelectedRestaurant', null);
       }
     },
+    // put the new comment in the comments array
+    addComment($event) {
+      this.comments.push($event);
+    },
   },
 };
 </script>
@@ -174,10 +221,13 @@ export default {
 .card-text {
   font-size: 0.75rem;
 }
+
 .stars {
-  font-size: 1rem;
   color: #08d9d6;
   margin: 0 0.2rem;
+}
+.mainStar {
+  font-size: 1rem;
 }
 .ratingsNumber {
   font-size: 0.75rem;
@@ -185,11 +235,43 @@ export default {
 }
 
 /* REVIEWS */
-
+.reviewTitle {
+  margin-top: 0.8rem;
+  margin-bottom: 0;
+  color: #ff2e63;
+  font-size: 1rem;
+}
+.reviewsComment {
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+}
+.separator {
+  border-bottom: 1px solid #797979;
+}
 .reviewsStars {
   margin-bottom: 0.2rem;
 }
-.reviewsComment {
-  margin-bottom: 0.8rem;
+.reviewsStars .stars {
+  font-size: 0.8rem;
+}
+/* buttons */
+.seeMoreBtn {
+  font-size: 0.8rem;
+  color: #08d9d6;
+  border: 1px solid #08d9d6;
+}
+.seeMoreBtn:hover {
+  background-color: #08d9d6;
+  color: #000;
+}
+
+.addCommBtnBtn {
+  font-size: 0.8rem;
+  color: #ff2e63;
+  border: 1px solid #ff2e63;
+}
+.addCommBtnBtn:hover {
+  background-color: #ff2e63;
+  color: #fff;
 }
 </style>
