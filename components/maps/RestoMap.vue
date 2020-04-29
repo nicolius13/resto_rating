@@ -278,6 +278,8 @@ export default {
 </script>
 
 <style>
+/* can't be scoped because of the marker cluster styling */
+
 .mapContainer,
 .google-map {
   height: inherit;

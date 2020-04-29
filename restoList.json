@@ -27,6 +27,14 @@
         "comment": "Un bon endroit pour manger, délicieux, propre, chaud"
       },
       {
+        "stars": 5,
+        "comment": "Un bon endroit pour manger"
+      },
+      {
+        "stars": 3,
+        "comment": "moyen"
+      },
+      {
         "stars": 4,
         "comment": "Ok"
       }
@@ -50,6 +58,14 @@
       {
         "stars": 5,
         "comment": "Multi-cuisine"
+      },
+      {
+        "stars": 4,
+        "comment": "super cuisine"
+      },
+      {
+        "stars": 3,
+        "comment": "pas mal"
       },
       {
         "stars": 3,
@@ -146,10 +162,6 @@
       {
         "stars": 0,
         "comment": "ça n'existe pas !"
-      },
-      {
-        "stars": 4,
-        "comment": "super bonne ambiance"
       },
       {
         "stars": 1,

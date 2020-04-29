@@ -24,7 +24,12 @@
     >
       <b-img :src="img" fluid></b-img>
       <b-card-text>Reviews :</b-card-text>
-      <div v-for="(review, index) in resto.ratings" :key="index">
+      <div
+        v-for="(review, index) in commentList"
+        :key="index"
+        :class="index === commentList.length - 1 ? '' : 'separator'"
+        class="reviewsComment"
+      >
         <b-card-text class="reviewsStars">
           <span class="stars">
             <b-icon :icon="stars.comments[index][0]"></b-icon>
@@ -34,7 +39,16 @@
             <b-icon :icon="stars.comments[index][4]"></b-icon>
           </span>
         </b-card-text>
-        <b-card-text class="reviewsComment">{{ review.comment }}</b-card-text>
+        <b-card-text>{{ review.comment }}</b-card-text>
+      </div>
+      <div class="d-flex justify-content-center">
+        <button
+          v-if="resto.ratings.length > 5 && commentLimit !== null"
+          @click="commentLimit = null"
+          class="seeMoreBtn"
+        >
+          See All Comments
+        </button>
       </div>
     </b-collapse>
   </b-card>
@@ -55,6 +69,7 @@ export default {
     return {
       // apiKey: process.env.GOOGLE_MAPS_API_KEY,
       averageRating: 5,
+      commentLimit: 5,
       stars: {
         average: [],
         comments: [],
@@ -64,9 +79,19 @@ export default {
     };
   },
   computed: {
+    commentList() {
+      return this.commentLimit
+        ? this.resto.ratings.slice(0, this.commentLimit)
+        : this.resto.ratings;
+    },
     ...mapState({
       selectedRestaurant: state => state.restoMap.selectedRestaurant,
     }),
+  },
+  watch: {
+    selectedRestaurant() {
+      this.commentLimit = 5;
+    },
   },
 
   created() {
@@ -186,10 +211,27 @@ export default {
 
 /* REVIEWS */
 
+.reviewsComment {
+  padding-top: 0.2rem;
+  padding-bottom: 0.8rem;
+}
+.separator {
+  border-bottom: 1px solid #797979;
+}
 .reviewsStars {
   margin-bottom: 0.2rem;
 }
-.reviewsComment {
-  margin-bottom: 0.8rem;
+
+.seeMoreBtn {
+  color: #ff2e63;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0.4rem 0.8rem;
+  transition: all 0.2s ease-in-out;
+}
+.seeMoreBtn:hover {
+  background-color: rgba(255, 46, 99, 0.15);
+  transition: all 0.2s ease-in-out;
 }
 </style>
