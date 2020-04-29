@@ -1,17 +1,24 @@
 <template>
-  <div ref="googleMap" class="google-map"></div>
+  <div id="google-map" ref="googleMap">
+    <!-- MODAL -->
+    <addRestoModal @addingResto="addResto" />
+  </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import MarkerClusterer from '@google/markerclustererplus';
-
 import GoogleMapsApiLoader from 'google-maps-api-loader';
 
 // map settings
 import mapSettings from '@/assets/mapSettings/mapSettings.json';
 
+import AddRestoModal from '../addResto/AddRestoModal';
+
 export default {
+  components: {
+    AddRestoModal,
+  },
   data() {
     return {
       // apiKey: process.env.GOOGLE_MAPS_API_KEY,
@@ -25,6 +32,7 @@ export default {
         lng: 102.539655,
       },
       restoIcon: require('@/assets/img/resto-icon.png'),
+      newResto: {},
     };
   },
   computed: {
@@ -35,6 +43,7 @@ export default {
       };
     },
     ...mapState({
+      allRestaurants: state => state.restoMap.restoList,
       restoList: state => state.restoMap.filteredList,
       allMarkersList: state => state.restoMap.allMarkersList,
       markersDisplayed: state => state.restoMap.markersDisplayed,
@@ -61,6 +70,11 @@ export default {
         this.reCenterMap();
       }
     },
+    // watch if a restaurant is added
+    allRestaurants() {
+      this.initMarkers();
+      this.handleMapIdle();
+    },
   },
   mounted() {
     // MAP INIT
@@ -84,7 +98,8 @@ export default {
         this.map,
         'rightclick',
         mapsMouseEvent => {
-          this.addResto(mapsMouseEvent);
+          mapsMouseEvent.stop();
+          this.addRestoClick(mapsMouseEvent);
         }
       );
     });
@@ -143,8 +158,8 @@ export default {
 
     initMarkers() {
       // check if the list of all marker is already populated
-      if (!this.allMarkersList.length > 0) {
-        this.restoList.forEach(resto => {
+      if (!this.restoList.length > 0) {
+        this.allRestaurants.forEach(resto => {
           const markerOptions = {
             id: resto.id,
             position: { lat: resto.lat, lng: resto.lng },
@@ -290,8 +305,21 @@ export default {
     // ////////////////////////
     //        ADD RESTO
     // ///////////////////////
-    addResto(event) {
-      console.log(event.latLng.lat);
+    addRestoClick(event) {
+      this.$bvModal.show('addRestoModal');
+
+      // add lat and lng to the new resto object
+      this.newResto.lat = event.latLng.lat();
+      this.newResto.lng = event.latLng.lng();
+    },
+    addResto($event) {
+      // add the name in the new resto object
+      this.newResto.restaurantName = $event.name;
+      this.$store.commit('restoMap/addRestaurant', {
+        ...this.newResto,
+        id: this.$store.state.restoMap.restoList.length + 1,
+        ratings: [],
+      });
     },
   },
 };
@@ -301,7 +329,7 @@ export default {
 /* can't be scoped because of the marker cluster styling */
 
 .mapContainer,
-.google-map {
+#google-map {
   height: inherit;
 }
 

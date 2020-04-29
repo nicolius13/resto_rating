@@ -15,7 +15,7 @@
         <b-icon :icon="stars.average[3]"></b-icon>
         <b-icon :icon="stars.average[4]"></b-icon>
       </span>
-      <span class="ratingsNumber"> ({{ comments.length }}) </span>
+      <span class="ratingsNumber"> ({{ resto.ratings.length }}) </span>
     </b-card-text>
     <b-collapse
       :id="'collapseInner-' + resto.id"
@@ -59,6 +59,7 @@
         </button>
       </b-row>
     </b-collapse>
+    <!-- MODAL -->
     <AddCommentModal :restoId="resto.id" @addingComment="addComment" />
   </b-card>
 </template>
@@ -83,7 +84,6 @@ export default {
     return {
       // apiKey: process.env.GOOGLE_MAPS_API_KEY,
       averageRating: 5,
-      comments: [...this.resto.ratings],
       commentLimit: 5,
       stars: {
         average: [],
@@ -96,10 +96,11 @@ export default {
   computed: {
     commentList() {
       return this.commentLimit
-        ? this.comments.slice(0, this.commentLimit)
-        : this.comments;
+        ? this.resto.ratings.slice(0, this.commentLimit)
+        : this.resto.ratings;
     },
     ...mapState({
+      restoList: state => state.restoMap.restoList,
       selectedRestaurant: state => state.restoMap.selectedRestaurant,
     }),
   },
@@ -109,8 +110,13 @@ export default {
       this.commentLimit = 5;
     },
     // watch if a comment is added
-    comments() {
-      this.handleAverages();
+    restoList: {
+      handler: function() {
+        if (this.restoList) {
+          this.handleAverages();
+        }
+      },
+      deep: true,
     },
   },
 
@@ -122,7 +128,7 @@ export default {
   methods: {
     handleAverages() {
       // if there is no comment put 0 as average rating
-      if (this.comments.length === 0) {
+      if (this.resto.ratings.length === 0) {
         this.averageRating = 0;
       } else {
         // calculate the average rating
@@ -131,17 +137,17 @@ export default {
       // stars for the  average rating
       this.stars.average = this.starRating(this.averageRating);
       // stars for the reviews
-      this.comments.forEach((rating, index) => {
+      this.resto.ratings.forEach((rating, index) => {
         this.stars.comments[index] = this.starRating(rating.stars);
       });
     },
     // calculate the average rating
     ratingAverage() {
       let averages = 0;
-      this.comments.forEach(rating => {
+      this.resto.ratings.forEach(rating => {
         averages += rating.stars;
       });
-      averages = averages / this.comments.length;
+      averages = averages / this.resto.ratings.length;
 
       this.averageRating = averages;
     },
@@ -202,7 +208,11 @@ export default {
     },
     // put the new comment in the comments array
     addComment($event) {
-      this.comments.push($event);
+      this.$store.commit('restoMap/addComment', {
+        comment: $event,
+        id: this.resto.id,
+      });
+      // this.comments.push($event);
     },
   },
 };

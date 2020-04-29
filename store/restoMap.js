@@ -34,4 +34,19 @@ export const mutations = {
   resetMarkers(state) {
     state.markersDisplayed = [];
   },
+
+  // ADD  COMMENT
+  addComment(state, comment) {
+    state.restoList.find(resto => {
+      if (resto.id === comment.id) {
+        resto.ratings.push(comment.comment);
+        return true;
+      }
+    });
+  },
+
+  // ADD RESTAURANT
+  addRestaurant(state, resto) {
+    state.restoList.push(resto);
+  },
 };

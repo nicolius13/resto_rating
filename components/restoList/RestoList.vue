@@ -67,6 +67,11 @@ export default {
     higherLimit() {
       this.filterList();
     },
+    // watch if restaurant is added
+    restoList() {
+      this.calAverage();
+      this.filterList();
+    },
   },
   fetch() {
     this.calAverage();
