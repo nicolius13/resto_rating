@@ -3,7 +3,7 @@
     <b-container id="mapContainer" fluid>
       <b-row class="mapRow">
         <b-col cols="8" class="mapCol">
-          <RestoMap />
+          <Maps @googleMap="googleInit" @markers="markers = $event" />
         </b-col>
         <RestoList id="list" class="col-4 mapCol" />
       </b-row>
@@ -12,23 +12,69 @@
 </template>
 
 <script>
-import RestoMap from '../components/maps/RestoMap';
+import { mapState } from 'vuex';
+
+import Maps from '../components/maps/Maps';
 import RestoList from '../components/restoList/RestoList';
 
 export default {
   components: {
-    RestoMap,
+    Maps,
     RestoList,
+  },
+  data() {
+    return {
+      google: null,
+      map: null,
+      markers: [],
+    };
+  },
+  computed: {
+    ...mapState({
+      selectedRestaurant: state => state.restoMap.selectedRestaurant,
+    }),
+  },
+  watch: {
+    selectedRestaurant() {
+      this.bounceMarker();
+    },
+    markers() {
+      this.markers.forEach(marker => {
+        // add click listener to make the resto card visible when clicked
+        marker.addListener('click', () => {
+          this.clickMarker(marker);
+        });
+      });
+    },
+  },
+  methods: {
+    googleInit($event) {
+      this.google = $event.google;
+      this.map = $event.map;
+    },
+    // change the selected restaurant
+    clickMarker(marker) {
+      this.$store.commit('restoMap/setSelectedRestaurant', marker.id);
+      // scroll to the restaurant card
+      const resto = document.getElementById('resto-' + marker.id);
+      resto.scrollIntoView(true);
+    },
+
+    // make the marker bounce when it's selected in the list
+    bounceMarker() {
+      this.markers.forEach(marker => {
+        if (marker.id === this.selectedRestaurant) {
+          marker.setAnimation(this.google.maps.Animation.BOUNCE);
+        } else {
+          marker.setAnimation(null);
+        }
+      });
+    },
   },
 };
 </script>
 
 <style scoped>
-#mapContainer,
-.mapRow,
-.mapCol {
-  height: 100%;
-}
 #list {
   overflow: auto;
   /* firefox 64 */

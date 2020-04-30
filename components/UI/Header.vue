@@ -21,12 +21,10 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
           <li class="nav-item">
-            <b-link class="nav-link deco" to="/map">Map</b-link>
+            <b-link class="nav-link deco" to="/map">Find Resto</b-link>
           </li>
           <li class="nav-item">
-            <b-link class="nav-link deco" to="/addResto"
-              >Add a Restaurant</b-link
-            >
+            <b-link class="nav-link deco" to="/addResto">Add Resto</b-link>
           </li>
           <li class="nav-item">
             <b-link class="nav-link deco" to="/about">About</b-link>
@@ -76,6 +74,7 @@ export default {
 .navbar-nav .nav-link {
   color: #08d9d6;
   transition: all 0.3s ease-in-out;
+  padding: 0.5rem 1.5rem;
 }
 .navbar-nav .nav-link:hover,
 .navbar-nav .nav-link:focus {
