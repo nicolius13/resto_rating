@@ -4,6 +4,7 @@
     @ok="handleOk"
     @show="resetModal"
     @hidden="resetModal"
+    :oncontextmenu="show ? 'return true;' : 'return false;'"
     centered
   >
     <template v-slot:modal-title>
@@ -44,7 +45,19 @@ export default {
     return {
       name: '',
       nameState: null,
+      show: false,
     };
+  },
+  mounted() {
+    // prevent the context menu to show on right click on the map
+    // when the modal is shown enable the right click on the modal
+    this.$root.$on('bv::modal::shown', () => {
+      this.show = true;
+    });
+    // when th modal hide disable the right click on it
+    this.$root.$on('bv::modal::hide', () => {
+      this.show = false;
+    });
   },
   methods: {
     // reset the modal
