@@ -1,8 +1,5 @@
 <template>
-  <div id="google-map" ref="googleMap">
-    <!-- MODAL -->
-    <addRestoModal @addingResto="addResto" />
-  </div>
+  <div id="google-map" ref="googleMap"></div>
 </template>
 
 <script>
@@ -13,12 +10,7 @@ import GoogleMapsApiLoader from 'google-maps-api-loader';
 // map settings
 import mapSettings from '@/assets/mapSettings/mapSettings.json';
 
-import AddRestoModal from '../addResto/AddRestoModal';
-
 export default {
-  components: {
-    AddRestoModal,
-  },
   data() {
     return {
       // apiKey: process.env.GOOGLE_MAPS_API_KEY,
@@ -32,7 +24,6 @@ export default {
         lng: 102.539655,
       },
       restoIcon: require('@/assets/img/resto-icon.png'),
-      newResto: {},
     };
   },
   computed: {
@@ -55,9 +46,6 @@ export default {
       if (this.map) {
         this.handleMapIdle();
       }
-    },
-    selectedRestaurant() {
-      this.bounceMarker();
     },
     // watch modification of the map center and re center it
     'mapConfig.center.lat'() {
@@ -84,24 +72,14 @@ export default {
       this.google = googleMapApi;
       this.initializeMap();
       // wait until the map is ready to initialise the markers
-      this.google.maps.event.addListenerOnce(
-        this.map,
-        'idle',
-        this.initMarkers
-      );
+      this.google.maps.event.addListenerOnce(this.map, 'idle', () => {
+        this.initMarkers();
+        this.$emit('googleMap', { google: this.google, map: this.map });
+      });
 
       // EVENT LISTENER
       // add event listener (when the map is still)
       this.google.maps.event.addListener(this.map, 'idle', this.handleMapIdle);
-
-      this.google.maps.event.addListener(
-        this.map,
-        'rightclick',
-        mapsMouseEvent => {
-          mapsMouseEvent.stop();
-          this.addRestoClick(mapsMouseEvent);
-        }
-      );
     });
 
     //  GEOLOC
@@ -268,10 +246,7 @@ export default {
             icon: mark.icon,
             animation: mark.animation,
           });
-          // add click listener to make the resto card visible when clicked
-          marker.addListener('click', () => {
-            this.clickMarker(marker);
-          });
+
           // if was open before and a resto selected make it bounce if needed
           if (marker.id === this.selectedRestaurant) {
             marker.setAnimation(this.google.maps.Animation.BOUNCE);
@@ -282,44 +257,7 @@ export default {
           this.markerCluster.addMarker(marker);
         }, i * 100);
       });
-    },
-
-    clickMarker(marker) {
-      this.$store.commit('restoMap/setSelectedRestaurant', marker.id);
-      // scroll to the restaurant card
-      const resto = document.getElementById('resto-' + marker.id);
-      resto.scrollIntoView(true);
-    },
-
-    // make the marker bounce when it's selected in the list
-    bounceMarker() {
-      this.markers.forEach(marker => {
-        if (marker.id === this.selectedRestaurant) {
-          marker.setAnimation(this.google.maps.Animation.BOUNCE);
-        } else {
-          marker.setAnimation(null);
-        }
-      });
-    },
-
-    // ////////////////////////
-    //        ADD RESTO
-    // ///////////////////////
-    addRestoClick(event) {
-      this.$bvModal.show('addRestoModal');
-
-      // add lat and lng to the new resto object
-      this.newResto.lat = event.latLng.lat();
-      this.newResto.lng = event.latLng.lng();
-    },
-    addResto($event) {
-      // add the name in the new resto object
-      this.newResto.restaurantName = $event.name;
-      this.$store.commit('restoMap/addRestaurant', {
-        ...this.newResto,
-        id: this.$store.state.restoMap.restoList.length + 1,
-        ratings: [],
-      });
+      this.$emit('markers', this.markers);
     },
   },
 };
@@ -327,11 +265,6 @@ export default {
 
 <style>
 /* can't be scoped because of the marker cluster styling */
-
-.mapContainer,
-#google-map {
-  height: inherit;
-}
 
 .custom-clustericon {
   background: #ff2e63;

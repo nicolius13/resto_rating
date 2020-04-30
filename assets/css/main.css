@@ -1,3 +1,17 @@
+/* MAPS */
+
+#mapContainer {
+  height: 100%;
+}
+#google-map {
+  height: inherit;
+  width: inherit;
+}
+.mapRow,
+.mapCol {
+  height: 100%;
+}
+
 /* BUTTONS */
 .outlineBtn {
   background: none;
