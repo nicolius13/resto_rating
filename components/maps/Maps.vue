@@ -257,6 +257,7 @@ export default {
           this.markerCluster.addMarker(marker);
         }, i * 100);
       });
+      // emit the markers array to be accesible by the parents components
       this.$emit('markers', this.markers);
     },
   },

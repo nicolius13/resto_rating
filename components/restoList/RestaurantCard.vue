@@ -17,12 +17,14 @@
       </span>
       <span class="ratingsNumber"> ({{ resto.ratings.length }}) </span>
     </b-card-text>
+    <!-- collapse -->
     <b-collapse
       :id="'collapseInner-' + resto.id"
       :visible="selectedRestaurant === resto.id"
       accordion="restoDetails"
     >
       <b-img :src="img" fluid></b-img>
+      <!-- Reviews -->
       <b-card-text class="reviewTitle">Reviews :</b-card-text>
       <div v-if="resto.ratings.length !== 0">
         <div
@@ -43,6 +45,7 @@
           <b-card-text>{{ review.comment }}</b-card-text>
         </div>
       </div>
+      <!-- if no reviews -->
       <div v-else>
         <b-card-text class="reviewsComment">No comment yet</b-card-text>
       </div>
@@ -176,14 +179,14 @@ export default {
       // check if the google street static img exist
       axios
         .get(
-          `https://maps.googleapis.com/maps/api/streetview/metadata?size=600x400&location=${lat}${lng}&key=${this.apiKey}`
+          `https://maps.googleapis.com/maps/api/streetview/metadata?size=600x400&location=${lat},${lng}&key=${this.apiKey}`
         )
         .then(response => {
           // if the img exist get the img
           if (response.data.status === 'OK') {
             axios
               .get(
-                `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${lat}${lng}&key=${this.apiKey}`
+                `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${lat},${lng}&key=${this.apiKey}`
               )
               .then(res => {
                 this.img = res.config.url;

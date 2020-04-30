@@ -4,6 +4,13 @@
       <b-row class="justify-content-center">
         <h1 class="pageTitle">Add Restaurant</h1>
       </b-row>
+      <b-row>
+        <b-col>
+          <h4 class="text-center">
+            To add a restaurant right click on the map where you want to add it
+          </h4>
+        </b-col>
+      </b-row>
       <b-row class=" flex-grow-1">
         <b-col class="d-flex flex-grow-1">
           <Maps @googleMap="googleInit" @markers="markers = $event" />
@@ -32,6 +39,7 @@ export default {
   },
   watch: {
     markers() {
+      // set all markers to be not clickable
       this.markers.forEach(marker => {
         marker.setClickable(false);
       });
@@ -80,6 +88,13 @@ export default {
 
 <style scoped>
 .pageTitle {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0;
+  /* color: #ff2e63; */
+}
+h4 {
+  color: #ff2e63;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 </style>

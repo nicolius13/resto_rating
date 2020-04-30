@@ -6,9 +6,11 @@
     @hidden="resetModal"
     centered
   >
+    <!-- title -->
     <template v-slot:modal-title>
       <h3 class="modalTitle">Add a comment</h3>
     </template>
+    <!-- form -->
     <b-form @submit.stop.prevent="handleSubmit" class="d-block">
       <b-form-group label="Rating" label-for="rating-input">
         <StarPicker id="rating-input" @starPick="rating = $event" />
@@ -21,6 +23,7 @@
         ></b-form-textarea>
       </b-form-group>
     </b-form>
+    <!-- footer -->
     <template v-slot:modal-footer="{ ok, cancel }">
       <button @click="cancel()" class="cancelBtn outlineBtn">Cancel</button>
       <button @click="ok()" class="okBtn outlineBtn">Ok</button>
