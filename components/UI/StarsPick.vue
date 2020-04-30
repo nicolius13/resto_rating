@@ -102,7 +102,7 @@ export default {
   props: {
     stars: {
       type: Number,
-      required: true,
+      default: 0,
     },
   },
   data() {
@@ -113,6 +113,7 @@ export default {
     };
   },
   methods: {
+    //  manage the star hovering
     starHover(hovered, event) {
       const starIndex = parseInt(event.target.dataset.star);
 
@@ -137,13 +138,6 @@ export default {
         this.firstClick = true;
         this.selected = star;
         this.$emit('starPick', this.selected + 1);
-      }
-    },
-    classSelect(star) {
-      if (this.isHovered[1]) {
-        return 'colorFill';
-      } else {
-        return '';
       }
     },
   },

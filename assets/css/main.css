@@ -1,0 +1,80 @@
+/* MAPS */
+
+#mapContainer {
+  height: 100%;
+}
+#google-map {
+  height: inherit;
+  width: inherit;
+}
+.mapRow,
+.mapCol {
+  height: 100%;
+}
+
+/* BUTTONS */
+.outlineBtn {
+  background: none;
+  border-radius: 5px;
+  margin: 0.2rem 0.4rem;
+  padding: 0.4rem 0.8rem;
+  transition: all 0.2s ease-in-out;
+}
+.outlineBtn:hover {
+  transition: all 0.2s ease-in-out;
+}
+
+/* MODAL */
+.modal-header {
+  border-bottom: 1px solid #292929;
+}
+.modal-footer {
+  border-top: none;
+}
+.modal-content {
+  background-color: #1d1d1d;
+  color: #fff;
+}
+/* close btn */
+.close {
+  color: #ff2e63;
+  text-shadow: none;
+  opacity: 1;
+}
+.close:hover {
+  color: #ff2e63;
+}
+/* Title */
+.modalTitle {
+  color: #ff2e63;
+}
+/* Text input */
+.textInput {
+  background-color: #292929;
+  border: 1px solid #000;
+  color: #fff;
+}
+.textInput:focus {
+  box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.15);
+  border: 1px solid #000;
+  background-color: #292929;
+  color: #fff;
+}
+/* Buttons */
+.cancelBtn {
+  color: #838383;
+  border: 1px solid #838383;
+}
+.cancelBtn:hover {
+  background-color: #292929;
+  color: #fff;
+}
+
+.okBtn {
+  color: #ff2e63;
+  border: 1px solid #ff2e63;
+}
+.okBtn:hover {
+  background-color: #ff2e63;
+  color: #fff;
+}

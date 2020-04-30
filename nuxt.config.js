@@ -35,7 +35,7 @@ export default {
   /*
    ** Global CSS
    */
-  css: [],
+  css: ['@/assets/css/main.css'],
 
   /*
    ** Env

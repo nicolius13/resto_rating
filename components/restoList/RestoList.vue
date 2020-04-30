@@ -67,6 +67,11 @@ export default {
     higherLimit() {
       this.filterList();
     },
+    // watch if restaurant is added
+    restoList() {
+      this.calAverage();
+      this.filterList();
+    },
   },
   fetch() {
     this.calAverage();
@@ -77,14 +82,23 @@ export default {
     calAverage() {
       this.restoList.forEach(resto => {
         let averages = 0;
-        resto.ratings.forEach(rating => {
-          averages += rating.stars;
-        });
-        averages = averages / resto.ratings.length;
-        this.$store.commit('restoMap/addRattingAverage', {
-          averages,
-          id: resto.id,
-        });
+        // check if there is comments if yes => calculate the average
+        if (resto.ratings.length !== 0) {
+          resto.ratings.forEach(rating => {
+            averages += rating.stars;
+          });
+          averages = averages / resto.ratings.length;
+          this.$store.commit('restoMap/addRattingAverage', {
+            averages,
+            id: resto.id,
+          });
+          // if no comment put average to 0
+        } else {
+          this.$store.commit('restoMap/addRattingAverage', {
+            averages: 0,
+            id: resto.id,
+          });
+        }
       });
     },
     filterList() {

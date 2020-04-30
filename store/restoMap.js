@@ -16,6 +16,9 @@ export const mutations = {
       average: rating.averages,
     });
   },
+  setFilteredList(state) {
+    state.filteredList = state.restoList;
+  },
   filteringList(state, filteredAverages) {
     // filter the restaurant list with the resto id put in the filteredAverages array
     state.filteredList = state.restoList.filter(resto => {
@@ -33,5 +36,20 @@ export const mutations = {
   },
   resetMarkers(state) {
     state.markersDisplayed = [];
+  },
+
+  // ADD  COMMENT
+  addComment(state, comment) {
+    state.restoList.find(resto => {
+      if (resto.id === comment.id) {
+        resto.ratings.push(comment.comment);
+        return true;
+      }
+    });
+  },
+
+  // ADD RESTAURANT
+  addRestaurant(state, resto) {
+    state.restoList.push(resto);
   },
 };

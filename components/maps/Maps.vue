@@ -1,11 +1,10 @@
 <template>
-  <div ref="googleMap" class="google-map"></div>
+  <div id="google-map" ref="googleMap"></div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import MarkerClusterer from '@google/markerclustererplus';
-
 import GoogleMapsApiLoader from 'google-maps-api-loader';
 
 // map settings
@@ -35,6 +34,7 @@ export default {
       };
     },
     ...mapState({
+      allRestaurants: state => state.restoMap.restoList,
       restoList: state => state.restoMap.filteredList,
       allMarkersList: state => state.restoMap.allMarkersList,
       markersDisplayed: state => state.restoMap.markersDisplayed,
@@ -47,9 +47,6 @@ export default {
         this.handleMapIdle();
       }
     },
-    selectedRestaurant() {
-      this.bounceMarker();
-    },
     // watch modification of the map center and re center it
     'mapConfig.center.lat'() {
       if (this.map) {
@@ -61,22 +58,31 @@ export default {
         this.reCenterMap();
       }
     },
+    // watch if a restaurant is added
+    allRestaurants() {
+      this.initMarkers();
+      this.handleMapIdle();
+    },
   },
   mounted() {
+    // MAP INIT
     GoogleMapsApiLoader({
       apiKey: this.apiKey,
     }).then(googleMapApi => {
       this.google = googleMapApi;
       this.initializeMap();
       // wait until the map is ready to initialise the markers
-      this.google.maps.event.addListenerOnce(
-        this.map,
-        'idle',
-        this.initMarkers
-      );
+      this.google.maps.event.addListenerOnce(this.map, 'idle', () => {
+        this.initMarkers();
+        this.$emit('googleMap', { google: this.google, map: this.map });
+      });
+
+      // EVENT LISTENER
       // add event listener (when the map is still)
       this.google.maps.event.addListener(this.map, 'idle', this.handleMapIdle);
     });
+
+    //  GEOLOC
     // Try HTML geolocation
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -130,8 +136,8 @@ export default {
 
     initMarkers() {
       // check if the list of all marker is already populated
-      if (!this.allMarkersList.length > 0) {
-        this.restoList.forEach(resto => {
+      if (!this.restoList.length > 0) {
+        this.allRestaurants.forEach(resto => {
           const markerOptions = {
             id: resto.id,
             position: { lat: resto.lat, lng: resto.lng },
@@ -240,10 +246,7 @@ export default {
             icon: mark.icon,
             animation: mark.animation,
           });
-          // add click listener to make the resto card visible when clicked
-          marker.addListener('click', () => {
-            this.clickMarker(marker);
-          });
+
           // if was open before and a resto selected make it bounce if needed
           if (marker.id === this.selectedRestaurant) {
             marker.setAnimation(this.google.maps.Animation.BOUNCE);
@@ -254,34 +257,15 @@ export default {
           this.markerCluster.addMarker(marker);
         }, i * 100);
       });
-    },
-
-    clickMarker(marker) {
-      this.$store.commit('restoMap/setSelectedRestaurant', marker.id);
-      // scroll to the restaurant card
-      const resto = document.getElementById('resto-' + marker.id);
-      resto.scrollIntoView(true);
-    },
-
-    // make the marker bounce when it's selected in the list
-    bounceMarker() {
-      this.markers.forEach(marker => {
-        if (marker.id === this.selectedRestaurant) {
-          marker.setAnimation(this.google.maps.Animation.BOUNCE);
-        } else {
-          marker.setAnimation(null);
-        }
-      });
+      // emit the markers array to be accesible by the parents components
+      this.$emit('markers', this.markers);
     },
   },
 };
 </script>
 
 <style>
-.mapContainer,
-.google-map {
-  height: inherit;
-}
+/* can't be scoped because of the marker cluster styling */
 
 .custom-clustericon {
   background: #ff2e63;
