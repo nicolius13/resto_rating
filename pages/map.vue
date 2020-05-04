@@ -38,8 +38,10 @@ export default {
     selectedRestaurant() {
       this.bounceMarker();
     },
-    markers() {
+    markers(newVal) {
       this.markers.forEach(marker => {
+        this.google.maps.event.clearListeners(marker, 'click');
+
         // add click listener to make the resto card visible when clicked
         marker.addListener('click', () => {
           this.clickMarker(marker);

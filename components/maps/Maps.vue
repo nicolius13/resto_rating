@@ -81,10 +81,12 @@ export default {
             rankBy: this.google.maps.places.RankBy.DISTANCE,
             type: 'restaurant',
           },
-          res => {
-            this.$store.commit('restoMap/setRestoList', res);
-            console.log(res);
-            this.initMarkers();
+          (res, status) => {
+            if (status === this.google.maps.places.PlacesServiceStatus.OK) {
+              this.$store.commit('restoMap/setRestoList', res);
+              console.log(res);
+              this.initMarkers();
+            }
           }
         );
 
