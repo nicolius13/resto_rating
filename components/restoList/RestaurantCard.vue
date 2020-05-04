@@ -1,7 +1,7 @@
 <template>
   <b-card :id="'resto-' + resto.id">
     <b-card-title
-      @click="bounceMarker"
+      @click="handleOpening"
       :class="selectedRestaurant === resto.id ? '' : 'collapsed'"
       :data-id="resto.id"
       >{{ resto.name }}</b-card-title
@@ -26,11 +26,11 @@
       <b-img :src="img" fluid></b-img>
       <!-- Reviews -->
       <b-card-text class="reviewTitle">Reviews :</b-card-text>
-      <!-- <div v-if="resto.ratings.length !== 0">
+      <div v-if="reviews.length !== 0">
         <div
-          v-for="(review, index) in commentList"
+          v-for="(review, index) in reviews"
           :key="index"
-          :class="index === commentList.length - 1 ? '' : 'separator'"
+          :class="index === reviews.length - 1 ? '' : 'separator'"
           class="reviewsComment"
         >
           <b-card-text class="reviewsStars">
@@ -42,13 +42,13 @@
               <b-icon :icon="stars.comments[index][4]"></b-icon>
             </span>
           </b-card-text>
-          <b-card-text>{{ review.comment }}</b-card-text>
+          <b-card-text>{{ reviews[index].text }}</b-card-text>
         </div>
-      </div> -->
+      </div>
       <!-- if no reviews -->
-      <!-- <div v-else>
+      <div v-else>
         <b-card-text class="reviewsComment">No comment yet</b-card-text>
-      </div> -->
+      </div>
       <b-row class="justify-content-around">
         <!-- <button
           v-if="resto.ratings.length > 5 && commentLimit !== null"
@@ -82,12 +82,17 @@ export default {
       type: Object,
       required: true,
     },
+    places: {
+      type: Object,
+    },
   },
   data() {
     return {
-      // apiKey: process.env.GOOGLE_MAPS_API_KEY,
+      apiKey: process.env.GOOGLE_MAPS_API_KEY,
       averageRating: 5,
       commentLimit: 5,
+      haveDetails: false,
+      reviews: [],
       stars: {
         average: [],
         comments: [],
@@ -118,6 +123,7 @@ export default {
     // reset the comment displayed each time the selected restaurant change
     selectedRestaurant() {
       this.commentLimit = 5;
+      this.getDetails();
     },
     // watch if a comment is added
     restoList: {
@@ -132,11 +138,6 @@ export default {
   fetch() {
     this.handleAverages();
   },
-
-  created() {
-    // get street view img
-    this.getImg();
-  },
   methods: {
     handleAverages() {
       if (this.resto.rating) {
@@ -146,10 +147,6 @@ export default {
       }
       // stars for the  average rating
       this.stars.average = this.starRating(this.averageRating);
-      // stars for the reviews
-      // this.resto.ratings.forEach((rating, index) => {
-      //   this.stars.comments[index] = this.starRating(rating.stars);
-      // });
     },
     // push the type of star in an array depending of the average rating
     starRating(rating) {
@@ -170,9 +167,30 @@ export default {
       }
       return starsRating;
     },
+    handleOpening($event) {
+      const restoId = $event.target.getAttribute('data-id');
+
+      const isCollapsed = $event.target.classList.contains('collapsed');
+      // check if the restaurant card is alredy open if not change the selected restaurant otherwise put null
+      if (isCollapsed) {
+        this.$store.commit('restoMap/setSelectedRestaurant', restoId);
+        this.getDetails();
+      } else {
+        this.$store.commit('restoMap/setSelectedRestaurant', null);
+      }
+    },
+    getDetails() {
+      // check if we already have the datas
+      if (!this.haveDetails) {
+        // get street view img
+        this.getImg();
+        // get reviews
+        this.getReviews(this.resto.place_id);
+      }
+    },
     getImg() {
-      const lat = this.resto.lat;
-      const lng = this.resto.lng;
+      const lat = this.resto.geometry.location.lat();
+      const lng = this.resto.geometry.location.lng();
       // check if the google street static img exist
       axios
         .get(
@@ -195,16 +213,19 @@ export default {
           console.log(error);
         });
     },
-    bounceMarker($event) {
-      const markId = $event.target.getAttribute('data-id');
-
-      const isCollapsed = $event.target.classList.contains('collapsed');
-      // check if the restaurant card is alredy open if not change the selected restaurant otherwise put null
-      if (isCollapsed) {
-        this.$store.commit('restoMap/setSelectedRestaurant', markId);
-      } else {
-        this.$store.commit('restoMap/setSelectedRestaurant', null);
-      }
+    getReviews(restoId) {
+      // get the reviews
+      this.places.getDetails({ placeId: restoId, fields: ['review'] }, res => {
+        // check if there are reviews
+        if (res.reviews) {
+          this.reviews = res.reviews;
+          // stars for the reviews
+          this.reviews.forEach((review, index) => {
+            this.stars.comments[index] = this.starRating(review.rating);
+          });
+        }
+      });
+      this.haveDetails = true;
     },
     // put the new comment in the comments array
     addComment($event) {

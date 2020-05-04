@@ -15,6 +15,7 @@ export default {
     return {
       apiKey: process.env.GOOGLE_MAPS_API_KEY,
       mapSettings: mapSettings,
+      places: null,
       map: null,
       google: null,
       markers: [],
@@ -74,8 +75,8 @@ export default {
       this.initializeMap();
       // wait until the map is ready to initialise the markers
       this.google.maps.event.addListenerOnce(this.map, 'idle', () => {
-        const place = new this.google.maps.places.PlacesService(this.map);
-        place.nearbySearch(
+        this.places = new this.google.maps.places.PlacesService(this.map);
+        this.places.nearbySearch(
           {
             location: this.mapConfig.center,
             rankBy: this.google.maps.places.RankBy.DISTANCE,
@@ -84,13 +85,16 @@ export default {
           (res, status) => {
             if (status === this.google.maps.places.PlacesServiceStatus.OK) {
               this.$store.commit('restoMap/setRestoList', res);
-              console.log(res);
               this.initMarkers();
             }
           }
         );
 
-        this.$emit('googleMap', { google: this.google, map: this.map });
+        this.$emit('googleMap', {
+          google: this.google,
+          map: this.map,
+          places: this.places,
+        });
       });
 
       // EVENT LISTENER

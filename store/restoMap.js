@@ -7,9 +7,13 @@ export const state = () => ({
   allMarkersList: [],
   markersDisplayed: [],
   selectedRestaurant: null,
+  places: null,
 });
 
 export const mutations = {
+  setPlaces(state, places) {
+    state.places = places;
+  },
   setRestoList(state, list) {
     state.restoList = list;
   },

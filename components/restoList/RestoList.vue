@@ -21,6 +21,7 @@
       v-for="resto in displayedResto"
       :key="resto.id"
       :resto="resto"
+      :places="places"
     />
   </div>
 </template>
@@ -35,6 +36,11 @@ export default {
   components: {
     StarPick,
     RestaurantCard,
+  },
+  props: {
+    places: {
+      type: Object,
+    },
   },
   data() {
     return {
