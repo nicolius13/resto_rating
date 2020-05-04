@@ -1,7 +1,7 @@
-import restos from '../restoList.json';
+// import restos from '../restoList.json';
 
 export const state = () => ({
-  restoList: restos,
+  restoList: [],
   filteredList: [],
   ratingAverage: [],
   allMarkersList: [],
@@ -10,12 +10,16 @@ export const state = () => ({
 });
 
 export const mutations = {
+  setRestoList(state, list) {
+    state.restoList = list;
+  },
   addRattingAverage(state, rating) {
     state.ratingAverage.push({
       restoId: rating.id,
       average: rating.averages,
     });
   },
+  // set an unfiltered list if no filtering is done (add resto page)
   setFilteredList(state) {
     state.filteredList = state.restoList;
   },

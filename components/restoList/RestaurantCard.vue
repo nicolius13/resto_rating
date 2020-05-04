@@ -4,10 +4,10 @@
       @click="bounceMarker"
       :class="selectedRestaurant === resto.id ? '' : 'collapsed'"
       :data-id="resto.id"
-      >{{ resto.restaurantName }}</b-card-title
+      >{{ resto.name }}</b-card-title
     >
     <b-card-text>
-      {{ averageRating.toFixed(1) }}
+      {{ averageRating }}
       <span class="stars mainStar">
         <b-icon :icon="stars.average[0]"></b-icon>
         <b-icon :icon="stars.average[1]"></b-icon>
@@ -15,7 +15,7 @@
         <b-icon :icon="stars.average[3]"></b-icon>
         <b-icon :icon="stars.average[4]"></b-icon>
       </span>
-      <span class="ratingsNumber"> ({{ resto.ratings.length }}) </span>
+      <span class="ratingsNumber"> ({{ totalReviews }}) </span>
     </b-card-text>
     <!-- collapse -->
     <b-collapse
@@ -26,7 +26,7 @@
       <b-img :src="img" fluid></b-img>
       <!-- Reviews -->
       <b-card-text class="reviewTitle">Reviews :</b-card-text>
-      <div v-if="resto.ratings.length !== 0">
+      <!-- <div v-if="resto.ratings.length !== 0">
         <div
           v-for="(review, index) in commentList"
           :key="index"
@@ -44,19 +44,19 @@
           </b-card-text>
           <b-card-text>{{ review.comment }}</b-card-text>
         </div>
-      </div>
+      </div> -->
       <!-- if no reviews -->
-      <div v-else>
+      <!-- <div v-else>
         <b-card-text class="reviewsComment">No comment yet</b-card-text>
-      </div>
+      </div> -->
       <b-row class="justify-content-around">
-        <button
+        <!-- <button
           v-if="resto.ratings.length > 5 && commentLimit !== null"
           @click="commentLimit = null"
           class="outlineBtn addCommBtnBtn"
         >
           See All Comments
-        </button>
+        </button> -->
         <button v-b-modal="'modal-' + resto.id" class="outlineBtn seeMoreBtn ">
           Add Comment
         </button>
@@ -102,6 +102,13 @@ export default {
         ? this.resto.ratings.slice(0, this.commentLimit)
         : this.resto.ratings;
     },
+    totalReviews() {
+      if (this.resto.user_ratings_total) {
+        return this.resto.user_ratings_total;
+      } else {
+        return 0;
+      }
+    },
     ...mapState({
       restoList: state => state.restoMap.restoList,
       selectedRestaurant: state => state.restoMap.selectedRestaurant,
@@ -122,37 +129,27 @@ export default {
       deep: true,
     },
   },
+  fetch() {
+    this.handleAverages();
+  },
 
   created() {
-    this.handleAverages();
     // get street view img
     this.getImg();
   },
   methods: {
     handleAverages() {
-      // if there is no comment put 0 as average rating
-      if (this.resto.ratings.length === 0) {
-        this.averageRating = 0;
+      if (this.resto.rating) {
+        this.averageRating = this.resto.rating;
       } else {
-        // calculate the average rating
-        this.ratingAverage();
+        this.averageRating = 0;
       }
       // stars for the  average rating
       this.stars.average = this.starRating(this.averageRating);
       // stars for the reviews
-      this.resto.ratings.forEach((rating, index) => {
-        this.stars.comments[index] = this.starRating(rating.stars);
-      });
-    },
-    // calculate the average rating
-    ratingAverage() {
-      let averages = 0;
-      this.resto.ratings.forEach(rating => {
-        averages += rating.stars;
-      });
-      averages = averages / this.resto.ratings.length;
-
-      this.averageRating = averages;
+      // this.resto.ratings.forEach((rating, index) => {
+      //   this.stars.comments[index] = this.starRating(rating.stars);
+      // });
     },
     // push the type of star in an array depending of the average rating
     starRating(rating) {
@@ -199,7 +196,7 @@ export default {
         });
     },
     bounceMarker($event) {
-      const markId = parseInt($event.target.getAttribute('data-id'));
+      const markId = $event.target.getAttribute('data-id');
 
       const isCollapsed = $event.target.classList.contains('collapsed');
       // check if the restaurant card is alredy open if not change the selected restaurant otherwise put null

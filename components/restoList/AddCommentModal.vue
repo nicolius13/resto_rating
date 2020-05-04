@@ -40,7 +40,7 @@ export default {
   },
   props: {
     restoId: {
-      type: Number,
+      type: String,
       required: true,
     },
   },

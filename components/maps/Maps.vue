@@ -13,7 +13,7 @@ import mapSettings from '@/assets/mapSettings/mapSettings.json';
 export default {
   data() {
     return {
-      // apiKey: process.env.GOOGLE_MAPS_API_KEY,
+      apiKey: process.env.GOOGLE_MAPS_API_KEY,
       mapSettings: mapSettings,
       map: null,
       google: null,
@@ -67,13 +67,27 @@ export default {
   mounted() {
     // MAP INIT
     GoogleMapsApiLoader({
+      libraries: ['places'],
       apiKey: this.apiKey,
     }).then(googleMapApi => {
       this.google = googleMapApi;
       this.initializeMap();
       // wait until the map is ready to initialise the markers
       this.google.maps.event.addListenerOnce(this.map, 'idle', () => {
-        this.initMarkers();
+        const place = new this.google.maps.places.PlacesService(this.map);
+        place.nearbySearch(
+          {
+            location: this.mapConfig.center,
+            rankBy: this.google.maps.places.RankBy.DISTANCE,
+            type: 'restaurant',
+          },
+          res => {
+            this.$store.commit('restoMap/setRestoList', res);
+            console.log(res);
+            this.initMarkers();
+          }
+        );
+
         this.$emit('googleMap', { google: this.google, map: this.map });
       });
 
@@ -140,7 +154,10 @@ export default {
         this.allRestaurants.forEach(resto => {
           const markerOptions = {
             id: resto.id,
-            position: { lat: resto.lat, lng: resto.lng },
+            position: {
+              lat: resto.geometry.location.lat(),
+              lng: resto.geometry.location.lng(),
+            },
             icon: this.restoIcon,
             animation: this.google.maps.Animation.DROP,
             bouncing: false,
@@ -174,8 +191,8 @@ export default {
       this.restoList.forEach(resto => {
         // create a latLng object of the resto coord
         const latLng = new this.google.maps.LatLng({
-          lat: resto.lat,
-          lng: resto.lng,
+          lat: resto.geometry.location.lat(),
+          lng: resto.geometry.location.lng(),
         });
         const markerOptions = {
           id: resto.id,
