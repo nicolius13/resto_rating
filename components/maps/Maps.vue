@@ -15,6 +15,7 @@ export default {
     return {
       apiKey: process.env.GOOGLE_MAPS_API_KEY,
       mapSettings: mapSettings,
+      pageLoad: true,
       places: null,
       map: null,
       google: null,
@@ -37,14 +38,13 @@ export default {
     ...mapState({
       allRestaurants: state => state.restoMap.restoList,
       restoList: state => state.restoMap.filteredList,
-      allMarkersList: state => state.restoMap.allMarkersList,
       markersDisplayed: state => state.restoMap.markersDisplayed,
       selectedRestaurant: state => state.restoMap.selectedRestaurant,
     }),
   },
   watch: {
     restoList() {
-      if (this.map) {
+      if (this.map && !this.pageLoad) {
         this.handleMapIdle();
       }
     },
@@ -61,8 +61,10 @@ export default {
     },
     // watch if a restaurant is added
     allRestaurants() {
-      this.initMarkers();
-      this.handleMapIdle();
+      // if (this.map && !this.pageLoad) {
+      //   this.initMarkers();
+      //   this.handleMapIdle();
+      // }
     },
   },
   mounted() {
@@ -85,11 +87,12 @@ export default {
           (res, status) => {
             if (status === this.google.maps.places.PlacesServiceStatus.OK) {
               this.$store.commit('restoMap/setRestoList', res);
+              this.$emit('restoImported');
               this.initMarkers();
             }
           }
         );
-
+        // send google, map and place service object to parent
         this.$emit('googleMap', {
           google: this.google,
           map: this.map,
@@ -101,6 +104,8 @@ export default {
       // add event listener (when the map is still)
       this.google.maps.event.addListener(this.map, 'idle', this.handleMapIdle);
     });
+
+    this.pageLoad = false;
 
     //  GEOLOC
     // Try HTML geolocation
@@ -119,6 +124,10 @@ export default {
       // browser don't support geoloc
       this.handleLocationError(false);
     }
+  },
+
+  beforeDestroy() {
+    this.$store.commit('restoMap/resetAll');
   },
 
   methods: {
@@ -156,25 +165,25 @@ export default {
 
     initMarkers() {
       // check if the list of all marker is already populated
-      if (!this.restoList.length > 0) {
-        this.allRestaurants.forEach(resto => {
-          const markerOptions = {
-            id: resto.id,
-            position: {
-              lat: resto.geometry.location.lat(),
-              lng: resto.geometry.location.lng(),
-            },
-            icon: this.restoIcon,
-            animation: this.google.maps.Animation.DROP,
-            bouncing: false,
-          };
-          // put all resto markers into an array
-          this.$store.commit('restoMap/addMarker', {
-            markerOptions: markerOptions,
-            markerList: 'allMarkersList',
-          });
-        });
-      }
+      // if (!this.restoList.length > 0) {
+      //   this.allRestaurants.forEach(resto => {
+      // const markerOptions = {
+      //   id: resto.id,
+      //   position: {
+      //     lat: resto.geometry.location.lat(),
+      //     lng: resto.geometry.location.lng(),
+      //   },
+      //   icon: this.restoIcon,
+      //   animation: this.google.maps.Animation.DROP,
+      //   bouncing: false,
+      // };
+      // put all resto markers into an array
+      // this.$store.commit('restoMap/addMarker', {
+      //   markerOptions: markerOptions,
+      //   markerList: 'allMarkersList',
+      // });
+      // });
+      // }
       // build an empty markers cluster
       this.markerCluster = new MarkerClusterer(this.map, [], {
         maxZoom: 12,
@@ -276,8 +285,10 @@ export default {
           }
           // push the new marker in the array
           this.markers.push(marker);
-          // put the marker into the marker cluster
-          this.markerCluster.addMarker(marker);
+          if (this.markerCluster) {
+            // put the marker into the marker cluster
+            this.markerCluster.addMarker(marker);
+          }
         }, i * 100);
       });
       // emit the markers array to be accesible by the parents components

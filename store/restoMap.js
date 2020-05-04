@@ -4,27 +4,34 @@ export const state = () => ({
   restoList: [],
   filteredList: [],
   ratingAverage: [],
-  allMarkersList: [],
   markersDisplayed: [],
   selectedRestaurant: null,
-  places: null,
 });
 
 export const mutations = {
-  setPlaces(state, places) {
-    state.places = places;
+  resetAll(state) {
+    state.restoList = [];
+    state.filteredList = [];
+    state.ratingAverage = [];
+    state.markersDisplayed = [];
   },
+
   setRestoList(state, list) {
     state.restoList = list;
   },
-  addRattingAverage(state, rating) {
+
+  setRatingAverage(state, ratingAverage) {
+    state.ratingAverage = ratingAverage;
+  },
+  addRatingAverage(state, rating) {
     state.ratingAverage.push({
       restoId: rating.id,
       average: rating.averages,
     });
   },
+
   // set an unfiltered list if no filtering is done (add resto page)
-  setFilteredList(state) {
+  setFilteredListToAllResto(state) {
     state.filteredList = state.restoList;
   },
   filteringList(state, filteredAverages) {

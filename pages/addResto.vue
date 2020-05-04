@@ -13,7 +13,11 @@
       </b-row>
       <b-row class=" flex-grow-1">
         <b-col class="d-flex flex-grow-1">
-          <Maps @googleMap="googleInit" @markers="markers = $event" />
+          <Maps
+            @googleMap="googleInit"
+            @markers="markers = $event"
+            @restoImported="setFilteredList"
+          />
         </b-col>
       </b-row>
     </b-container>
@@ -45,10 +49,6 @@ export default {
       });
     },
   },
-  created() {
-    // set the filtered list to all restaurant because there is no filtering in this page
-    this.$store.commit('restoMap/setFilteredList');
-  },
   methods: {
     googleInit($event) {
       this.google = $event.google;
@@ -62,6 +62,11 @@ export default {
           this.addRestoClick(mapsMouseEvent);
         }
       );
+    },
+
+    setFilteredList() {
+      // set the filtered list to all restaurant because there is no filtering in this page
+      this.$store.commit('restoMap/setFilteredListToAllResto');
     },
     // ////////////////////////
     //        ADD RESTO

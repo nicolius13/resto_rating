@@ -86,15 +86,17 @@ export default {
   methods: {
     // calculate the average rating
     calAverage() {
+      // reset the ratingAverageArray
+      this.$store.commit('restoMap/setRatingAverage', []);
       this.restoList.forEach(resto => {
         if (resto.rating) {
-          this.$store.commit('restoMap/addRattingAverage', {
+          this.$store.commit('restoMap/addRatingAverage', {
             averages: resto.rating,
             id: resto.id,
           });
         } else {
           // if no comment put average to 0
-          this.$store.commit('restoMap/addRattingAverage', {
+          this.$store.commit('restoMap/addRatingAverage', {
             averages: 0,
             id: resto.id,
           });

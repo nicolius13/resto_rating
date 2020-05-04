@@ -28,9 +28,9 @@
       <b-card-text class="reviewTitle">Reviews :</b-card-text>
       <div v-if="reviews.length !== 0">
         <div
-          v-for="(review, index) in reviews"
+          v-for="(review, index) in commentList"
           :key="index"
-          :class="index === reviews.length - 1 ? '' : 'separator'"
+          :class="index === commentList.length - 1 ? '' : 'separator'"
           class="reviewsComment"
         >
           <b-card-text class="reviewsStars">
@@ -50,13 +50,13 @@
         <b-card-text class="reviewsComment">No comment yet</b-card-text>
       </div>
       <b-row class="justify-content-around">
-        <!-- <button
-          v-if="resto.ratings.length > 5 && commentLimit !== null"
+        <button
+          v-if="reviews.length > commentLimit && commentLimit !== null"
           @click="commentLimit = null"
           class="outlineBtn addCommBtnBtn"
         >
-          See All Comments
-        </button> -->
+          See more Comments
+        </button>
         <button v-b-modal="'modal-' + resto.id" class="outlineBtn seeMoreBtn ">
           Add Comment
         </button>
@@ -90,7 +90,7 @@ export default {
     return {
       apiKey: process.env.GOOGLE_MAPS_API_KEY,
       averageRating: 5,
-      commentLimit: 5,
+      commentLimit: 3,
       haveDetails: false,
       reviews: [],
       stars: {
@@ -104,8 +104,8 @@ export default {
   computed: {
     commentList() {
       return this.commentLimit
-        ? this.resto.ratings.slice(0, this.commentLimit)
-        : this.resto.ratings;
+        ? this.reviews.slice(0, this.commentLimit)
+        : this.reviews;
     },
     totalReviews() {
       if (this.resto.user_ratings_total) {
@@ -122,7 +122,7 @@ export default {
   watch: {
     // reset the comment displayed each time the selected restaurant change
     selectedRestaurant() {
-      this.commentLimit = 5;
+      this.commentLimit = 3;
       this.getDetails();
     },
     // watch if a comment is added
