@@ -37,7 +37,7 @@ export default {
   },
   data() {
     return {
-      newResto: {},
+      newRestoCoord: {},
       markers: [],
     };
   },
@@ -75,16 +75,18 @@ export default {
       this.$bvModal.show('addRestoModal');
 
       // add lat and lng to the new resto object
-      this.newResto.lat = event.latLng.lat();
-      this.newResto.lng = event.latLng.lng();
+      this.newRestoCoord = event.latLng;
     },
     addResto($event) {
-      // add the name in the new resto object
-      this.newResto.restaurantName = $event.name;
       this.$store.commit('restoMap/addRestaurant', {
-        ...this.newResto,
-        id: this.$store.state.restoMap.restoList.length + 1,
-        ratings: [],
+        id: (this.$store.state.restoMap.restoList.length + 1).toString(),
+        name: $event.name,
+        geometry: {
+          location: this.newRestoCoord,
+        },
+        reviews: [],
+        rating: 0,
+        user_ratings_total: 0,
       });
     },
   },

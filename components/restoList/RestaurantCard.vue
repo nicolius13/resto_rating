@@ -176,8 +176,8 @@ export default {
     },
 
     getDetails() {
-      // check if we already have the datas
-      if (!this.resto.haveDetails) {
+      // check if we already have the datas or if the restaurant have a place_id (added one don't have)
+      if (!this.resto.haveDetails && this.resto.place_id) {
         // get street view img
         this.getImg();
         // get reviews
