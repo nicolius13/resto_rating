@@ -4,6 +4,7 @@ export const state = () => ({
   restoList: [],
   AddedRestaurants: [],
   filteredList: [],
+  filteringFinished: false,
   ratingAverage: [],
   markersDisplayed: [],
   selectedRestaurant: null,
@@ -15,6 +16,7 @@ export const mutations = {
     state.filteredList = [];
     state.ratingAverage = [];
     state.markersDisplayed = [];
+    state.filteringFinished = false;
   },
 
   setRestoList(state, list) {
@@ -58,12 +60,14 @@ export const mutations = {
   // set an unfiltered list if no filtering is done (add resto page)
   setFilteredListToAllResto(state) {
     state.filteredList = state.restoList;
+    state.filteringFinished = true;
   },
   filteringList(state, filteredAverages) {
     // filter the restaurant list with the resto id put in the filteredAverages array
     state.filteredList = state.restoList.filter(resto => {
       return filteredAverages.includes(resto.id);
     });
+    state.filteringFinished = true;
   },
 
   setSelectedRestaurant(state, resto) {

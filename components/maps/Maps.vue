@@ -36,15 +36,24 @@ export default {
       };
     },
     ...mapState({
-      allRestaurants: state => state.restoMap.restoList,
       restoList: state => state.restoMap.filteredList,
       markersDisplayed: state => state.restoMap.markersDisplayed,
       selectedRestaurant: state => state.restoMap.selectedRestaurant,
+      AddedRestaurants: state => state.restoMap.AddedRestaurants,
+      filteringFinished: state => state.restoMap.filteringFinished,
     }),
   },
   watch: {
-    restoList() {
-      if (this.map && !this.pageLoad) {
+    // watch if a restaurant is added
+    AddedRestaurants() {
+      console.log('added');
+
+      this.handleMapIdle();
+    },
+    filteringFinished() {
+      if (this.filteringFinished && this.map) {
+        console.log('filter');
+
         this.handleMapIdle();
       }
     },
@@ -58,13 +67,6 @@ export default {
       if (this.map) {
         this.reCenterMap();
       }
-    },
-    // watch if a restaurant is added
-    allRestaurants() {
-      // if (this.map && !this.pageLoad) {
-      //   this.initMarkers();
-      //   this.handleMapIdle();
-      // }
     },
   },
   mounted() {
@@ -92,17 +94,21 @@ export default {
             }
           }
         );
-        // send google, map and place service object to parent
-        this.$emit('googleMap', {
-          google: this.google,
-          map: this.map,
-          places: this.places,
+      });
+      // EVENT LISTENER
+      // wait that the map is loaded
+      this.google.maps.event.addListenerOnce(this.map, 'tilesloaded', () => {
+        // add event listener (when the map is still)
+        this.google.maps.event.addListener(this.map, 'idle', () => {
+          this.handleMapIdle();
         });
       });
-
-      // EVENT LISTENER
-      // add event listener (when the map is still)
-      this.google.maps.event.addListener(this.map, 'idle', this.handleMapIdle);
+      // send google, map and place service object to parent
+      this.$emit('googleMap', {
+        google: this.google,
+        map: this.map,
+        places: this.places,
+      });
     });
 
     //  GEOLOC
@@ -123,7 +129,7 @@ export default {
       this.handleLocationError(false);
     }
 
-    this.pageLoad = false;
+    // this.pageLoad = false;
   },
 
   beforeDestroy() {
@@ -164,26 +170,6 @@ export default {
     // ///////////////////////
 
     initMarkers() {
-      // check if the list of all marker is already populated
-      // if (!this.restoList.length > 0) {
-      //   this.allRestaurants.forEach(resto => {
-      // const markerOptions = {
-      //   id: resto.id,
-      //   position: {
-      //     lat: resto.geometry.location.lat(),
-      //     lng: resto.geometry.location.lng(),
-      //   },
-      //   icon: this.restoIcon,
-      //   animation: this.google.maps.Animation.DROP,
-      //   bouncing: false,
-      // };
-      // put all resto markers into an array
-      // this.$store.commit('restoMap/addMarker', {
-      //   markerOptions: markerOptions,
-      //   markerList: 'allMarkersList',
-      // });
-      // });
-      // }
       // build an empty markers cluster
       this.markerCluster = new MarkerClusterer(this.map, [], {
         maxZoom: 12,
@@ -198,6 +184,8 @@ export default {
     },
 
     handleMapIdle() {
+      console.log('try');
+
       // reset the markerDisplayed array
       this.$store.commit('restoMap/resetMarkers');
       // get the map bounds
