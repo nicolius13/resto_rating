@@ -82,10 +82,6 @@ export default {
       this.filterList();
     },
   },
-  fetch() {
-    this.calAverage();
-    this.filterList();
-  },
   methods: {
     // calculate the average rating
     calAverage() {

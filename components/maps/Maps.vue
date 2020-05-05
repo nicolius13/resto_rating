@@ -36,15 +36,20 @@ export default {
       };
     },
     ...mapState({
-      allRestaurants: state => state.restoMap.restoList,
       restoList: state => state.restoMap.filteredList,
       markersDisplayed: state => state.restoMap.markersDisplayed,
       selectedRestaurant: state => state.restoMap.selectedRestaurant,
+      AddedRestaurants: state => state.restoMap.AddedRestaurants,
+      filteringFinished: state => state.restoMap.filteringFinished,
     }),
   },
   watch: {
-    restoList() {
-      if (this.map && !this.pageLoad) {
+    // watch if a restaurant is added
+    AddedRestaurants() {
+      this.handleMapIdle();
+    },
+    filteringFinished() {
+      if (this.filteringFinished && this.map) {
         this.handleMapIdle();
       }
     },
@@ -58,13 +63,6 @@ export default {
       if (this.map) {
         this.reCenterMap();
       }
-    },
-    // watch if a restaurant is added
-    allRestaurants() {
-      // if (this.map && !this.pageLoad) {
-      //   this.initMarkers();
-      //   this.handleMapIdle();
-      // }
     },
   },
   mounted() {
@@ -89,6 +87,7 @@ export default {
               this.$store.commit('restoMap/setRestoList', res);
               this.$emit('restoImported');
               this.initMarkers();
+              this.handleMapIdle();
             }
           }
         );
@@ -123,7 +122,7 @@ export default {
       this.handleLocationError(false);
     }
 
-    this.pageLoad = false;
+    // this.pageLoad = false;
   },
 
   beforeDestroy() {
@@ -164,26 +163,6 @@ export default {
     // ///////////////////////
 
     initMarkers() {
-      // check if the list of all marker is already populated
-      // if (!this.restoList.length > 0) {
-      //   this.allRestaurants.forEach(resto => {
-      // const markerOptions = {
-      //   id: resto.id,
-      //   position: {
-      //     lat: resto.geometry.location.lat(),
-      //     lng: resto.geometry.location.lng(),
-      //   },
-      //   icon: this.restoIcon,
-      //   animation: this.google.maps.Animation.DROP,
-      //   bouncing: false,
-      // };
-      // put all resto markers into an array
-      // this.$store.commit('restoMap/addMarker', {
-      //   markerOptions: markerOptions,
-      //   markerList: 'allMarkersList',
-      // });
-      // });
-      // }
       // build an empty markers cluster
       this.markerCluster = new MarkerClusterer(this.map, [], {
         maxZoom: 12,
