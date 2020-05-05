@@ -105,8 +105,6 @@ export default {
       this.google.maps.event.addListener(this.map, 'idle', this.handleMapIdle);
     });
 
-    this.pageLoad = false;
-
     //  GEOLOC
     // Try HTML geolocation
     if (navigator.geolocation) {
@@ -124,6 +122,8 @@ export default {
       // browser don't support geoloc
       this.handleLocationError(false);
     }
+
+    this.pageLoad = false;
   },
 
   beforeDestroy() {

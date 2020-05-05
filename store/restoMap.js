@@ -17,7 +17,25 @@ export const mutations = {
   },
 
   setRestoList(state, list) {
-    state.restoList = list;
+    list.forEach(resto => {
+      // add reviews and haveDetails keys
+      if (resto.user_ratings_total) {
+        state.restoList.push({
+          ...resto,
+          reviews: [],
+          haveDetails: false,
+        });
+        // add user_ratings_total and rating keys if doesn't exist
+      } else {
+        state.restoList.push({
+          ...resto,
+          reviews: [],
+          haveDetails: false,
+          user_ratings_total: 0,
+          rating: 0,
+        });
+      }
+    });
   },
 
   setRatingAverage(state, ratingAverage) {
@@ -54,10 +72,26 @@ export const mutations = {
   },
 
   // ADD  COMMENT
+  setReviews(state, reviews) {
+    state.restoList.find(resto => {
+      if (resto.id === reviews.id) {
+        resto.reviews = reviews.reviews;
+        resto.haveDetails = true;
+        return true;
+      }
+    });
+  },
   addComment(state, comment) {
     state.restoList.find(resto => {
       if (resto.id === comment.id) {
-        resto.ratings.push(comment.comment);
+        resto.reviews.push(comment.comment);
+        // add 1 to the total reviews number
+        resto.user_ratings_total++;
+        // recalculate the average rating
+        resto.rating =
+          resto.rating +
+          (comment.comment.rating - resto.rating) / resto.user_ratings_total;
+
         return true;
       }
     });

@@ -9,11 +9,11 @@
     <b-card-text>
       {{ averageRating }}
       <span class="stars mainStar">
-        <b-icon :icon="stars.average[0]"></b-icon>
-        <b-icon :icon="stars.average[1]"></b-icon>
-        <b-icon :icon="stars.average[2]"></b-icon>
-        <b-icon :icon="stars.average[3]"></b-icon>
-        <b-icon :icon="stars.average[4]"></b-icon>
+        <b-icon :icon="starsAverage[0]"></b-icon>
+        <b-icon :icon="starsAverage[1]"></b-icon>
+        <b-icon :icon="starsAverage[2]"></b-icon>
+        <b-icon :icon="starsAverage[3]"></b-icon>
+        <b-icon :icon="starsAverage[4]"></b-icon>
       </span>
       <span class="ratingsNumber"> ({{ totalReviews }}) </span>
     </b-card-text>
@@ -26,7 +26,7 @@
       <b-img :src="img" fluid></b-img>
       <!-- Reviews -->
       <b-card-text class="reviewTitle">Reviews :</b-card-text>
-      <div v-if="reviews.length !== 0">
+      <div v-if="commentList.length !== 0">
         <div
           v-for="(review, index) in commentList"
           :key="index"
@@ -35,14 +35,14 @@
         >
           <b-card-text class="reviewsStars">
             <span class="stars">
-              <b-icon :icon="stars.comments[index][0]"></b-icon>
-              <b-icon :icon="stars.comments[index][1]"></b-icon>
-              <b-icon :icon="stars.comments[index][2]"></b-icon>
-              <b-icon :icon="stars.comments[index][3]"></b-icon>
-              <b-icon :icon="stars.comments[index][4]"></b-icon>
+              <b-icon :icon="starsComments[index][0]"></b-icon>
+              <b-icon :icon="starsComments[index][1]"></b-icon>
+              <b-icon :icon="starsComments[index][2]"></b-icon>
+              <b-icon :icon="starsComments[index][3]"></b-icon>
+              <b-icon :icon="starsComments[index][4]"></b-icon>
             </span>
           </b-card-text>
-          <b-card-text>{{ reviews[index].text }}</b-card-text>
+          <b-card-text>{{ commentList[index].text }}</b-card-text>
         </div>
       </div>
       <!-- if no reviews -->
@@ -51,7 +51,7 @@
       </div>
       <b-row class="justify-content-around">
         <button
-          v-if="reviews.length > commentLimit && commentLimit !== null"
+          v-if="resto.reviews.length > commentLimit && commentLimit !== null"
           @click="commentLimit = null"
           class="outlineBtn addCommBtnBtn"
         >
@@ -92,30 +92,24 @@ export default {
   data() {
     return {
       apiKey: process.env.GOOGLE_MAPS_API_KEY,
-      averageRating: 5,
       commentLimit: 3,
-      haveDetails: false,
-      reviews: [],
-      stars: {
-        average: [],
-        comments: [],
-      },
+      starsAverage: [],
+      starsComments: [],
       // placeholder
       img: require('@/assets/img/asian-d.jpg'),
     };
   },
   computed: {
-    commentList() {
-      return this.commentLimit
-        ? this.reviews.slice(0, this.commentLimit)
-        : this.reviews;
+    averageRating() {
+      return this.resto.rating.toFixed(1);
     },
     totalReviews() {
-      if (this.resto.user_ratings_total) {
-        return this.resto.user_ratings_total;
-      } else {
-        return 0;
-      }
+      return this.resto.user_ratings_total;
+    },
+    commentList() {
+      return this.commentLimit
+        ? this.resto.reviews.slice(0, this.commentLimit)
+        : this.resto.reviews;
     },
     ...mapState({
       restoList: state => state.restoMap.restoList,
@@ -124,6 +118,7 @@ export default {
   },
   watch: {
     // reset the comment displayed each time the selected restaurant change
+    // and get the details of the selected restaurant
     selectedRestaurant(newVal) {
       if (newVal === this.resto.id) {
         this.commentLimit = 3;
@@ -131,28 +126,23 @@ export default {
       }
     },
     // watch if a comment is added
-    restoList: {
-      handler: function() {
-        if (this.restoList) {
-          this.handleAverages();
-        }
-      },
-      deep: true,
+    'resto.reviews'() {
+      this.handleStarRatings();
     },
   },
   fetch() {
-    this.handleAverages();
+    this.handleStarRatings();
   },
   methods: {
-    handleAverages() {
-      if (this.resto.rating) {
-        this.averageRating = this.resto.rating;
-      } else {
-        this.averageRating = 0;
-      }
+    handleStarRatings() {
       // stars for the  average rating
-      this.stars.average = this.starRating(this.averageRating);
+      this.starsAverage = this.starRating(this.resto.rating);
+      // stars for the reviews
+      this.resto.reviews.forEach((review, index) => {
+        this.starsComments[index] = this.starRating(review.rating);
+      });
     },
+
     // push the type of star in an array depending of the average rating
     starRating(rating) {
       const starsRating = [];
@@ -172,6 +162,7 @@ export default {
       }
       return starsRating;
     },
+
     handleOpening($event) {
       const restoId = $event.target.getAttribute('data-id');
 
@@ -179,14 +170,14 @@ export default {
       // check if the restaurant card is alredy open if not change the selected restaurant otherwise put null
       if (isCollapsed) {
         this.$store.commit('restoMap/setSelectedRestaurant', restoId);
-        this.getDetails();
       } else {
         this.$store.commit('restoMap/setSelectedRestaurant', null);
       }
     },
+
     getDetails() {
       // check if we already have the datas
-      if (!this.haveDetails) {
+      if (!this.resto.haveDetails) {
         // get street view img
         this.getImg();
         // get reviews
@@ -223,22 +214,25 @@ export default {
       this.places.getDetails({ placeId: restoId, fields: ['review'] }, res => {
         // check if there are reviews
         if (res.reviews) {
-          this.reviews = res.reviews;
+          this.$store.commit('restoMap/setReviews', {
+            reviews: res.reviews,
+            id: this.resto.id,
+          });
           // stars for the reviews
-          this.reviews.forEach((review, index) => {
-            this.stars.comments[index] = this.starRating(review.rating);
+          this.resto.reviews.forEach((review, index) => {
+            this.starsComments[index] = this.starRating(review.rating);
           });
         }
       });
-      this.haveDetails = true;
     },
+
     // put the new comment in the comments array
     addComment($event) {
       this.$store.commit('restoMap/addComment', {
-        comment: $event,
         id: this.resto.id,
+        comment: $event,
       });
-      // this.comments.push($event);
+      this.starsComments.push(this.starRating($event.rating));
     },
   },
 };

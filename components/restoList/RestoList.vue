@@ -40,6 +40,9 @@ export default {
   props: {
     places: {
       type: Object,
+      default: () => {
+        return {};
+      },
     },
   },
   data() {
