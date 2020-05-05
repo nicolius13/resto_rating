@@ -84,6 +84,9 @@ export default {
     },
     places: {
       type: Object,
+      default: () => {
+        return {};
+      },
     },
   },
   data() {
@@ -121,9 +124,11 @@ export default {
   },
   watch: {
     // reset the comment displayed each time the selected restaurant change
-    selectedRestaurant() {
-      this.commentLimit = 3;
-      this.getDetails();
+    selectedRestaurant(newVal) {
+      if (newVal === this.resto.id) {
+        this.commentLimit = 3;
+        this.getDetails();
+      }
     },
     // watch if a comment is added
     restoList: {
