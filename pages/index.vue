@@ -1,13 +1,15 @@
 <template>
-  <div class="landing">
-    <div class="searchWrapper">
-      <h1>Find Restaurant</h1>
-      <div class="search">
-        <input ref="autoInput" type="text" />
-        <nuxt-link class="okBtn outlineBtn mainBtn" to="/map">GO</nuxt-link>
-      </div>
-    </div>
-  </div>
+  <b-container class="landing">
+    <b-row>
+      <h1 class="findTitle">Find Restaurant</h1>
+    </b-row>
+    <b-row class="searchBar justify-content-center">
+      <input ref="autoInput" type="text" />
+      <button @click="handleGoBtn" class="okBtn outlineBtn mainBtn">
+        GO
+      </button>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -21,6 +23,7 @@ export default {
       google: {},
       autocomplete: {},
       sessionToken: '',
+      locationSelected: null,
     };
   },
   mounted() {
@@ -38,28 +41,35 @@ export default {
       });
       this.autocomplete.setFields(['geometry']);
       this.autocomplete.addListener('place_changed', () => {
+        // get the location and save it 'localy'
         const place = this.autocomplete.getPlace();
-        this.$store.commit(
-          'restoMap/setAutoComplLocation',
-          place.geometry.location
-        );
+        this.locationSelected = place.geometry.location;
+
         // create a NEW unique id for the autocomplete session and change it
         this.sessionToken = uuidV4();
         this.autocomplete.setOptions({ sessionToken: this.sessionToken });
       });
     });
   },
+  methods: {
+    handleGoBtn() {
+      // if there is a selected location send it to the store
+      if (this.locationSelected) {
+        this.$store.commit(
+          'restoMap/setAutoComplLocation',
+          this.locationSelected
+        );
+      }
+      // go to 'resto map' page
+      this.$router.push({
+        path: '/map',
+      });
+    },
+  },
 };
 </script>
 
 <style>
-body {
-  min-height: 100vh;
-  margin: 0;
-  background-color: #1d1d1d;
-  color: #fff;
-  font-family: 'Montserrat', sans-serif;
-}
 .landing {
   display: flex;
   flex-direction: column;
@@ -80,34 +90,37 @@ body {
   position: absolute;
   z-index: -1;
 }
-h1 {
-  color: #08d9d6;
-  font-size: 45px;
-  text-align: center;
-}
 
-.searchWrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  width: 100%;
-  min-height: 40%;
+/* autocomplete prediction */
+.pac-icon {
+  background: url('../assets/img/resto-icon.png');
+  background-repeat: no-repeat;
+  background-size: 15px;
 }
 </style>
 
 <style scoped>
+.findTitle {
+  margin-bottom: 2rem;
+}
+
+.searchBar {
+  width: 100%;
+}
+/* autocomplete input */
 .pac-target-input {
   padding: 0.375rem 0.75rem;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
   border-radius: 0.25rem;
+  width: 60%;
 }
 .pac-target-input:focus {
   box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
 }
 
+/* GO button */
 .mainBtn {
   font-size: 1.2rem;
   font-weight: 600;
@@ -117,26 +130,5 @@ h1 {
 }
 .mainBtn:hover {
   text-decoration: none;
-}
-
-/* PlaceHolder */
-
-.search {
-  display: flex;
-  justify-content: center;
-}
-.searchBar {
-  background-color: #fff;
-  width: 300px;
-  height: 30px;
-}
-.searchBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  background-color: #ff2e63;
-  height: 30px;
-  width: 50px;
 }
 </style>

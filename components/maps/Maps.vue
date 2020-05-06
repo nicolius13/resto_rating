@@ -41,6 +41,7 @@ export default {
       selectedRestaurant: state => state.restoMap.selectedRestaurant,
       AddedRestaurants: state => state.restoMap.AddedRestaurants,
       filteringFinished: state => state.restoMap.filteringFinished,
+      autoComplLocation: state => state.restoMap.autoComplLocation,
     }),
   },
   watch: {
@@ -88,6 +89,12 @@ export default {
               this.$emit('restoImported');
               this.initMarkers();
               this.handleMapIdle();
+              // send google, map and place service object to parent
+              this.$emit('googleMap', {
+                google: this.google,
+                map: this.map,
+                places: this.places,
+              });
             }
           }
         );
@@ -100,33 +107,7 @@ export default {
           this.handleMapIdle();
         });
       });
-      // send google, map and place service object to parent
-      this.$emit('googleMap', {
-        google: this.google,
-        map: this.map,
-        places: this.places,
-      });
     });
-
-    //  GEOLOC
-    // Try HTML geolocation
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          this.mapConfig.center.lat = position.coords.latitude;
-          this.mapConfig.center.lng = position.coords.longitude;
-        },
-        () => {
-          // denied geoloc
-          this.handleLocationError(true);
-        }
-      );
-    } else {
-      // browser don't support geoloc
-      this.handleLocationError(false);
-    }
-
-    // this.pageLoad = false;
   },
 
   beforeDestroy() {
@@ -139,6 +120,30 @@ export default {
     // ///////////////////////
 
     initializeMap() {
+      // if there is no autocomplete done ask for the geoloc
+      if (!this.autoComplLocation) {
+        //  GEOLOC
+        // Try HTML geolocation
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            position => {
+              this.mapConfig.center.lat = position.coords.latitude;
+              this.mapConfig.center.lng = position.coords.longitude;
+            },
+            () => {
+              // denied geoloc
+              this.handleLocationError(true);
+            }
+          );
+        } else {
+          // browser don't support geoloc
+          this.handleLocationError(false);
+        }
+      } else {
+        this.mapCenter.lat = this.autoComplLocation.lat();
+        this.mapCenter.lng = this.autoComplLocation.lng();
+      }
+
       const mapContainer = this.$refs.googleMap;
       this.map = new this.google.maps.Map(mapContainer, this.mapConfig);
     },
