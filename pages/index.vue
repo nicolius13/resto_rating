@@ -3,17 +3,51 @@
     <div class="searchWrapper">
       <h1>Find Restaurant</h1>
       <div class="search">
-        <div class="searchBar"></div>
-        <div class="searchBtn">GO</div>
+        <input ref="autoInput" type="text" />
+        <nuxt-link class="okBtn outlineBtn mainBtn" to="/map">GO</nuxt-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import GoogleMapsApiLoader from 'google-maps-api-loader';
+import { v4 as uuidV4 } from 'uuid';
+
 export default {
   data() {
-    return {};
+    return {
+      apiKey: process.env.GOOGLE_MAPS_API_KEY,
+      google: {},
+      autocomplete: {},
+      sessionToken: '',
+    };
+  },
+  mounted() {
+    GoogleMapsApiLoader({
+      libraries: ['places'],
+      apiKey: this.apiKey,
+    }).then(googleMapApi => {
+      const input = this.$refs.autoInput;
+      this.google = googleMapApi;
+      // create a unique id for the autocomplete session
+      this.sessionToken = uuidV4();
+      this.autocomplete = new this.google.maps.places.Autocomplete(input, {
+        types: ['(cities)'],
+        sessionToken: this.sessionToken,
+      });
+      this.autocomplete.setFields(['geometry']);
+      this.autocomplete.addListener('place_changed', () => {
+        const place = this.autocomplete.getPlace();
+        this.$store.commit(
+          'restoMap/setAutoComplLocation',
+          place.geometry.location
+        );
+        // create a NEW unique id for the autocomplete session and change it
+        this.sessionToken = uuidV4();
+        this.autocomplete.setOptions({ sessionToken: this.sessionToken });
+      });
+    });
   },
 };
 </script>
@@ -59,6 +93,30 @@ h1 {
   position: relative;
   width: 100%;
   min-height: 40%;
+}
+</style>
+
+<style scoped>
+.pac-target-input {
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+}
+.pac-target-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
+}
+
+.mainBtn {
+  font-size: 1.2rem;
+  font-weight: 600;
+  border: 3px solid #ff2e63;
+  margin: 0 0.4rem;
+  line-height: 1.5;
+}
+.mainBtn:hover {
+  text-decoration: none;
 }
 
 /* PlaceHolder */

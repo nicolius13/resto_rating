@@ -8,6 +8,7 @@ export const state = () => ({
   ratingAverage: [],
   markersDisplayed: [],
   selectedRestaurant: null,
+  autoComplLocation: null,
 });
 
 export const mutations = {
@@ -112,5 +113,10 @@ export const mutations = {
   addRestaurant(state, resto) {
     state.restoList.push(resto);
     state.AddedRestaurants.push(resto);
+  },
+
+  // AUTOCOMPLETE
+  setAutoComplLocation(state, location) {
+    state.autoComplLocation = location;
   },
 };
