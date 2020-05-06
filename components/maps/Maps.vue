@@ -46,14 +46,10 @@ export default {
   watch: {
     // watch if a restaurant is added
     AddedRestaurants() {
-      console.log('added');
-
       this.handleMapIdle();
     },
     filteringFinished() {
       if (this.filteringFinished && this.map) {
-        console.log('filter');
-
         this.handleMapIdle();
       }
     },
@@ -91,6 +87,7 @@ export default {
               this.$store.commit('restoMap/setRestoList', res);
               this.$emit('restoImported');
               this.initMarkers();
+              this.handleMapIdle();
             }
           }
         );
@@ -184,8 +181,6 @@ export default {
     },
 
     handleMapIdle() {
-      console.log('try');
-
       // reset the markerDisplayed array
       this.$store.commit('restoMap/resetMarkers');
       // get the map bounds
