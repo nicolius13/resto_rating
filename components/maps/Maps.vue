@@ -22,7 +22,7 @@ export default {
       markers: [],
       markerCluster: null,
       mapCenter: {
-        lat: 17.984052,
+        lat: 18.984052,
         lng: 102.539655,
       },
       restoIcon: require('@/assets/img/resto-icon.png'),

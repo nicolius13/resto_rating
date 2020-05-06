@@ -4,7 +4,12 @@
       <h1 class="findTitle">Find Restaurant</h1>
     </b-row>
     <b-row class="searchBar justify-content-center">
-      <input ref="autoInput" type="text" />
+      <b-input-group class="inputGroup">
+        <b-form-input id="autoInput" type="text" />
+        <b-input-group-append>
+          <b-button class="geoloc"></b-button>
+        </b-input-group-append>
+      </b-input-group>
       <button @click="handleGoBtn" class="okBtn outlineBtn mainBtn">
         GO
       </button>
@@ -31,7 +36,7 @@ export default {
       libraries: ['places'],
       apiKey: this.apiKey,
     }).then(googleMapApi => {
-      const input = this.$refs.autoInput;
+      const input = document.getElementById('autoInput');
       this.google = googleMapApi;
       // create a unique id for the autocomplete session
       this.sessionToken = uuidV4();
@@ -107,16 +112,33 @@ export default {
 .searchBar {
   width: 100%;
 }
-/* autocomplete input */
-.pac-target-input {
+
+.inputGroup {
+  width: 60%;
+}
+/* Autocomplete Input */
+#autoInput {
+  display: flex;
+  box-sizing: content-box;
   padding: 0.375rem 0.75rem;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  border-radius: 0.25rem;
-  width: 60%;
 }
-.pac-target-input:focus {
+#autoInput:focus {
+  box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
+}
+
+/* Geoloc Btn */
+.geoloc {
+  width: 50px;
+  background: url('../assets/img/geoloc.png'), #fff;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 30px;
+  border: none;
+}
+.geoloc:focus {
   box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
 }
 
