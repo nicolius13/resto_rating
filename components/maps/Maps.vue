@@ -147,7 +147,7 @@ export default {
       // Set CSS for the control interior.
       // icon
       const controlIcon = document.createElement('div');
-      const icon = require('@/assets/img/searchR.png');
+      const icon = require('@/assets/img/search.png');
       controlIcon.style.backgroundImage = `url(${icon})`;
       controlIcon.style.backgroundSize = '18px 18px';
       controlIcon.style.width = '18px';
