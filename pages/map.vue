@@ -5,7 +5,7 @@
         <b-col cols="8" class="mapCol">
           <Maps @googleMap="googleInit" @markers="markers = $event" />
         </b-col>
-        <RestoList id="list" class="col-4 mapCol" />
+        <RestoList id="list" :places="places" class="col-4 mapCol" />
       </b-row>
     </b-container>
   </div>
@@ -26,6 +26,7 @@ export default {
     return {
       google: null,
       map: null,
+      places: null,
       markers: [],
     };
   },
@@ -38,8 +39,10 @@ export default {
     selectedRestaurant() {
       this.bounceMarker();
     },
-    markers() {
+    markers(newVal) {
       this.markers.forEach(marker => {
+        this.google.maps.event.clearListeners(marker, 'click');
+
         // add click listener to make the resto card visible when clicked
         marker.addListener('click', () => {
           this.clickMarker(marker);
@@ -51,6 +54,7 @@ export default {
     googleInit($event) {
       this.google = $event.google;
       this.map = $event.map;
+      this.places = $event.places;
     },
     // change the selected restaurant
     clickMarker(marker) {

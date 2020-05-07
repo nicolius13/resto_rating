@@ -18,7 +18,7 @@
       <b-form-group label="Comment" label-for="comment-input">
         <b-form-textarea
           id="comment-input"
-          v-model="comment"
+          v-model="text"
           class="textInput"
         ></b-form-textarea>
       </b-form-group>
@@ -40,21 +40,21 @@ export default {
   },
   props: {
     restoId: {
-      type: Number,
+      type: String,
       required: true,
     },
   },
   data() {
     return {
       rating: 0,
-      comment: '',
+      text: '',
     };
   },
   methods: {
     // reset the modal
     resetModal() {
       this.rating = 0;
-      this.comment = '';
+      this.text = '';
     },
     handleOk(bvModalEvt) {
       // Prevent modal from closing
@@ -65,8 +65,8 @@ export default {
     handleSubmit() {
       // emit an event with the comment to add
       this.$emit('addingComment', {
-        stars: this.rating,
-        comment: this.comment,
+        rating: this.rating,
+        text: this.text,
       });
       // Hide the modal
       this.$nextTick(() => {

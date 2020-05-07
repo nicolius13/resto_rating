@@ -1,27 +1,74 @@
-import restos from '../restoList.json';
+// import restos from '../restoList.json';
 
 export const state = () => ({
-  restoList: restos,
+  restoList: [],
+  AddedRestaurants: [],
   filteredList: [],
+  filteringFinished: false,
   ratingAverage: [],
-  allMarkersList: [],
   markersDisplayed: [],
   selectedRestaurant: null,
+  autoComplLocation: null,
 });
 
 export const mutations = {
-  addRattingAverage(state, rating) {
+  resetAll(state) {
+    state.restoList = [];
+    state.filteredList = [];
+    state.ratingAverage = [];
+    state.markersDisplayed = [];
+    state.filteringFinished = false;
+  },
+
+  setRestoList(state, list) {
+    list.forEach(resto => {
+      // add reviews and haveDetails keys
+      if (resto.user_ratings_total) {
+        state.restoList.push({
+          ...resto,
+          reviews: [],
+          haveDetails: false,
+        });
+        // add user_ratings_total and rating keys if doesn't exist
+      } else {
+        state.restoList.push({
+          ...resto,
+          reviews: [],
+          haveDetails: false,
+          user_ratings_total: 0,
+          rating: 0,
+        });
+      }
+    });
+    // add the added restaurant if needed
+    if (state.AddedRestaurants) {
+      state.AddedRestaurants.forEach(resto => {
+        state.restoList.push(resto);
+      });
+    }
+  },
+
+  setRatingAverage(state, ratingAverage) {
+    state.ratingAverage = ratingAverage;
+  },
+  addRatingAverage(state, rating) {
     state.ratingAverage.push({
       restoId: rating.id,
       average: rating.averages,
     });
   },
-  setFilteredList(state) {
+
+  // set an unfiltered list if no filtering is done (add resto page)
+  setFilteredListToAllResto(state) {
     state.filteredList = state.restoList;
+    state.filteringFinished = true;
   },
   filteringList(state, filteredAverages) {
     // filter the restaurant list with the resto id put in the filteredAverages array
-    state.filteredList = state.restoList.filter(resto => {
+    state.filteredList = state.restoList.filter((resto, i) => {
+      if (i === filteredAverages.length - 1) {
+        state.filteringFinished = true;
+      }
       return filteredAverages.includes(resto.id);
     });
   },
@@ -39,10 +86,26 @@ export const mutations = {
   },
 
   // ADD  COMMENT
+  setReviews(state, reviews) {
+    state.restoList.find(resto => {
+      if (resto.id === reviews.id) {
+        resto.reviews = reviews.reviews;
+        resto.haveDetails = true;
+        return true;
+      }
+    });
+  },
   addComment(state, comment) {
     state.restoList.find(resto => {
       if (resto.id === comment.id) {
-        resto.ratings.push(comment.comment);
+        resto.reviews.push(comment.comment);
+        // add 1 to the total reviews number
+        resto.user_ratings_total++;
+        // recalculate the average rating
+        resto.rating =
+          resto.rating +
+          (comment.comment.rating - resto.rating) / resto.user_ratings_total;
+
         return true;
       }
     });
@@ -51,5 +114,11 @@ export const mutations = {
   // ADD RESTAURANT
   addRestaurant(state, resto) {
     state.restoList.push(resto);
+    state.AddedRestaurants.push(resto);
+  },
+
+  // AUTOCOMPLETE
+  setAutoComplLocation(state, location) {
+    state.autoComplLocation = location;
   },
 };

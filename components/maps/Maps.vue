@@ -13,15 +13,17 @@ import mapSettings from '@/assets/mapSettings/mapSettings.json';
 export default {
   data() {
     return {
-      // apiKey: process.env.GOOGLE_MAPS_API_KEY,
+      apiKey: process.env.GOOGLE_MAPS_API_KEY,
       mapSettings: mapSettings,
+      pageLoad: true,
+      places: null,
       map: null,
       google: null,
       markers: [],
       markerCluster: null,
       mapCenter: {
-        lat: 17.984052,
-        lng: 102.539655,
+        lat: 17.395192,
+        lng: 104.804329,
       },
       restoIcon: require('@/assets/img/resto-icon.png'),
     };
@@ -34,16 +36,21 @@ export default {
       };
     },
     ...mapState({
-      allRestaurants: state => state.restoMap.restoList,
       restoList: state => state.restoMap.filteredList,
-      allMarkersList: state => state.restoMap.allMarkersList,
       markersDisplayed: state => state.restoMap.markersDisplayed,
       selectedRestaurant: state => state.restoMap.selectedRestaurant,
+      AddedRestaurants: state => state.restoMap.AddedRestaurants,
+      filteringFinished: state => state.restoMap.filteringFinished,
+      autoComplLocation: state => state.restoMap.autoComplLocation,
     }),
   },
   watch: {
-    restoList() {
-      if (this.map) {
+    // watch if a restaurant is added
+    AddedRestaurants() {
+      this.handleMapIdle();
+    },
+    filteringFinished() {
+      if (this.filteringFinished && this.map) {
         this.handleMapIdle();
       }
     },
@@ -58,47 +65,20 @@ export default {
         this.reCenterMap();
       }
     },
-    // watch if a restaurant is added
-    allRestaurants() {
-      this.initMarkers();
-      this.handleMapIdle();
-    },
   },
   mounted() {
     // MAP INIT
     GoogleMapsApiLoader({
+      libraries: ['places'],
       apiKey: this.apiKey,
     }).then(googleMapApi => {
       this.google = googleMapApi;
       this.initializeMap();
-      // wait until the map is ready to initialise the markers
-      this.google.maps.event.addListenerOnce(this.map, 'idle', () => {
-        this.initMarkers();
-        this.$emit('googleMap', { google: this.google, map: this.map });
-      });
-
-      // EVENT LISTENER
-      // add event listener (when the map is still)
-      this.google.maps.event.addListener(this.map, 'idle', this.handleMapIdle);
     });
+  },
 
-    //  GEOLOC
-    // Try HTML geolocation
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          this.mapConfig.center.lat = position.coords.latitude;
-          this.mapConfig.center.lng = position.coords.longitude;
-        },
-        () => {
-          // denied geoloc
-          this.handleLocationError(true);
-        }
-      );
-    } else {
-      // browser don't support geoloc
-      this.handleLocationError(false);
-    }
+  beforeDestroy() {
+    this.$store.commit('restoMap/resetAll');
   },
 
   methods: {
@@ -109,7 +89,149 @@ export default {
     initializeMap() {
       const mapContainer = this.$refs.googleMap;
       this.map = new this.google.maps.Map(mapContainer, this.mapConfig);
+      // wait until the map is ready to initialise the place service
+      this.google.maps.event.addListenerOnce(this.map, 'idle', () => {
+        this.places = new this.google.maps.places.PlacesService(this.map);
+        // send google, map and place service object to parent
+        this.$emit('googleMap', {
+          google: this.google,
+          map: this.map,
+          places: this.places,
+        });
+        this.handleGeoloc();
+      });
+
+      // Event listener
+      // create the 'search this area' btn when the user finish to drag the map
+      this.google.maps.event.addListenerOnce(this.map, 'dragend', () => {
+        const searchThisAreaDiv = document.createElement('div');
+        const mapControl = new this.MapControl(searchThisAreaDiv, this);
+        mapControl.index = 1;
+        this.map.controls[this.google.maps.ControlPosition.TOP_CENTER].push(
+          searchThisAreaDiv
+        );
+      });
+
+      this.google.maps.event.addListener(this.map, 'dragend', () => {
+        const searchAreaControl = document.getElementById('searchAreaControl');
+        searchAreaControl.style.display = 'flex';
+      });
+
+      // wait that the map is loaded
+      this.google.maps.event.addListenerOnce(this.map, 'tilesloaded', () => {
+        // add event listener (when the map is still)
+        this.google.maps.event.addListener(this.map, 'idle', () => {
+          this.handleMapIdle();
+        });
+      });
     },
+
+    // MAP CONTROL constructor
+    MapControl(controlDiv, vue) {
+      // Set CSS for the control border.
+      const controlUI = document.createElement('div');
+      controlUI.id = 'searchAreaControl';
+      controlUI.style.display = 'flex';
+      controlUI.style.alignItems = 'center';
+      controlUI.style.padding = '0 0.4rem';
+      controlUI.style.backgroundColor = '#fff';
+      controlUI.style.border = '2px solid #fff';
+      controlUI.style.borderRadius = '0.25rem';
+      controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+      controlUI.style.cursor = 'pointer';
+      controlUI.style.margin = '10px';
+      controlUI.style.textAlign = 'center';
+      controlUI.title = 'Click to Search this area';
+      controlDiv.appendChild(controlUI);
+
+      // Set CSS for the control interior.
+      // icon
+      const controlIcon = document.createElement('div');
+      const icon = require('@/assets/img/searchR.png');
+      controlIcon.style.backgroundImage = `url(${icon})`;
+      controlIcon.style.backgroundSize = '18px 18px';
+      controlIcon.style.width = '18px';
+      controlIcon.style.height = '18px';
+      controlUI.appendChild(controlIcon);
+
+      // text
+      const controlText = document.createElement('div');
+      controlText.style.color = 'rgb(25,25,25)';
+      controlText.style.fontSize = '16px';
+      controlText.style.lineHeight = '38px';
+      controlText.style.paddingLeft = '5px';
+      controlText.style.paddingRight = '5px';
+      controlText.innerHTML = 'Search this area';
+      controlUI.appendChild(controlText);
+
+      // Click event
+      controlUI.addEventListener('click', () => {
+        vue.$store.commit('restoMap/resetAll');
+        vue.searchPlace(vue.map.getCenter());
+        controlUI.style.display = 'none';
+      });
+    },
+
+    // GEOLOC
+    handleGeoloc() {
+      // if there is no autocomplete done (in the landing page) ask for the geoloc
+      if (!this.autoComplLocation) {
+        //  GEOLOC
+        // Try HTML geolocation
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            position => {
+              this.mapCenter.lat = position.coords.latitude;
+              this.mapCenter.lng = position.coords.longitude;
+              // search the area given by the geoloc
+              this.searchPlace();
+            },
+            () => {
+              // denied geoloc
+              this.handleLocationError(true);
+              // search the area given by me :)
+              this.searchPlace();
+            }
+          );
+        } else {
+          // browser don't support geoloc
+          this.handleLocationError(false);
+          // search the area given by me :)
+          this.searchPlace();
+        }
+      } else {
+        this.mapCenter.lat = this.autoComplLocation.lat;
+        this.mapCenter.lng = this.autoComplLocation.lng;
+        // search the area given by autocomplete
+        this.searchPlace();
+      }
+    },
+    // throw an alert if the geoloc is refuse or not supported
+    handleLocationError(browserHasGeoloc) {
+      alert(
+        browserHasGeoloc
+          ? 'Error: The Geolocation service failed.'
+          : "Error: Your browser doesn't support geolocation."
+      );
+    },
+    searchPlace(center = this.mapCenter) {
+      this.places.nearbySearch(
+        {
+          location: center,
+          rankBy: this.google.maps.places.RankBy.DISTANCE,
+          type: 'restaurant',
+        },
+        (res, status) => {
+          if (status === this.google.maps.places.PlacesServiceStatus.OK) {
+            this.$store.commit('restoMap/setRestoList', res);
+            this.$emit('restoImported');
+            this.initMarkers();
+            this.handleMapIdle();
+          }
+        }
+      );
+    },
+
     reCenterMap() {
       this.map.setCenter(this.mapConfig.center);
       // create a marker in the center position
@@ -121,37 +243,12 @@ export default {
         icon: require('@/assets/img/here.png'),
       });
     },
-    // throw an alert if the geoloc is refuse or not supported
-    handleLocationError(browserHasGeoloc) {
-      alert(
-        browserHasGeoloc
-          ? 'Error: The Geolocation service failed.'
-          : "Error: Your browser doesn't support geolocation."
-      );
-    },
 
     // ////////////////////////
     //          MARKERS
     // ///////////////////////
 
     initMarkers() {
-      // check if the list of all marker is already populated
-      if (!this.restoList.length > 0) {
-        this.allRestaurants.forEach(resto => {
-          const markerOptions = {
-            id: resto.id,
-            position: { lat: resto.lat, lng: resto.lng },
-            icon: this.restoIcon,
-            animation: this.google.maps.Animation.DROP,
-            bouncing: false,
-          };
-          // put all resto markers into an array
-          this.$store.commit('restoMap/addMarker', {
-            markerOptions: markerOptions,
-            markerList: 'allMarkersList',
-          });
-        });
-      }
       // build an empty markers cluster
       this.markerCluster = new MarkerClusterer(this.map, [], {
         maxZoom: 12,
@@ -174,8 +271,8 @@ export default {
       this.restoList.forEach(resto => {
         // create a latLng object of the resto coord
         const latLng = new this.google.maps.LatLng({
-          lat: resto.lat,
-          lng: resto.lng,
+          lat: resto.geometry.location.lat(),
+          lng: resto.geometry.location.lng(),
         });
         const markerOptions = {
           id: resto.id,
@@ -253,8 +350,10 @@ export default {
           }
           // push the new marker in the array
           this.markers.push(marker);
-          // put the marker into the marker cluster
-          this.markerCluster.addMarker(marker);
+          if (this.markerCluster) {
+            // put the marker into the marker cluster
+            this.markerCluster.addMarker(marker);
+          }
         }, i * 100);
       });
       // emit the markers array to be accesible by the parents components

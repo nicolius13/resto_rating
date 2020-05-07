@@ -21,6 +21,7 @@
       v-for="resto in displayedResto"
       :key="resto.id"
       :resto="resto"
+      :places="places"
     />
   </div>
 </template>
@@ -35,6 +36,14 @@ export default {
   components: {
     StarPick,
     RestaurantCard,
+  },
+  props: {
+    places: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
   },
   data() {
     return {
@@ -73,28 +82,20 @@ export default {
       this.filterList();
     },
   },
-  fetch() {
-    this.calAverage();
-    this.filterList();
-  },
   methods: {
     // calculate the average rating
     calAverage() {
+      // reset the ratingAverageArray
+      this.$store.commit('restoMap/setRatingAverage', []);
       this.restoList.forEach(resto => {
-        let averages = 0;
-        // check if there is comments if yes => calculate the average
-        if (resto.ratings.length !== 0) {
-          resto.ratings.forEach(rating => {
-            averages += rating.stars;
-          });
-          averages = averages / resto.ratings.length;
-          this.$store.commit('restoMap/addRattingAverage', {
-            averages,
+        if (resto.rating) {
+          this.$store.commit('restoMap/addRatingAverage', {
+            averages: resto.rating,
             id: resto.id,
           });
-          // if no comment put average to 0
         } else {
-          this.$store.commit('restoMap/addRattingAverage', {
+          // if no comment put average to 0
+          this.$store.commit('restoMap/addRatingAverage', {
             averages: 0,
             id: resto.id,
           });
