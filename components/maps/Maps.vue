@@ -133,9 +133,8 @@ export default {
       controlUI.id = 'searchAreaControl';
       controlUI.style.display = 'flex';
       controlUI.style.alignItems = 'center';
-      controlUI.style.padding = '0 0.4rem';
+      controlUI.style.padding = '0 17px';
       controlUI.style.backgroundColor = '#fff';
-      controlUI.style.border = '2px solid #fff';
       controlUI.style.borderRadius = '0.25rem';
       controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
       controlUI.style.cursor = 'pointer';
@@ -156,13 +155,21 @@ export default {
 
       // text
       const controlText = document.createElement('div');
-      controlText.style.color = 'rgb(25,25,25)';
+      controlText.style.color = 'rgb(86, 86, 86)';
       controlText.style.fontSize = '16px';
-      controlText.style.lineHeight = '38px';
+      controlText.style.lineHeight = '40px';
       controlText.style.paddingLeft = '5px';
       controlText.style.paddingRight = '5px';
       controlText.innerHTML = 'Search this area';
       controlUI.appendChild(controlText);
+
+      // Hover events
+      controlUI.addEventListener('mouseenter', () => {
+        controlText.style.color = 'rgb(0, 0, 0)';
+      });
+      controlUI.addEventListener('mouseleave', () => {
+        controlText.style.color = 'rgb(86, 86, 86)';
+      });
 
       // Click event
       controlUI.addEventListener('click', () => {
