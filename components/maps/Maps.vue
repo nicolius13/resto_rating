@@ -98,37 +98,7 @@ export default {
           map: this.map,
           places: this.places,
         });
-        // if there is no autocomplete done ask for the geoloc
-        if (!this.autoComplLocation) {
-          //  GEOLOC
-          // Try HTML geolocation
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              position => {
-                this.mapCenter.lat = position.coords.latitude;
-                this.mapCenter.lng = position.coords.longitude;
-                // search the area given by the geoloc
-                this.searchPlace();
-              },
-              () => {
-                // denied geoloc
-                this.handleLocationError(true);
-                // search the area given by me :)
-                this.searchPlace();
-              }
-            );
-          } else {
-            // browser don't support geoloc
-            this.handleLocationError(false);
-            // search the area given by me :)
-            this.searchPlace();
-          }
-        } else {
-          this.mapCenter.lat = this.autoComplLocation.lat();
-          this.mapCenter.lng = this.autoComplLocation.lng();
-          // search the area given by autocomplete
-          this.searchPlace();
-        }
+        this.handleGeoloc();
       });
       // EVENT LISTENER
       // wait that the map is loaded
@@ -138,6 +108,49 @@ export default {
           this.handleMapIdle();
         });
       });
+    },
+
+    // GEOLOC
+    handleGeoloc() {
+      // if there is no autocomplete done (in the landing page) ask for the geoloc
+      if (!this.autoComplLocation) {
+        //  GEOLOC
+        // Try HTML geolocation
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            position => {
+              this.mapCenter.lat = position.coords.latitude;
+              this.mapCenter.lng = position.coords.longitude;
+              // search the area given by the geoloc
+              this.searchPlace();
+            },
+            () => {
+              // denied geoloc
+              this.handleLocationError(true);
+              // search the area given by me :)
+              this.searchPlace();
+            }
+          );
+        } else {
+          // browser don't support geoloc
+          this.handleLocationError(false);
+          // search the area given by me :)
+          this.searchPlace();
+        }
+      } else {
+        this.mapCenter.lat = this.autoComplLocation.lat;
+        this.mapCenter.lng = this.autoComplLocation.lng;
+        // search the area given by autocomplete
+        this.searchPlace();
+      }
+    },
+    // throw an alert if the geoloc is refuse or not supported
+    handleLocationError(browserHasGeoloc) {
+      alert(
+        browserHasGeoloc
+          ? 'Error: The Geolocation service failed.'
+          : "Error: Your browser doesn't support geolocation."
+      );
     },
     searchPlace() {
       this.places.nearbySearch(
@@ -156,6 +169,7 @@ export default {
         }
       );
     },
+
     reCenterMap() {
       this.map.setCenter(this.mapConfig.center);
       // create a marker in the center position
@@ -166,14 +180,6 @@ export default {
         position: this.mapConfig.center,
         icon: require('@/assets/img/here.png'),
       });
-    },
-    // throw an alert if the geoloc is refuse or not supported
-    handleLocationError(browserHasGeoloc) {
-      alert(
-        browserHasGeoloc
-          ? 'Error: The Geolocation service failed.'
-          : "Error: Your browser doesn't support geolocation."
-      );
     },
 
     // ////////////////////////

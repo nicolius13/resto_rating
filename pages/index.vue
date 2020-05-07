@@ -5,9 +5,9 @@
     </b-row>
     <b-row class="searchBar justify-content-center">
       <b-input-group class="inputGroup">
-        <b-form-input id="autoInput" type="text" />
+        <b-form-input id="autoInput" v-model="input" type="text" />
         <b-input-group-append>
-          <b-button class="geoloc"></b-button>
+          <b-button @click="getGeoloc" class="geoloc"></b-button>
         </b-input-group-append>
       </b-input-group>
       <button @click="handleGoBtn" class="okBtn outlineBtn mainBtn">
@@ -25,10 +25,13 @@ export default {
   data() {
     return {
       apiKey: process.env.GOOGLE_MAPS_API_KEY,
-      google: {},
-      autocomplete: {},
+      input: '',
+      google: null,
+      autocomplete: null,
       sessionToken: '',
       locationSelected: null,
+      geocoder: null,
+      geoloc: null,
     };
   },
   mounted() {
@@ -36,38 +39,105 @@ export default {
       libraries: ['places'],
       apiKey: this.apiKey,
     }).then(googleMapApi => {
-      const input = document.getElementById('autoInput');
       this.google = googleMapApi;
+      this.handleAutocomplete();
+      this.initGeocoding();
+    });
+  },
+  methods: {
+    // AUTOCOMPLETE
+    handleAutocomplete() {
+      const input = document.getElementById('autoInput');
+
       // create a unique id for the autocomplete session
       this.sessionToken = uuidV4();
+      // create the autocomplete service object
       this.autocomplete = new this.google.maps.places.Autocomplete(input, {
         types: ['(cities)'],
+        fields: ['geometry'],
         sessionToken: this.sessionToken,
       });
-      this.autocomplete.setFields(['geometry']);
       this.autocomplete.addListener('place_changed', () => {
         // get the location and save it 'localy'
         const place = this.autocomplete.getPlace();
-        this.locationSelected = place.geometry.location;
+        this.locationSelected = {};
+        this.locationSelected.lat = place.geometry.location.lat();
+        this.locationSelected.lng = place.geometry.location.lng();
 
         // create a NEW unique id for the autocomplete session and change it
         this.sessionToken = uuidV4();
         this.autocomplete.setOptions({ sessionToken: this.sessionToken });
       });
-    });
-  },
-  methods: {
+    },
+
+    // GO BTN
     handleGoBtn() {
-      // if there is a selected location send it to the store
+      // if there is a selected location by AUTOCOMPLETE send it to the store
       if (this.locationSelected) {
         this.$store.commit(
           'restoMap/setAutoComplLocation',
           this.locationSelected
         );
+        // esle if there is a selected location by GEOLOC send it to the store
+      } else if (this.geoloc) {
+        this.$store.commit('restoMap/setAutoComplLocation', this.geoloc);
       }
       // go to 'resto map' page
       this.$router.push({
         path: '/map',
+      });
+    },
+
+    // GEOLOC BTN
+    getGeoloc() {
+      //  GEOLOC
+      // Try HTML geolocation
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            this.geoloc = {};
+            this.geoloc.lat = position.coords.latitude;
+            this.geoloc.lng = position.coords.longitude;
+            this.geocodeLatLng();
+          },
+          () => {
+            // denied geoloc
+            this.handleLocationError(true);
+          }
+        );
+      } else {
+        // browser don't support geoloc
+        this.handleLocationError(false);
+      }
+    },
+    // throw an alert if the geoloc is refuse or not supported
+    handleLocationError(browserHasGeoloc) {
+      alert(
+        browserHasGeoloc
+          ? 'Error: The Geolocation service failed.'
+          : "Error: Your browser doesn't support geolocation."
+      );
+    },
+    // geocoding
+    initGeocoding() {
+      this.geocoder = new this.google.maps.Geocoder();
+    },
+    geocodeLatLng() {
+      const latLng = {
+        lat: this.geoloc.lat,
+        lng: this.geoloc.lng,
+      };
+      // try to have the adress from the geoloc
+      this.geocoder.geocode({ location: latLng }, (res, status) => {
+        if (status === 'OK') {
+          if (res[0]) {
+            this.input = res[0].formatted_address;
+          } else {
+            window.alert('No results found');
+          }
+        } else {
+          window.alert('Geocoder failed due to: ' + status);
+        }
       });
     },
   },
@@ -117,6 +187,9 @@ export default {
   width: 60%;
 }
 /* Autocomplete Input */
+.form-control {
+  color: #000;
+}
 #autoInput {
   display: flex;
   box-sizing: content-box;
