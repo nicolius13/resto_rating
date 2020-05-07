@@ -1,31 +1,150 @@
 <template>
-  <div class="landing">
-    <div class="searchWrapper">
-      <h1>Find Restaurant</h1>
-      <div class="search">
-        <div class="searchBar"></div>
-        <div class="searchBtn">GO</div>
-      </div>
-    </div>
-  </div>
+  <b-container class="landing">
+    <b-row>
+      <h1 class="findTitle">Find Restaurant</h1>
+    </b-row>
+    <b-row class="searchBar justify-content-center">
+      <b-input-group class="inputGroup">
+        <b-form-input id="autoInput" v-model="input" type="text" />
+        <b-input-group-append>
+          <b-button @click="getGeoloc" class="geoloc"></b-button>
+        </b-input-group-append>
+      </b-input-group>
+      <button @click="handleGoBtn" class="okBtn outlineBtn mainBtn">
+        GO
+      </button>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
+import GoogleMapsApiLoader from 'google-maps-api-loader';
+import { v4 as uuidV4 } from 'uuid';
+
 export default {
   data() {
-    return {};
+    return {
+      apiKey: process.env.GOOGLE_MAPS_API_KEY,
+      input: '',
+      google: null,
+      autocomplete: null,
+      sessionToken: '',
+      locationSelected: null,
+      geocoder: null,
+      geoloc: null,
+    };
+  },
+  mounted() {
+    GoogleMapsApiLoader({
+      libraries: ['places'],
+      apiKey: this.apiKey,
+    }).then(googleMapApi => {
+      this.google = googleMapApi;
+      this.handleAutocomplete();
+      this.initGeocoding();
+    });
+  },
+  methods: {
+    // AUTOCOMPLETE
+    handleAutocomplete() {
+      const input = document.getElementById('autoInput');
+
+      // create a unique id for the autocomplete session
+      this.sessionToken = uuidV4();
+      // create the autocomplete service object
+      this.autocomplete = new this.google.maps.places.Autocomplete(input, {
+        types: ['(cities)'],
+        fields: ['geometry'],
+        sessionToken: this.sessionToken,
+      });
+      this.autocomplete.addListener('place_changed', () => {
+        // get the location and save it 'localy'
+        const place = this.autocomplete.getPlace();
+        this.locationSelected = {};
+        this.locationSelected.lat = place.geometry.location.lat();
+        this.locationSelected.lng = place.geometry.location.lng();
+
+        // create a NEW unique id for the autocomplete session and change it
+        this.sessionToken = uuidV4();
+        this.autocomplete.setOptions({ sessionToken: this.sessionToken });
+      });
+    },
+
+    // GO BTN
+    handleGoBtn() {
+      // if there is a selected location by AUTOCOMPLETE send it to the store
+      if (this.locationSelected) {
+        this.$store.commit(
+          'restoMap/setAutoComplLocation',
+          this.locationSelected
+        );
+        // esle if there is a selected location by GEOLOC send it to the store
+      } else if (this.geoloc) {
+        this.$store.commit('restoMap/setAutoComplLocation', this.geoloc);
+      }
+      // go to 'resto map' page
+      this.$router.push({
+        path: '/map',
+      });
+    },
+
+    // GEOLOC BTN
+    getGeoloc() {
+      //  GEOLOC
+      // Try HTML geolocation
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            this.geoloc = {};
+            this.geoloc.lat = position.coords.latitude;
+            this.geoloc.lng = position.coords.longitude;
+            this.geocodeLatLng();
+          },
+          () => {
+            // denied geoloc
+            this.handleLocationError(true);
+          }
+        );
+      } else {
+        // browser don't support geoloc
+        this.handleLocationError(false);
+      }
+    },
+    // throw an alert if the geoloc is refuse or not supported
+    handleLocationError(browserHasGeoloc) {
+      alert(
+        browserHasGeoloc
+          ? 'Error: The Geolocation service failed.'
+          : "Error: Your browser doesn't support geolocation."
+      );
+    },
+    // geocoding
+    initGeocoding() {
+      this.geocoder = new this.google.maps.Geocoder();
+    },
+    geocodeLatLng() {
+      const latLng = {
+        lat: this.geoloc.lat,
+        lng: this.geoloc.lng,
+      };
+      // try to have the adress from the geoloc
+      this.geocoder.geocode({ location: latLng }, (res, status) => {
+        if (status === 'OK') {
+          if (res[0]) {
+            this.input = res[0].formatted_address;
+          } else {
+            window.alert('No results found');
+          }
+        } else {
+          window.alert('Geocoder failed due to: ' + status);
+        }
+      });
+    },
   },
 };
 </script>
 
 <style>
-body {
-  min-height: 100vh;
-  margin: 0;
-  background-color: #1d1d1d;
-  color: #fff;
-  font-family: 'Montserrat', sans-serif;
-}
 .landing {
   display: flex;
   flex-direction: column;
@@ -46,39 +165,65 @@ body {
   position: absolute;
   z-index: -1;
 }
-h1 {
-  color: #08d9d6;
-  font-size: 45px;
-  text-align: center;
+
+/* autocomplete prediction */
+.pac-icon {
+  background: url('../assets/img/resto-icon.png');
+  background-repeat: no-repeat;
+  background-size: 15px;
+}
+</style>
+
+<style scoped>
+.findTitle {
+  margin-bottom: 2rem;
 }
 
-.searchWrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  width: 100%;
-  min-height: 40%;
-}
-
-/* PlaceHolder */
-
-.search {
-  display: flex;
-  justify-content: center;
-}
 .searchBar {
-  background-color: #fff;
-  width: 300px;
-  height: 30px;
+  width: 100%;
 }
-.searchBtn {
+
+.inputGroup {
+  width: 60%;
+}
+/* Autocomplete Input */
+.form-control {
+  color: #000;
+}
+#autoInput {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  background-color: #ff2e63;
-  height: 30px;
+  box-sizing: content-box;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+#autoInput:focus {
+  box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
+}
+
+/* Geoloc Btn */
+.geoloc {
   width: 50px;
+  background: url('../assets/img/geoloc.png'), #fff;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 30px;
+  border: none;
+}
+.geoloc:focus {
+  box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
+}
+
+/* GO button */
+.mainBtn {
+  font-size: 1.2rem;
+  font-weight: 600;
+  border: 3px solid #ff2e63;
+  margin: 0 0.4rem;
+  line-height: 1.5;
+}
+.mainBtn:hover {
+  text-decoration: none;
 }
 </style>

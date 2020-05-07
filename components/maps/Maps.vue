@@ -22,8 +22,8 @@ export default {
       markers: [],
       markerCluster: null,
       mapCenter: {
-        lat: 17.984052,
-        lng: 102.539655,
+        lat: 17.395192,
+        lng: 104.804329,
       },
       restoIcon: require('@/assets/img/resto-icon.png'),
     };
@@ -41,6 +41,7 @@ export default {
       selectedRestaurant: state => state.restoMap.selectedRestaurant,
       AddedRestaurants: state => state.restoMap.AddedRestaurants,
       filteringFinished: state => state.restoMap.filteringFinished,
+      autoComplLocation: state => state.restoMap.autoComplLocation,
     }),
   },
   watch: {
@@ -73,60 +74,7 @@ export default {
     }).then(googleMapApi => {
       this.google = googleMapApi;
       this.initializeMap();
-      // wait until the map is ready to initialise the markers
-      this.google.maps.event.addListenerOnce(this.map, 'idle', () => {
-        this.places = new this.google.maps.places.PlacesService(this.map);
-        this.places.nearbySearch(
-          {
-            location: this.mapConfig.center,
-            rankBy: this.google.maps.places.RankBy.DISTANCE,
-            type: 'restaurant',
-          },
-          (res, status) => {
-            if (status === this.google.maps.places.PlacesServiceStatus.OK) {
-              this.$store.commit('restoMap/setRestoList', res);
-              this.$emit('restoImported');
-              this.initMarkers();
-              this.handleMapIdle();
-            }
-          }
-        );
-      });
-      // EVENT LISTENER
-      // wait that the map is loaded
-      this.google.maps.event.addListenerOnce(this.map, 'tilesloaded', () => {
-        // add event listener (when the map is still)
-        this.google.maps.event.addListener(this.map, 'idle', () => {
-          this.handleMapIdle();
-        });
-      });
-      // send google, map and place service object to parent
-      this.$emit('googleMap', {
-        google: this.google,
-        map: this.map,
-        places: this.places,
-      });
     });
-
-    //  GEOLOC
-    // Try HTML geolocation
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          this.mapConfig.center.lat = position.coords.latitude;
-          this.mapConfig.center.lng = position.coords.longitude;
-        },
-        () => {
-          // denied geoloc
-          this.handleLocationError(true);
-        }
-      );
-    } else {
-      // browser don't support geoloc
-      this.handleLocationError(false);
-    }
-
-    // this.pageLoad = false;
   },
 
   beforeDestroy() {
@@ -141,7 +89,87 @@ export default {
     initializeMap() {
       const mapContainer = this.$refs.googleMap;
       this.map = new this.google.maps.Map(mapContainer, this.mapConfig);
+      // wait until the map is ready to initialise the place service
+      this.google.maps.event.addListenerOnce(this.map, 'idle', () => {
+        this.places = new this.google.maps.places.PlacesService(this.map);
+        // send google, map and place service object to parent
+        this.$emit('googleMap', {
+          google: this.google,
+          map: this.map,
+          places: this.places,
+        });
+        this.handleGeoloc();
+      });
+      // EVENT LISTENER
+      // wait that the map is loaded
+      this.google.maps.event.addListenerOnce(this.map, 'tilesloaded', () => {
+        // add event listener (when the map is still)
+        this.google.maps.event.addListener(this.map, 'idle', () => {
+          this.handleMapIdle();
+        });
+      });
     },
+
+    // GEOLOC
+    handleGeoloc() {
+      // if there is no autocomplete done (in the landing page) ask for the geoloc
+      if (!this.autoComplLocation) {
+        //  GEOLOC
+        // Try HTML geolocation
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            position => {
+              this.mapCenter.lat = position.coords.latitude;
+              this.mapCenter.lng = position.coords.longitude;
+              // search the area given by the geoloc
+              this.searchPlace();
+            },
+            () => {
+              // denied geoloc
+              this.handleLocationError(true);
+              // search the area given by me :)
+              this.searchPlace();
+            }
+          );
+        } else {
+          // browser don't support geoloc
+          this.handleLocationError(false);
+          // search the area given by me :)
+          this.searchPlace();
+        }
+      } else {
+        this.mapCenter.lat = this.autoComplLocation.lat;
+        this.mapCenter.lng = this.autoComplLocation.lng;
+        // search the area given by autocomplete
+        this.searchPlace();
+      }
+    },
+    // throw an alert if the geoloc is refuse or not supported
+    handleLocationError(browserHasGeoloc) {
+      alert(
+        browserHasGeoloc
+          ? 'Error: The Geolocation service failed.'
+          : "Error: Your browser doesn't support geolocation."
+      );
+    },
+    searchPlace() {
+      this.places.nearbySearch(
+        {
+          location: this.mapConfig.center,
+          rankBy: this.google.maps.places.RankBy.DISTANCE,
+          type: 'restaurant',
+        },
+        (res, status) => {
+          if (status === this.google.maps.places.PlacesServiceStatus.OK) {
+            this.$store.commit('restoMap/setRestoList', res);
+            this.$emit('restoImported');
+            this.initMarkers();
+            this.handleMapIdle();
+          }
+        }
+      );
+    },
+
     reCenterMap() {
       this.map.setCenter(this.mapConfig.center);
       // create a marker in the center position
@@ -152,14 +180,6 @@ export default {
         position: this.mapConfig.center,
         icon: require('@/assets/img/here.png'),
       });
-    },
-    // throw an alert if the geoloc is refuse or not supported
-    handleLocationError(browserHasGeoloc) {
-      alert(
-        browserHasGeoloc
-          ? 'Error: The Geolocation service failed.'
-          : "Error: Your browser doesn't support geolocation."
-      );
     },
 
     // ////////////////////////

@@ -18,7 +18,8 @@
     "bootstrap-vue": "^2.11.0",
     "cross-env": "^5.2.0",
     "google-maps-api-loader": "^1.1.1",
-    "nuxt": "^2.4.0"
+    "nuxt": "^2.4.0",
+    "uuid": "^8.0.0"
   },
   "devDependencies": {
     "@nuxtjs/dotenv": "^1.4.1",
