@@ -100,13 +100,75 @@ export default {
         });
         this.handleGeoloc();
       });
-      // EVENT LISTENER
+
+      // Event listener
+      // create the 'search this area' btn when the user finish to drag the map
+      this.google.maps.event.addListenerOnce(this.map, 'dragend', () => {
+        const searchThisAreaDiv = document.createElement('div');
+        const mapControl = new this.MapControl(searchThisAreaDiv, this);
+        mapControl.index = 1;
+        this.map.controls[this.google.maps.ControlPosition.TOP_CENTER].push(
+          searchThisAreaDiv
+        );
+      });
+
+      this.google.maps.event.addListener(this.map, 'dragend', () => {
+        const searchAreaControl = document.getElementById('searchAreaControl');
+        searchAreaControl.style.display = 'flex';
+      });
+
       // wait that the map is loaded
       this.google.maps.event.addListenerOnce(this.map, 'tilesloaded', () => {
         // add event listener (when the map is still)
         this.google.maps.event.addListener(this.map, 'idle', () => {
           this.handleMapIdle();
         });
+      });
+    },
+
+    // MAP CONTROL constructor
+    MapControl(controlDiv, vue) {
+      // Set CSS for the control border.
+      const controlUI = document.createElement('div');
+      controlUI.id = 'searchAreaControl';
+      controlUI.style.display = 'flex';
+      controlUI.style.alignItems = 'center';
+      controlUI.style.padding = '0 0.4rem';
+      controlUI.style.backgroundColor = '#fff';
+      controlUI.style.border = '2px solid #fff';
+      controlUI.style.borderRadius = '0.25rem';
+      controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+      controlUI.style.cursor = 'pointer';
+      controlUI.style.margin = '10px';
+      controlUI.style.textAlign = 'center';
+      controlUI.title = 'Click to Search this area';
+      controlDiv.appendChild(controlUI);
+
+      // Set CSS for the control interior.
+      // icon
+      const controlIcon = document.createElement('div');
+      const icon = require('@/assets/img/searchR.png');
+      controlIcon.style.backgroundImage = `url(${icon})`;
+      controlIcon.style.backgroundSize = '18px 18px';
+      controlIcon.style.width = '18px';
+      controlIcon.style.height = '18px';
+      controlUI.appendChild(controlIcon);
+
+      // text
+      const controlText = document.createElement('div');
+      controlText.style.color = 'rgb(25,25,25)';
+      controlText.style.fontSize = '16px';
+      controlText.style.lineHeight = '38px';
+      controlText.style.paddingLeft = '5px';
+      controlText.style.paddingRight = '5px';
+      controlText.innerHTML = 'Search this area';
+      controlUI.appendChild(controlText);
+
+      // Click event
+      controlUI.addEventListener('click', () => {
+        vue.$store.commit('restoMap/resetAll');
+        vue.searchPlace(vue.map.getCenter());
+        controlUI.style.display = 'none';
       });
     },
 
@@ -152,10 +214,10 @@ export default {
           : "Error: Your browser doesn't support geolocation."
       );
     },
-    searchPlace() {
+    searchPlace(center = this.mapCenter) {
       this.places.nearbySearch(
         {
-          location: this.mapConfig.center,
+          location: center,
           rankBy: this.google.maps.places.RankBy.DISTANCE,
           type: 'restaurant',
         },

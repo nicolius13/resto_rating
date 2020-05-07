@@ -65,10 +65,12 @@ export const mutations = {
   },
   filteringList(state, filteredAverages) {
     // filter the restaurant list with the resto id put in the filteredAverages array
-    state.filteredList = state.restoList.filter(resto => {
+    state.filteredList = state.restoList.filter((resto, i) => {
+      if (i === filteredAverages.length - 1) {
+        state.filteringFinished = true;
+      }
       return filteredAverages.includes(resto.id);
     });
-    state.filteringFinished = true;
   },
 
   setSelectedRestaurant(state, resto) {
