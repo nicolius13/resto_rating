@@ -1,5 +1,5 @@
 <template>
-  <b-container class="landing">
+  <b-container :style="{ '--bgImg': bgImg }" class="landing">
     <b-row>
       <h1 class="findTitle">Find Restaurant</h1>
     </b-row>
@@ -24,7 +24,7 @@ import { v4 as uuidV4 } from 'uuid';
 export default {
   data() {
     return {
-      apiKey: process.env.GOOGLE_MAPS_API_KEY,
+      // apiKey: process.env.GOOGLE_MAPS_API_KEY,
       input: '',
       google: null,
       autocomplete: null,
@@ -32,9 +32,21 @@ export default {
       locationSelected: null,
       geocoder: null,
       geoloc: null,
+      backImgArray: [
+        require('@/assets/img/backgrounds/asian-d.jpg'),
+        require('@/assets/img/backgrounds/resto-d.jpg'),
+        require('@/assets/img/backgrounds/table-d.jpg'),
+      ],
+      bgImg: '',
     };
   },
+  created() {
+    // choose the background img
+    const randNum = Math.floor(Math.random() * this.backImgArray.length);
+    this.bgImg = `url(${this.backImgArray[randNum]})`;
+  },
   mounted() {
+    // init the google object
     GoogleMapsApiLoader({
       libraries: ['places'],
       apiKey: this.apiKey,
@@ -153,7 +165,7 @@ export default {
 }
 .landing::after {
   content: '';
-  background: url('../assets/img/asian-d.jpg');
+  background: var(--bgImg, url('../assets/img/backgrounds/asian-d.jpg'));
   background-size: cover;
   background-repeat: no-repeat;
   box-shadow: inset 0 0 10em 2em #1d1d1d;
@@ -168,7 +180,7 @@ export default {
 
 /* autocomplete prediction */
 .pac-icon {
-  background: url('../assets/img/resto-icon.png');
+  background: url('../assets/img/mapIcons/resto-icon.png');
   background-repeat: no-repeat;
   background-size: 15px;
 }

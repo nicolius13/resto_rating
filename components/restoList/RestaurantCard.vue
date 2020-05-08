@@ -96,7 +96,7 @@ export default {
       starsAverage: [],
       starsComments: [],
       // placeholder
-      img: require('@/assets/img/asian-d.jpg'),
+      img: require('@/assets/img/backgrounds/asian-d.jpg'),
     };
   },
   computed: {

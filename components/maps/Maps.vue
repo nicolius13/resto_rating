@@ -25,7 +25,7 @@ export default {
         lat: 17.395192,
         lng: 104.804329,
       },
-      restoIcon: require('@/assets/img/resto-icon.png'),
+      restoIcon: require('@/assets/img/mapIcons/resto-icon.png'),
     };
   },
   computed: {
@@ -146,7 +146,7 @@ export default {
       // Set CSS for the control interior.
       // icon
       const controlIcon = document.createElement('div');
-      const icon = require('@/assets/img/search.png');
+      const icon = require('@/assets/img/mapIcons/search.png');
       controlIcon.style.backgroundImage = `url(${icon})`;
       controlIcon.style.backgroundSize = '18px 18px';
       controlIcon.style.width = '18px';
@@ -247,7 +247,7 @@ export default {
         map: this.map,
         id: 'you_here',
         position: this.mapConfig.center,
-        icon: require('@/assets/img/here.png'),
+        icon: require('@/assets/img/mapIcons/here.png'),
       });
     },
 
