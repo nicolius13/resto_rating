@@ -24,7 +24,7 @@ import { v4 as uuidV4 } from 'uuid';
 export default {
   data() {
     return {
-      // apiKey: process.env.GOOGLE_MAPS_API_KEY,
+      apiKey: process.env.GOOGLE_MAPS_API_KEY,
       input: '',
       google: null,
       autocomplete: null,

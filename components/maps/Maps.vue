@@ -242,12 +242,16 @@ export default {
     reCenterMap() {
       this.map.setCenter(this.mapConfig.center);
       // create a marker in the center position
-      // eslint-disable-next-line no-new
-      new this.google.maps.Marker({
+      const center = new this.google.maps.Marker({
         map: this.map,
         id: 'you_here',
         position: this.mapConfig.center,
         icon: require('@/assets/img/mapIcons/here.png'),
+      });
+      // recenter and zoom if clicked
+      center.addListener('click', () => {
+        this.map.setCenter(this.mapCenter);
+        this.map.setZoom(17);
       });
     },
 
