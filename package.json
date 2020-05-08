@@ -19,6 +19,7 @@
     "cross-env": "^5.2.0",
     "google-maps-api-loader": "^1.1.1",
     "nuxt": "^2.4.0",
+    "rfs": "^9.0.3",
     "uuid": "^8.0.0"
   },
   "devDependencies": {
@@ -39,5 +40,8 @@
     "eslint-plugin-vue": "^5.2.2",
     "nodemon": "^1.18.9",
     "prettier": "^1.16.4"
-  }
+  },
+  "browserslist": [
+    "last 2 versions"
+  ]
 }

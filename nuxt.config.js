@@ -75,6 +75,12 @@ export default {
    ** Build configuration
    */
   build: {
+    postcss: {
+      plugins: {
+        rfs: {},
+      },
+    },
+
     /*
      ** You can extend webpack config here
      */
