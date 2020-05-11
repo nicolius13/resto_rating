@@ -55,7 +55,7 @@ export default {
   background-color: #222222;
 }
 .light #navBar {
-  background-color: #e6e6e6;
+  background-color: #e2e2e2;
 }
 
 #logo {

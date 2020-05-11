@@ -1,11 +1,16 @@
 <template>
   <b-container :style="{ '--bgImg': bgImg }" class="landing">
     <b-row>
-      <h1 class="findTitle">Find Restaurant</h1>
+      <h1 class="findTitle">Find Restaurants</h1>
     </b-row>
     <b-row class="searchBar justify-content-center">
       <b-input-group class="inputGroup">
-        <b-form-input id="autoInput" v-model="input" type="text" />
+        <b-form-input
+          id="autoInput"
+          v-model="input"
+          type="text"
+          placeholder="Where do you want to eat ?"
+        />
         <b-input-group-append>
           <b-button
             @click="getGeoloc"
@@ -189,7 +194,7 @@ export default {
   z-index: -1;
 }
 .light .landing::after {
-  opacity: 0.4;
+  box-shadow: inset 0 0 10em 2em #e2e2e2;
 }
 
 /* autocomplete prediction */
@@ -227,11 +232,15 @@ export default {
   border: none;
 }
 .light #autoInput {
-  background-color: #4b4b4b;
-  color: #fff;
+  background-color: #e2e2e2;
+  color: #1d1d1d;
 }
 #autoInput:focus {
   box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
+}
+
+.light .form-control::placeholder {
+  color: #5f5f5f;
 }
 
 /* Geoloc Btn */
@@ -249,7 +258,7 @@ export default {
   box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
 }
 .geoloc.light {
-  background: url('../assets/img/geolocB.png'), #4b4b4b;
+  background: url('../assets/img/geoloc.png'), #e2e2e2;
   background-position: center;
   background-repeat: no-repeat;
   background-size: 30px;

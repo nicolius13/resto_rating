@@ -115,6 +115,9 @@ export default {
   scrollbar-width: thin;
   scrollbar-color: #ff2e63 #292929;
 }
+.light #list {
+  scrollbar-color: #ff2e63 #eeeeee;
+}
 /* webkit */
 #list::-webkit-scrollbar {
   width: 8px;
@@ -124,6 +127,9 @@ export default {
 }
 #list::-webkit-scrollbar-track {
   background: #292929;
+}
+.light #list::-webkit-scrollbar-track {
+  background: #eeeeee;
 }
 
 /* TOP BTN */

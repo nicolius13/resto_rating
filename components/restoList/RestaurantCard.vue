@@ -243,6 +243,9 @@ export default {
   background-color: #292929;
   margin: 0.75rem 0;
 }
+.light .card {
+  background-color: #eeeeee;
+}
 
 .card-title {
   text-align: center;
@@ -265,6 +268,9 @@ export default {
 .stars {
   color: #08d9d6;
   margin: 0 0.2rem;
+}
+.light .stars {
+  color: #ff8811;
 }
 .mainStar {
   font-size: 1rem;
@@ -302,6 +308,15 @@ export default {
 .seeMoreBtn:hover {
   background-color: #08d9d6;
   color: #000;
+}
+.light .seeMoreBtn {
+  font-size: 0.8rem;
+  color: #ff8811;
+  border: 1px solid #ff8811;
+}
+.light .seeMoreBtn:hover {
+  background-color: #ff8811;
+  color: #fff;
 }
 
 .addCommBtnBtn {

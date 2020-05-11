@@ -59,14 +59,6 @@ export default {
       this.$store.commit('restoMap/toggleTheme');
     },
   },
-  // change the body class
-  head() {
-    return {
-      bodyAttrs: {
-        class: this.light ? 'light' : 'dark',
-      },
-    };
-  },
 };
 </script>
 
@@ -78,7 +70,7 @@ export default {
   position: absolute;
 }
 .light #footer {
-  background-color: #e6e6e6;
+  background-color: #e2e2e2;
 }
 .footerRow {
   height: 100%;
@@ -97,8 +89,8 @@ p {
   color: rgb(200, 200, 200);
 }
 .light .themeBtn {
-  background-color: #fcfcfc;
-  color: #303030;
+  background-color: #f5f5f5;
+  color: #3d3d3d;
 }
 
 .credit {

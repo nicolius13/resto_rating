@@ -188,9 +188,15 @@ export default {
   color: #08d9d6;
   transition: all 0.2s ease-in-out;
 }
+.light .cities a:hover {
+  color: #ff8811;
+}
 
 .blue {
   color: #08d9d6;
   font-size: rfs(1.3rem);
+}
+.light .blue {
+  color: #ff8811;
 }
 </style>

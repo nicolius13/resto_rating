@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="back">
     <Header />
     <nuxt class="main" />
     <Footer />
@@ -14,6 +14,14 @@ export default {
   components: {
     Header,
     Footer,
+  },
+  // change the body class
+  head() {
+    return {
+      bodyAttrs: {
+        class: this.$store.state.restoMap.light ? 'light main' : 'dark',
+      },
+    };
   },
 };
 </script>
