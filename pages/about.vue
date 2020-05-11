@@ -88,6 +88,7 @@
 
 <script>
 export default {
+  layout: 'about',
   methods: {
     toMap(location) {
       this.$store.commit('restoMap/setAutoComplLocation', location);

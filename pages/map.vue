@@ -18,6 +18,7 @@ import Maps from '../components/maps/Maps';
 import RestoList from '../components/restoList/RestoList';
 
 export default {
+  layout: 'maps',
   components: {
     Maps,
     RestoList,
