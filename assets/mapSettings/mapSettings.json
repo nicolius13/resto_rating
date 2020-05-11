@@ -1,5 +1,7 @@
 {
   "zoom": 17,
+  "streetViewControl": false,
+  "mapTypeControl": false,
   "styles": [
     {
       "featureType": "poi.business",

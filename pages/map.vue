@@ -2,12 +2,17 @@
   <div>
     <b-container id="mapContainer" fluid>
       <b-row class="mapRow">
-        <b-col cols="8" class="mapCol">
+        <b-col cols="12" md="8" class="mapCol">
           <Maps @googleMap="googleInit" @markers="markers = $event" />
         </b-col>
-        <RestoList id="list" :places="places" class="col-4 mapCol" />
+        <RestoList id="list" :places="places" class=" col-12 col-md-4 mapCol" />
       </b-row>
     </b-container>
+    <transition name="fade">
+      <button id="top" @click="backTopTop" v-show="toTop" href="#header">
+        <b-icon-arrow-up font-scale="1.2"></b-icon-arrow-up>
+      </button>
+    </transition>
   </div>
 </template>
 
@@ -29,6 +34,7 @@ export default {
       map: null,
       places: null,
       markers: [],
+      toTop: false,
     };
   },
   computed: {
@@ -51,6 +57,10 @@ export default {
       });
     },
   },
+  mounted() {
+    // add listener whe scroll to show/hide the toTop btn
+    window.addEventListener('scroll', this.scrollHandler);
+  },
   methods: {
     googleInit($event) {
       this.google = $event.google;
@@ -62,7 +72,12 @@ export default {
       this.$store.commit('restoMap/setSelectedRestaurant', marker.id);
       // scroll to the restaurant card
       const resto = document.getElementById('resto-' + marker.id);
-      resto.scrollIntoView(true);
+      const list = document.getElementById('list');
+      // scroll to the list if th escreen is smaller than 768px
+      if (window.innerWidth <= 768) {
+        list.scrollIntoView();
+      }
+      list.scrollTo(0, resto.offsetTop);
     },
 
     // make the marker bounce when it's selected in the list
@@ -75,11 +90,24 @@ export default {
         }
       });
     },
+    // Scroll btn
+    // check if we scroll pass 400px and show the button
+    scrollHandler() {
+      if (window.pageYOffset > 400) {
+        this.toTop = true;
+      } else {
+        this.toTop = false;
+      }
+    },
+    // scroll to top
+    backTopTop() {
+      window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
+    },
   },
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 #list {
   overflow: auto;
   /* firefox 64 */
@@ -95,5 +123,28 @@ export default {
 }
 #list::-webkit-scrollbar-track {
   background: #292929;
+}
+
+/* TOP BTN */
+
+#top {
+  background: #ff2e63;
+  color: #fff;
+  border: none;
+  border-radius: 0.25rem;
+  margin: 0.2rem 0.4rem;
+  padding: 0.4rem 0.8rem;
+  position: fixed;
+  right: 10px;
+  bottom: 20px;
+  z-index: 9999;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease-in-out;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
