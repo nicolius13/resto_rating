@@ -20,6 +20,6 @@ export default {
 <style scoped>
 /* heigth the screen - header and footer */
 .mainApp {
-  height: Calc(100vh - 76px - 60px);
+  height: Calc(100vh - 76px - 70px);
 }
 </style>
