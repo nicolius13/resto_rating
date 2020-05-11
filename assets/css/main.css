@@ -3,6 +3,10 @@
 h1 {
   color: #08d9d6;
   text-align: center;
+  font-weight: 600;
+}
+.light h1 {
+  color: #ff8811;
 }
 
 body {
@@ -11,6 +15,10 @@ body {
   background-color: #1d1d1d;
   color: #fff;
   font-family: 'Montserrat', sans-serif;
+}
+body.light {
+  background-color: #fcfcfc;
+  color: #1d1d1d;
 }
 
 /* PAGES TRANSITIONS */

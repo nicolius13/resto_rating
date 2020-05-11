@@ -54,6 +54,9 @@ export default {
 #navBar {
   background-color: #222222;
 }
+.light #navBar {
+  background-color: #e6e6e6;
+}
 
 #logo {
   display: flex;
@@ -74,7 +77,7 @@ export default {
 .navbar-nav .nav-link {
   color: #08d9d6;
   transition: all 0.3s ease-in-out;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1.3rem;
 }
 .navbar-nav .nav-link:hover,
 .navbar-nav .nav-link:focus {
@@ -84,6 +87,17 @@ export default {
 .navbar-nav .deco {
   text-decoration: none;
   position: relative;
+}
+
+.light .navbar-nav .nav-link {
+  color: #ff8811;
+  transition: all 0.3s ease-in-out;
+  padding: 0.5rem 1.3rem;
+}
+.light .navbar-nav .nav-link:hover,
+.light .navbar-nav .nav-link:focus {
+  color: #ff8811;
+  transition: all 0.3s ease-in-out;
 }
 
 .navbar-nav .deco::before {

@@ -9,6 +9,7 @@ export const state = () => ({
   markersDisplayed: [],
   selectedRestaurant: null,
   autoComplLocation: null,
+  light: false,
 });
 
 export const mutations = {
@@ -120,5 +121,10 @@ export const mutations = {
   // AUTOCOMPLETE
   setAutoComplLocation(state, location) {
     state.autoComplLocation = location;
+  },
+
+  // THEME
+  toggleTheme(state) {
+    state.light = !state.light;
   },
 };
