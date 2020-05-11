@@ -30,10 +30,17 @@ export default {
   },
   computed: {
     mapConfig() {
-      return {
-        ...this.mapSettings,
-        center: this.mapCenter,
-      };
+      if (this.light) {
+        return {
+          ...this.mapSettings.light,
+          center: this.mapCenter,
+        };
+      } else {
+        return {
+          ...this.mapSettings.dark,
+          center: this.mapCenter,
+        };
+      }
     },
     ...mapState({
       restoList: state => state.restoMap.filteredList,
@@ -42,6 +49,7 @@ export default {
       AddedRestaurants: state => state.restoMap.AddedRestaurants,
       filteringFinished: state => state.restoMap.filteringFinished,
       autoComplLocation: state => state.restoMap.autoComplLocation,
+      light: state => state.restoMap.light,
     }),
   },
   watch: {
