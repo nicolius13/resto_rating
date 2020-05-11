@@ -156,7 +156,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="postcss">
 .landing {
   display: flex;
   flex-direction: column;
@@ -188,6 +188,7 @@ export default {
 
 <style scoped>
 .findTitle {
+  font-size: rfs(5rem);
   margin-bottom: 2rem;
 }
 
@@ -206,7 +207,7 @@ export default {
   display: flex;
   box-sizing: content-box;
   padding: 0.375rem 0.75rem;
-  font-size: 1rem;
+  font-size: rfs(1rem);
   font-weight: 400;
   line-height: 1.5;
 }
