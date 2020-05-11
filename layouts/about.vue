@@ -10,6 +10,7 @@
 import Header from '../components/UI/Header';
 import Footer from '../components/UI/Footer';
 export default {
+  layoutTransition: 'layout',
   components: {
     Header,
     Footer,

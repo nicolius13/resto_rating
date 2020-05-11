@@ -22,6 +22,8 @@ import GoogleMapsApiLoader from 'google-maps-api-loader';
 import { v4 as uuidV4 } from 'uuid';
 
 export default {
+  layout: 'default',
+  transition: 'page',
   data() {
     return {
       apiKey: process.env.GOOGLE_MAPS_API_KEY,

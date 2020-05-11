@@ -32,6 +32,7 @@ import AddRestoModal from '../components/addResto/AddRestoModal';
 import Maps from '../components/maps/Maps';
 export default {
   layout: 'maps',
+  transition: 'page',
   components: {
     Maps,
     AddRestoModal,

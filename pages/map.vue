@@ -24,6 +24,7 @@ import RestoList from '../components/restoList/RestoList';
 
 export default {
   layout: 'maps',
+  transition: 'page',
   components: {
     Maps,
     RestoList,
