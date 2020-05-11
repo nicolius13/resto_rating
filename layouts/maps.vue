@@ -8,6 +8,7 @@
 <script>
 import Header from '../components/UI/Header';
 export default {
+  layoutTransition: 'layout',
   components: {
     Header,
   },

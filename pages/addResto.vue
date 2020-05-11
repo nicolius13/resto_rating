@@ -6,7 +6,7 @@
       </b-row>
       <b-row>
         <b-col>
-          <h4 class="text-center">
+          <h4 class="text-center instruction">
             To add a restaurant right click on the map where you want to add it
           </h4>
         </b-col>
@@ -32,6 +32,7 @@ import AddRestoModal from '../components/addResto/AddRestoModal';
 import Maps from '../components/maps/Maps';
 export default {
   layout: 'maps',
+  transition: 'page',
   components: {
     Maps,
     AddRestoModal,
@@ -94,13 +95,14 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .pageTitle {
+  font-size: rfs(3rem);
   margin-top: 1.5rem;
   margin-bottom: 0;
-  /* color: #ff2e63; */
 }
-h4 {
+.instruction {
+  font-size: rfs(1.5rem);
   color: #ff2e63;
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;

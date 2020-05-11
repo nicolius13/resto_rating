@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header />
-    <nuxt class="mainApp" />
+    <nuxt class="main" />
     <Footer />
   </div>
 </template>
@@ -10,6 +10,7 @@
 import Header from '../components/UI/Header';
 import Footer from '../components/UI/Footer';
 export default {
+  layoutTransition: 'layout',
   components: {
     Header,
     Footer,
@@ -19,7 +20,7 @@ export default {
 
 <style scoped>
 /* heigth the screen - header and footer */
-.mainApp {
+.main {
   height: Calc(100vh - 76px - 70px);
 }
 </style>
