@@ -57,6 +57,17 @@ export default {
     '@nuxtjs/axios',
     'bootstrap-vue/nuxt',
     '@nuxtjs/dotenv',
+    [
+      'nuxt-fontawesome',
+      {
+        imports: [
+          {
+            set: '@fortawesome/free-brands-svg-icons',
+            icons: ['faGithubAlt', 'faLinkedinIn', 'faFacebookF'],
+          },
+        ],
+      },
+    ],
   ],
   /*
    ** bootstrapVue module configuration
@@ -75,6 +86,12 @@ export default {
    ** Build configuration
    */
   build: {
+    postcss: {
+      plugins: {
+        rfs: {},
+      },
+    },
+
     /*
      ** You can extend webpack config here
      */

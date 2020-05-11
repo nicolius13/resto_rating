@@ -25,7 +25,7 @@ export default {
         lat: 17.395192,
         lng: 104.804329,
       },
-      restoIcon: require('@/assets/img/resto-icon.png'),
+      restoIcon: require('@/assets/img/mapIcons/resto-icon.png'),
     };
   },
   computed: {
@@ -133,9 +133,8 @@ export default {
       controlUI.id = 'searchAreaControl';
       controlUI.style.display = 'flex';
       controlUI.style.alignItems = 'center';
-      controlUI.style.padding = '0 0.4rem';
+      controlUI.style.padding = '0 17px';
       controlUI.style.backgroundColor = '#fff';
-      controlUI.style.border = '2px solid #fff';
       controlUI.style.borderRadius = '0.25rem';
       controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
       controlUI.style.cursor = 'pointer';
@@ -147,7 +146,7 @@ export default {
       // Set CSS for the control interior.
       // icon
       const controlIcon = document.createElement('div');
-      const icon = require('@/assets/img/searchR.png');
+      const icon = require('@/assets/img/mapIcons/search.png');
       controlIcon.style.backgroundImage = `url(${icon})`;
       controlIcon.style.backgroundSize = '18px 18px';
       controlIcon.style.width = '18px';
@@ -156,13 +155,21 @@ export default {
 
       // text
       const controlText = document.createElement('div');
-      controlText.style.color = 'rgb(25,25,25)';
+      controlText.style.color = 'rgb(86, 86, 86)';
       controlText.style.fontSize = '16px';
-      controlText.style.lineHeight = '38px';
+      controlText.style.lineHeight = '40px';
       controlText.style.paddingLeft = '5px';
       controlText.style.paddingRight = '5px';
       controlText.innerHTML = 'Search this area';
       controlUI.appendChild(controlText);
+
+      // Hover events
+      controlUI.addEventListener('mouseenter', () => {
+        controlText.style.color = 'rgb(0, 0, 0)';
+      });
+      controlUI.addEventListener('mouseleave', () => {
+        controlText.style.color = 'rgb(86, 86, 86)';
+      });
 
       // Click event
       controlUI.addEventListener('click', () => {
@@ -235,12 +242,16 @@ export default {
     reCenterMap() {
       this.map.setCenter(this.mapConfig.center);
       // create a marker in the center position
-      // eslint-disable-next-line no-new
-      new this.google.maps.Marker({
+      const center = new this.google.maps.Marker({
         map: this.map,
         id: 'you_here',
         position: this.mapConfig.center,
-        icon: require('@/assets/img/here.png'),
+        icon: require('@/assets/img/mapIcons/here.png'),
+      });
+      // recenter and zoom if clicked
+      center.addListener('click', () => {
+        this.map.setCenter(this.mapCenter);
+        this.map.setZoom(17);
       });
     },
 
