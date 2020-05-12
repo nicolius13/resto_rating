@@ -1,16 +1,26 @@
 /* GENERAL */
-
-h1 {
-  color: #08d9d6;
-  text-align: center;
-}
-
 body {
   min-height: 100vh;
   margin: 0;
   background-color: #1d1d1d;
   color: #fff;
   font-family: 'Montserrat', sans-serif;
+}
+body.light {
+  background-color: #fcfcfc;
+  color: #1d1d1d;
+}
+body.light.main {
+  background-color: #6d6d6d;
+}
+
+h1 {
+  color: #08d9d6;
+  text-align: center;
+  font-weight: 600;
+}
+.light h1 {
+  color: #ff8811;
 }
 
 /* PAGES TRANSITIONS */
@@ -57,12 +67,19 @@ body {
 .modal-header {
   border-bottom: 1px solid #292929;
 }
+.light .modal-header {
+  border-bottom: 1px solid #cecece;
+}
 .modal-footer {
   border-top: none;
 }
 .modal-content {
   background-color: #1d1d1d;
   color: #fff;
+}
+.light .modal-content {
+  background-color: #fcfcfc;
+  color: #1d1d1d;
 }
 /* close btn */
 .close {
@@ -89,6 +106,18 @@ body {
   background-color: #292929;
   color: #fff;
 }
+.light .textInput {
+  background-color: #e2e2e2;
+  border: 1px solid rgb(163, 163, 163);
+  color: #1d1d1d;
+}
+.light .textInput:focus {
+  box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.15);
+  border: 1px solid rgb(163, 163, 163);
+  background-color: #e2e2e2;
+  color: #1d1d1d;
+}
+
 /* Buttons */
 .cancelBtn {
   color: #838383;
@@ -97,6 +126,10 @@ body {
 .cancelBtn:hover {
   background-color: #292929;
   color: #fff;
+}
+.light .cancelBtn:hover {
+  background-color: #838383;
+  color: #e2e2e2;
 }
 
 .okBtn {

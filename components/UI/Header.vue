@@ -30,13 +30,20 @@
             <b-link class="nav-link deco" to="/about">About</b-link>
           </li>
         </b-navbar-nav>
+        <div class="themeBtn d-block d-sm-none">
+          <ThemeBtn />
+        </div>
       </b-collapse>
     </b-container>
   </b-navbar>
 </template>
 
 <script>
+import ThemeBtn from './ThemeBtn';
 export default {
+  components: {
+    ThemeBtn,
+  },
   data() {
     return {
       mobileOpen: false,
@@ -53,6 +60,9 @@ export default {
 <style scoped>
 #navBar {
   background-color: #222222;
+}
+.light #navBar {
+  background-color: #e2e2e2;
 }
 
 #logo {
@@ -74,7 +84,7 @@ export default {
 .navbar-nav .nav-link {
   color: #08d9d6;
   transition: all 0.3s ease-in-out;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1.3rem;
 }
 .navbar-nav .nav-link:hover,
 .navbar-nav .nav-link:focus {
@@ -84,6 +94,17 @@ export default {
 .navbar-nav .deco {
   text-decoration: none;
   position: relative;
+}
+
+.light .navbar-nav .nav-link {
+  color: #ff8811;
+  transition: all 0.3s ease-in-out;
+  padding: 0.5rem 1.3rem;
+}
+.light .navbar-nav .nav-link:hover,
+.light .navbar-nav .nav-link:focus {
+  color: #ff8811;
+  transition: all 0.3s ease-in-out;
 }
 
 .navbar-nav .deco::before {
@@ -103,6 +124,10 @@ export default {
 .nuxt-link-exact-active.deco::before {
   visibility: visible;
   transform: scaleX(1);
+}
+
+.themeBtn {
+  padding: 0.5rem 1.3rem;
 }
 
 /* MOBILE MENU BTN */

@@ -1,13 +1,22 @@
 <template>
   <b-container :style="{ '--bgImg': bgImg }" class="landing">
     <b-row>
-      <h1 class="findTitle">Find Restaurant</h1>
+      <h1 class="findTitle">Find Restaurants</h1>
     </b-row>
     <b-row class="searchBar justify-content-center">
       <b-input-group class="inputGroup">
-        <b-form-input id="autoInput" v-model="input" type="text" />
+        <b-form-input
+          id="autoInput"
+          v-model="input"
+          type="text"
+          placeholder="Where do you want to eat ?"
+        />
         <b-input-group-append>
-          <b-button @click="getGeoloc" class="geoloc"></b-button>
+          <b-button
+            @click="getGeoloc"
+            :class="geolocIcon"
+            class="geoloc"
+          ></b-button>
         </b-input-group-append>
       </b-input-group>
       <button @click="handleGoBtn" class="okBtn outlineBtn mainBtn">
@@ -41,6 +50,11 @@ export default {
       ],
       bgImg: '',
     };
+  },
+  computed: {
+    geolocIcon() {
+      return this.$store.state.restoMap.light ? 'light' : 'dark';
+    },
   },
   created() {
     // choose the background img
@@ -179,6 +193,9 @@ export default {
   position: absolute;
   z-index: -1;
 }
+.light .landing::after {
+  box-shadow: inset 0 0 10em 2em #e2e2e2;
+}
 
 /* autocomplete prediction */
 .pac-icon {
@@ -212,22 +229,39 @@ export default {
   font-size: rfs(1rem);
   font-weight: 400;
   line-height: 1.5;
+  border: none;
+}
+.light #autoInput {
+  background-color: #e2e2e2;
+  color: #1d1d1d;
 }
 #autoInput:focus {
   box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
 }
 
+.light .form-control::placeholder {
+  color: #5f5f5f;
+}
+
 /* Geoloc Btn */
 .geoloc {
   width: 50px;
+  border: none;
+}
+.geoloc.dark {
   background: url('../assets/img/geoloc.png'), #fff;
   background-position: center;
   background-repeat: no-repeat;
   background-size: 30px;
-  border: none;
 }
 .geoloc:focus {
   box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
+}
+.geoloc.light {
+  background: url('../assets/img/geoloc.png'), #e2e2e2;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 30px;
 }
 
 /* GO button */

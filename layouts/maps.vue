@@ -12,6 +12,14 @@ export default {
   components: {
     Header,
   },
+  // change the body class
+  head() {
+    return {
+      bodyAttrs: {
+        class: this.$store.state.restoMap.light ? 'light' : 'dark',
+      },
+    };
+  },
 };
 </script>
 

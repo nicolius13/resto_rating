@@ -149,19 +149,27 @@ export default {
   cursor: pointer;
 }
 
-.select {
-  color: #08d9d6;
-}
 .fill {
   color: #1d1d1d;
 }
+.select,
+.fullStar .fill,
 .colorFill {
-  color: #08d9d6;
-}
-.fullStar .fill {
   color: #08d9d6;
 }
 .fullStar .colorFill {
   color: #048684;
+}
+
+.light .fill {
+  color: #e2e2e2;
+}
+.light .select,
+.light .fullStar .fill,
+.light .colorFill {
+  color: #ff8811;
+}
+.light .fullStar .colorFill {
+  color: #d67615;
 }
 </style>

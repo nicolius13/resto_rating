@@ -23,7 +23,7 @@
     </b-container>
     <b-container fluid class="map_section">
       <b-row>
-        <b-img fluid-grow src="@/assets/img/backgrounds/wave.png" alt="" />
+        <b-img :src="waveImg" fluid-grow alt="" />
       </b-row>
       <b-container class="map_content">
         <b-row>
@@ -99,6 +99,13 @@ export default {
       });
     },
   },
+  computed: {
+    waveImg() {
+      return this.$store.state.restoMap.light
+        ? require('@/assets/img/backgrounds/waveB.png')
+        : require('@/assets/img/backgrounds/wave.png');
+    },
+  },
 };
 </script>
 
@@ -145,6 +152,9 @@ export default {
   background-color: #a74554;
   margin-top: 0;
 }
+.light .map_section {
+  color: #fff;
+}
 @media only screen and (min-width: 1200px) {
   .map_section {
     margin-top: -250px;
@@ -178,9 +188,15 @@ export default {
   color: #08d9d6;
   transition: all 0.2s ease-in-out;
 }
+.light .cities a:hover {
+  color: #ff8811;
+}
 
 .blue {
   color: #08d9d6;
   font-size: rfs(1.3rem);
+}
+.light .blue {
+  color: #ff8811;
 }
 </style>
