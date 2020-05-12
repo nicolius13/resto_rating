@@ -30,13 +30,20 @@
             <b-link class="nav-link deco" to="/about">About</b-link>
           </li>
         </b-navbar-nav>
+        <div class="themeBtn d-block d-sm-none">
+          <ThemeBtn />
+        </div>
       </b-collapse>
     </b-container>
   </b-navbar>
 </template>
 
 <script>
+import ThemeBtn from './ThemeBtn';
 export default {
+  components: {
+    ThemeBtn,
+  },
   data() {
     return {
       mobileOpen: false,
@@ -117,6 +124,10 @@ export default {
 .nuxt-link-exact-active.deco::before {
   visibility: visible;
   transform: scaleX(1);
+}
+
+.themeBtn {
+  padding: 0.5rem 1.3rem;
 }
 
 /* MOBILE MENU BTN */

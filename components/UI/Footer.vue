@@ -3,10 +3,7 @@
     <b-container fluid="md" class="footerRow">
       <b-row class="footerRow" align-v="center" align-h="center">
         <b-col cols="2" class="d-none d-sm-flex">
-          <button @click="toggleTheme" class="themeBtn">
-            <b-icon :icon="light ? 'sun' : 'moon'"></b-icon>
-            {{ light ? 'Light' : 'Dark' }}
-          </button>
+          <ThemeBtn />
         </b-col>
         <b-col>
           <p class="text-center credit">
@@ -43,21 +40,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
+import ThemeBtn from './ThemeBtn';
 export default {
-  data() {
-    return {};
-  },
-  computed: {
-    ...mapState({
-      light: state => state.restoMap.light,
-    }),
-  },
-  methods: {
-    toggleTheme() {
-      this.$store.commit('restoMap/toggleTheme');
-    },
+  components: {
+    ThemeBtn,
   },
 };
 </script>
@@ -79,28 +65,7 @@ p {
   margin: 0;
 }
 
-/* Theme Switch */
-
-.themeBtn {
-  background-color: #2c2c2c;
-  padding: 0.4rem 0.8rem;
-  border: none;
-  border-radius: 1rem;
-  color: rgb(200, 200, 200);
-}
-.light .themeBtn {
-  background-color: #f5f5f5;
-  color: #3d3d3d;
-}
-
-.credit {
-  font-size: rfs(1rem);
-  color: #525252;
-}
-.light .credit {
-  color: #8d8d8d;
-}
-
+/* Social links */
 .icons {
   font-size: rfs(1.5rem);
 }
