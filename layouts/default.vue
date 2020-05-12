@@ -1,8 +1,8 @@
 <template>
   <div class="back">
-    <Header />
-    <nuxt class="main" />
-    <Footer />
+    <Header @mobileMenu="mobileOpen = $event" />
+    <nuxt :style="mainHeight" />
+    <Footer class="footer" />
   </div>
 </template>
 
@@ -15,11 +15,26 @@ export default {
     Header,
     Footer,
   },
+  data() {
+    return {
+      mobileOpen: false,
+    };
+  },
+  computed: {
+    mainHeight() {
+      /* heigth the screen - header and footer */
+      if (this.mobileOpen) {
+        return 'height: Calc(100vh - 252px - 70px);';
+      } else {
+        return 'height: Calc(100vh - 76px - 70px);';
+      }
+    },
+  },
   // change the body class
   head() {
     return {
       bodyAttrs: {
-        class: this.$store.state.restoMap.light ? 'light main' : 'dark',
+        class: this.$store.state.restoMap.light ? 'light main' : 'dark main',
       },
     };
   },
@@ -27,8 +42,7 @@ export default {
 </script>
 
 <style scoped>
-/* heigth the screen - header and footer */
-.main {
-  height: Calc(100vh - 76px - 70px);
+.footer {
+  bottom: 0;
 }
 </style>

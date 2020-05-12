@@ -23,6 +23,13 @@
       :resto="resto"
       :places="places"
     />
+    <button
+      v-if="hasPage && displayedResto.length > 15"
+      @click="seeMoreResto"
+      class="okBtn outlineBtn"
+    >
+      See More
+    </button>
   </div>
 </template>
 
@@ -65,6 +72,7 @@ export default {
       filteredList: state => state.restoMap.filteredList,
       markersDisplayed: state => state.restoMap.markersDisplayed,
       ratingAverages: state => state.restoMap.ratingAverage,
+      hasPage: state => state.restoMap.searchResultHasPage,
     }),
   },
 
@@ -121,6 +129,10 @@ export default {
       // filter the restaurant list with the resto id put in the filteredAverages array
       this.$store.commit('restoMap/filteringList', filteredAverages);
     },
+
+    seeMoreResto() {
+      this.$store.commit('restoMap/toggleSeeMoreCliked');
+    },
   },
 };
 </script>
@@ -134,5 +146,10 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+}
+
+.okBtn {
+  display: flex;
+  margin: 0.8rem auto;
 }
 </style>

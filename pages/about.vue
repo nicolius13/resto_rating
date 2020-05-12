@@ -90,6 +90,13 @@
 export default {
   layout: 'about',
   transition: 'page',
+  computed: {
+    waveImg() {
+      return this.$store.state.restoMap.light
+        ? require('@/assets/img/backgrounds/waveB.png')
+        : require('@/assets/img/backgrounds/wave.png');
+    },
+  },
   methods: {
     toMap(location) {
       this.$store.commit('restoMap/setAutoComplLocation', location);
@@ -97,13 +104,6 @@ export default {
       this.$router.push({
         path: '/map',
       });
-    },
-  },
-  computed: {
-    waveImg() {
-      return this.$store.state.restoMap.light
-        ? require('@/assets/img/backgrounds/waveB.png')
-        : require('@/assets/img/backgrounds/wave.png');
     },
   },
 };

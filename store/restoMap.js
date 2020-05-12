@@ -10,6 +10,8 @@ export const state = () => ({
   selectedRestaurant: null,
   autoComplLocation: null,
   light: false,
+  searchResultHasPage: false,
+  seeMoreCliked: false,
 });
 
 export const mutations = {
@@ -19,6 +21,8 @@ export const mutations = {
     state.ratingAverage = [];
     state.markersDisplayed = [];
     state.filteringFinished = false;
+    state.searchResultHasPage = false;
+    state.seeMoreCliked = false;
   },
 
   setRestoList(state, list) {
@@ -65,6 +69,8 @@ export const mutations = {
     state.filteringFinished = true;
   },
   filteringList(state, filteredAverages) {
+    state.filteringFinished = false;
+
     // filter the restaurant list with the resto id put in the filteredAverages array
     state.filteredList = state.restoList.filter((resto, i) => {
       if (i === filteredAverages.length - 1) {
@@ -72,6 +78,9 @@ export const mutations = {
       }
       return filteredAverages.includes(resto.id);
     });
+  },
+  resetFilteringFinished(state) {
+    state.filteringFinished = false;
   },
 
   setSelectedRestaurant(state, resto) {
@@ -116,6 +125,14 @@ export const mutations = {
   addRestaurant(state, resto) {
     state.restoList.push(resto);
     state.AddedRestaurants.push(resto);
+  },
+
+  setSearchResultHasPage(state, hasPage) {
+    state.searchResultHasPage = hasPage;
+  },
+
+  toggleSeeMoreCliked(state) {
+    state.seeMoreCliked = !state.seeMoreCliked;
   },
 
   // AUTOCOMPLETE
