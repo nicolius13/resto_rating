@@ -17,9 +17,7 @@ export default {
       },
       { hid: 'description', name: 'description', content: pkg.description },
     ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '@/assets/img/logo.png' },
-    ],
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     link: [
       {
         rel: 'stylesheet',
