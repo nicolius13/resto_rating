@@ -104,7 +104,7 @@ export default {
 }
 .light .navbar-nav .nav-link:hover,
 .light .navbar-nav .nav-link:focus {
-  color: #ff8811;
+  color: #ca6e11;
   transition: all 0.3s ease-in-out;
 }
 
@@ -164,6 +164,12 @@ export default {
 }
 .burgerBtn:hover span {
   background: #09a5a2;
+}
+.light .burgerBtn span {
+  background: #ff8811;
+}
+.light .burgerBtn:hover span {
+  background: #ca6e11;
 }
 
 .burgerBtn span:nth-child(1) {
