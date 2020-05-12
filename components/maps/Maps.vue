@@ -1,5 +1,7 @@
 <template>
-  <div id="google-map" ref="googleMap"></div>
+  <div id="google-map" ref="googleMap">
+    <FailModal :geolocError="geolocError" />
+  </div>
 </template>
 
 <script>
@@ -10,7 +12,12 @@ import GoogleMapsApiLoader from 'google-maps-api-loader';
 // map settings
 import mapSettings from '@/assets/mapSettings/mapSettings.json';
 
+import FailModal from '../UI/FailModal';
+
 export default {
+  components: {
+    FailModal,
+  },
   data() {
     return {
       apiKey: process.env.GOOGLE_MAPS_API_KEY,
@@ -26,6 +33,7 @@ export default {
         lng: 104.804329,
       },
       restoIcon: require('@/assets/img/mapIcons/resto-icon.png'),
+      geolocError: {},
     };
   },
   computed: {
@@ -221,13 +229,21 @@ export default {
         this.searchPlace();
       }
     },
-    // throw an alert if the geoloc is refuse or not supported
+    // open a modal if the geoloc is refuse or not supported
     handleLocationError(browserHasGeoloc) {
-      alert(
-        browserHasGeoloc
-          ? 'Error: The Geolocation service failed.'
-          : "Error: Your browser doesn't support geolocation."
-      );
+      if (browserHasGeoloc) {
+        this.geolocError = {
+          title: 'Geolocation fail',
+          error: 'The Geolocation service failed.',
+        };
+        this.$bvModal.show('geolocFailModal');
+      } else {
+        this.geolocError = {
+          title: 'Geolocation fail',
+          error: "Your browser doesn't support geolocation.",
+        };
+        this.$bvModal.show('geolocFailModal');
+      }
     },
     searchPlace(center = this.mapCenter) {
       this.places.nearbySearch(

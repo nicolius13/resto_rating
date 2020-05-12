@@ -23,6 +23,7 @@
         GO
       </button>
     </b-row>
+    <FailModal :geolocError="geolocError" />
   </b-container>
 </template>
 
@@ -30,9 +31,13 @@
 import GoogleMapsApiLoader from 'google-maps-api-loader';
 import { v4 as uuidV4 } from 'uuid';
 
+import FailModal from '../components/UI/FailModal';
+
 export default {
-  layout: 'default',
   transition: 'page',
+  components: {
+    FailModal,
+  },
   data() {
     return {
       apiKey: process.env.GOOGLE_MAPS_API_KEY,
@@ -43,6 +48,7 @@ export default {
       locationSelected: null,
       geocoder: null,
       geoloc: null,
+      geolocError: { title: '', error: '' },
       backImgArray: [
         require('@/assets/img/backgrounds/asian-d.jpg'),
         require('@/assets/img/backgrounds/resto-d.jpg'),
@@ -138,13 +144,21 @@ export default {
         this.handleLocationError(false);
       }
     },
-    // throw an alert if the geoloc is refuse or not supported
+    // open a modal if the geoloc is refuse or not supported
     handleLocationError(browserHasGeoloc) {
-      alert(
-        browserHasGeoloc
-          ? 'Error: The Geolocation service failed.'
-          : "Error: Your browser doesn't support geolocation."
-      );
+      if (browserHasGeoloc) {
+        this.geolocError = {
+          title: 'Geolocation fail',
+          error: 'The Geolocation service failed.',
+        };
+        this.$bvModal.show('geolocFailModal');
+      } else {
+        this.geolocError = {
+          title: 'Geolocation fail',
+          error: "Your browser doesn't support geolocation.",
+        };
+        this.$bvModal.show('geolocFailModal');
+      }
     },
     // geocoding
     initGeocoding() {
@@ -161,10 +175,18 @@ export default {
           if (res[0]) {
             this.input = res[0].formatted_address;
           } else {
-            window.alert('No results found');
+            this.geolocError = {
+              title: 'Geocoder fail',
+              error: 'No results found.',
+            };
+            this.$bvModal.show('geolocFailModal');
           }
         } else {
-          window.alert('Geocoder failed due to: ' + status);
+          this.geolocError = {
+            title: 'Geocoder fail',
+            error: 'Geocoder failed due to: ' + status,
+          };
+          this.$bvModal.show('geolocFailModal');
         }
       });
     },
