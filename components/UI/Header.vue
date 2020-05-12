@@ -52,6 +52,7 @@ export default {
   methods: {
     mobileBtn() {
       this.mobileOpen = !this.mobileOpen;
+      this.$emit('mobileMenu', this.mobileOpen);
     },
   },
 };
@@ -119,13 +120,13 @@ export default {
   transform: scaleX(0);
   transition: all 0.3s ease-in-out 0s;
 }
-
 .navbar-nav .deco:hover::before,
 .nuxt-link-exact-active.deco::before {
   visibility: visible;
   transform: scaleX(1);
 }
 
+/* Theme btn */
 .themeBtn {
   padding: 0.5rem 1.3rem;
 }
@@ -181,7 +182,7 @@ export default {
 }
 .burgerBtn.open span:nth-child(2) {
   opacity: 0;
-  left: 60px;
+  left: 28px;
 }
 .burgerBtn.open span:nth-child(3) {
   top: 11px;
