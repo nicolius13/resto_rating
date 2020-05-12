@@ -190,7 +190,7 @@ export default {
       // Click event
       controlUI.addEventListener('click', () => {
         vue.$store.commit('restoMap/resetAll');
-        vue.searchPlace(vue.map.getCenter());
+        vue.searchPlace(vue.map.getCenter(), true);
         controlUI.style.display = 'none';
       });
     },
@@ -245,7 +245,7 @@ export default {
         this.$bvModal.show('geolocFailModal');
       }
     },
-    searchPlace(center = this.mapCenter) {
+    searchPlace(center = this.mapCenter, needHandleMarker = false) {
       this.places.nearbySearch(
         {
           location: center,
@@ -257,7 +257,10 @@ export default {
             this.$store.commit('restoMap/setRestoList', res);
             this.$emit('restoImported');
             this.initMarkers();
-            this.handleMapIdle();
+            // handle Markers only if needed (when search this zone btn is clicked)
+            if (needHandleMarker) {
+              this.handleMapIdle();
+            }
           }
         }
       );
