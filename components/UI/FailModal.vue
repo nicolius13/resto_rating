@@ -1,9 +1,9 @@
 <template>
-  <b-modal id="geolocFailModal" centered>
+  <b-modal id="geolocFailModal" class="colorTransition" centered>
     <template v-slot:modal-title>
-      <h3 class="modalTitle">{{ geolocError.title }}</h3>
+      <h3 class="modalTitle colorTransition">{{ geolocError.title }}</h3>
     </template>
-    <p class="text-center">{{ geolocError.error }}</p>
+    <p class="text-center colorTransition">{{ geolocError.error }}</p>
     <template v-slot:modal-footer="{ ok }">
       <button @click="ok()" class="okBtn outlineBtn float-right">Ok</button>
     </template>

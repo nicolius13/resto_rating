@@ -1,5 +1,5 @@
 <template>
-  <button @click="toggleTheme" class="themeBtn">
+  <button @click="toggleTheme" class="themeBtn colorTransition">
     <b-icon :icon="light ? 'sun' : 'moon'"></b-icon>
     {{ light ? 'Light' : 'Dark' }}
   </button>

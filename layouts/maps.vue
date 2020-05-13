@@ -16,7 +16,9 @@ export default {
   head() {
     return {
       bodyAttrs: {
-        class: this.$store.state.restoMap.light ? 'light' : 'dark',
+        class: this.$store.state.restoMap.light
+          ? 'light colorTransition'
+          : 'dark colorTransition',
       },
     };
   },

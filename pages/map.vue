@@ -5,7 +5,11 @@
         <b-col cols="12" md="8" class="mapCol">
           <Maps @googleMap="googleInit" @markers="markers = $event" />
         </b-col>
-        <RestoList id="list" :places="places" class=" col-12 col-md-4 mapCol" />
+        <RestoList
+          id="list"
+          :places="places"
+          class="colorTransition col-12 col-md-4 mapCol"
+        />
       </b-row>
     </b-container>
     <transition name="fade">

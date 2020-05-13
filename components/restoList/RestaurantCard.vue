@@ -1,5 +1,5 @@
 <template>
-  <b-card :id="'resto-' + resto.id">
+  <b-card :id="'resto-' + resto.id" class="colorTransition">
     <b-card-title
       @click="handleOpening"
       :class="selectedRestaurant === resto.id ? '' : 'collapsed'"
@@ -8,7 +8,7 @@
     >
     <b-card-text>
       {{ averageRating }}
-      <span class="stars mainStar">
+      <span class="stars mainStar colorTransition">
         <b-icon :icon="starsAverage[0]"></b-icon>
         <b-icon :icon="starsAverage[1]"></b-icon>
         <b-icon :icon="starsAverage[2]"></b-icon>
@@ -57,7 +57,10 @@
         >
           See more Comments
         </button>
-        <button v-b-modal="'modal-' + resto.id" class="outlineBtn seeMoreBtn ">
+        <button
+          v-b-modal="'modal-' + resto.id"
+          class="outlineBtn seeMoreBtn colorTransition"
+        >
           Add Comment
         </button>
       </b-row>

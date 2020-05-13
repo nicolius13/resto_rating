@@ -10,7 +10,7 @@
       <b-iconstack>
         <b-icon
           :class="isHovered[0] ? 'colorFill' : ''"
-          class="fill"
+          class="fill colorTransition"
           stacked
           icon="star-fill"
           scale="0.8"
@@ -29,7 +29,7 @@
       <b-iconstack>
         <b-icon
           :class="isHovered[1] ? 'colorFill' : ''"
-          class="fill"
+          class="fill colorTransition"
           stacked
           icon="star-fill"
           scale="0.8"
@@ -48,7 +48,7 @@
       <b-iconstack>
         <b-icon
           :class="isHovered[2] ? 'colorFill' : ''"
-          class="fill"
+          class="fill colorTransition"
           stacked
           icon="star-fill"
           scale="0.8"
@@ -67,7 +67,7 @@
       <b-iconstack>
         <b-icon
           :class="isHovered[3] ? 'colorFill' : ''"
-          class="fill"
+          class="fill colorTransition"
           stacked
           icon="star-fill"
           scale="0.8"
@@ -86,7 +86,7 @@
       <b-iconstack>
         <b-icon
           :class="isHovered[4] ? 'colorFill' : ''"
-          class="fill"
+          class="fill colorTransition"
           stacked
           icon="star-fill"
           scale="0.8"

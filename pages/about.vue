@@ -23,7 +23,22 @@
     </b-container>
     <b-container fluid class="map_section">
       <b-row>
-        <b-img :src="waveImg" fluid-grow alt="" />
+        <transition-group name="imgFade">
+          <b-img
+            key="dark"
+            v-if="!$store.state.restoMap.light"
+            src="@/assets/img/backgrounds/wave.png"
+            fluid-grow
+            alt="wave"
+          />
+          <b-img
+            key="light"
+            v-else
+            src="@/assets/img/backgrounds/waveB.png"
+            fluid-grow
+            alt="wave"
+          />
+        </transition-group>
       </b-row>
       <b-container class="map_content">
         <b-row>
@@ -69,13 +84,13 @@
 
         <b-row class="cities mx-auto">
           <b-col class="text-right">
-            <p class="blue">Even:</p>
+            <p class="blue colorTransition">Even:</p>
           </b-col>
           <b-col class="text-left">
             <a @click="toMap({ lat: 17.395094, lng: 104.804415 })">Thakhek</a>
           </b-col>
           <b-col class="text-right">
-            <p class="blue">Or:</p>
+            <p class="blue colorTransition">Or:</p>
           </b-col>
           <b-col class="text-left">
             <a @click="toMap({ lat: 46.644531, lng: 1.560187 })">Tendu</a>
@@ -144,6 +159,19 @@ export default {
 
 /* MAP SECTION */
 
+/* wave img */
+
+.imgFade-enter-active,
+.imgFade-leave-active {
+  transition: all 0.4s ease-in-out;
+}
+.imgFade-leave-active {
+  position: absolute;
+}
+.imgFade-enter {
+  opacity: 0;
+}
+
 .map_section {
   background: url('../assets/img/backgrounds/world.svg');
   background-position: top center;
@@ -151,8 +179,6 @@ export default {
   background-repeat: no-repeat;
   background-color: #a74554;
   margin-top: 0;
-}
-.light .map_section {
   color: #fff;
 }
 @media only screen and (min-width: 1200px) {

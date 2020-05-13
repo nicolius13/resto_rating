@@ -1,13 +1,14 @@
 <template>
-  <b-container :style="{ '--bgImg': bgImg }" class="landing">
+  <b-container :style="{ '--bgImg': bgImg }" class="landing colorTransition">
     <b-row>
-      <h1 class="findTitle">Find Restaurants</h1>
+      <h1 class="findTitle colorTransition">Find Restaurants</h1>
     </b-row>
     <b-row class="searchBar justify-content-center">
-      <b-input-group class="inputGroup">
+      <b-input-group class="inputGroup colorTransition">
         <b-form-input
           id="autoInput"
           v-model="input"
+          class="colorTransition"
           type="text"
           placeholder="Where do you want to eat ?"
         />
@@ -15,7 +16,7 @@
           <b-button
             @click="getGeoloc"
             :class="geolocIcon"
-            class="geoloc"
+            class="geoloc colorTransition"
           ></b-button>
         </b-input-group-append>
       </b-input-group>

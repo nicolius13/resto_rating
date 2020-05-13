@@ -1,5 +1,5 @@
 <template>
-  <b-navbar id="navBar" type="muted" toggleable="md">
+  <b-navbar id="navBar" class="colorTransition" type="muted" toggleable="md">
     <b-container>
       <b-navbar-brand id="logo" to="/">
         <img src="@/assets/img/logo.png" alt="logo" />

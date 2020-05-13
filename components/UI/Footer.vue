@@ -1,5 +1,5 @@
 <template>
-  <div id="footer">
+  <div id="footer" class="colorTransition">
     <b-container fluid="md" class="footerRow">
       <b-row class="footerRow" align-v="center" align-h="center">
         <b-col cols="2" class="d-none d-sm-flex">
