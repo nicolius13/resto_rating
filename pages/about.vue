@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container>
+    <b-container class="colorTransition">
       <b-row class="flex-nowrap no-gutters pt-5">
         <b-col cols="1" sm="2" class="text-right">
           <img class="logo" src="@/assets/img/logo.png" alt="logo" />
@@ -23,22 +23,18 @@
     </b-container>
     <b-container fluid class="map_section">
       <b-row>
-        <transition-group name="imgFade">
-          <b-img
-            key="dark"
-            v-if="!$store.state.restoMap.light"
-            src="@/assets/img/backgrounds/wave.png"
-            fluid-grow
-            alt="wave"
-          />
-          <b-img
-            key="light"
-            v-else
-            src="@/assets/img/backgrounds/waveB.png"
-            fluid-grow
-            alt="wave"
-          />
-        </transition-group>
+        <b-img
+          :class="!light ? '' : 'transparent'"
+          src="@/assets/img/backgrounds/wave.png"
+          fluid-grow
+          alt="wave"
+        />
+        <b-img
+          :class="!light ? 'transparent' : ''"
+          src="@/assets/img/backgrounds/waveB.png"
+          fluid-grow
+          alt="wave"
+        />
       </b-row>
       <b-container class="map_content">
         <b-row>
@@ -102,15 +98,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   layout: 'about',
   transition: 'page',
   computed: {
-    waveImg() {
-      return this.$store.state.restoMap.light
-        ? require('@/assets/img/backgrounds/waveB.png')
-        : require('@/assets/img/backgrounds/wave.png');
-    },
+    ...mapState({
+      light: state => state.restoMap.light,
+    }),
   },
   methods: {
     toMap(location) {
@@ -160,16 +155,10 @@ export default {
 /* MAP SECTION */
 
 /* wave img */
-
-.imgFade-enter-active,
-.imgFade-leave-active {
-  transition: all 0.4s ease-in-out;
-}
-.imgFade-leave-active {
-  position: absolute;
-}
-.imgFade-enter {
+.transparent {
+  transition: opacity 0.4s ease-in-out;
   opacity: 0;
+  position: absolute;
 }
 
 .map_section {

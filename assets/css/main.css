@@ -28,8 +28,8 @@ h1 {
 
 /* Theme transition */
 .colorTransition {
-  transition: 0.4s ease-in-out;
-  transition-property: color, background-color;
+  transition: all 0.4s ease-in-out;
+  /* transition-property: color, background-color; */
 }
 
 /* PAGES TRANSITIONS */
