@@ -1,6 +1,16 @@
 /* eslint-disable no-dupe-keys */
 import pkg from './package';
 
+// only add `router.base = '/resto_rating/'` if `DEPLOY_ENV` is `GH_PAGES`
+const routerBase =
+  process.env.DEPLOY_ENV === 'GH_PAGES'
+    ? {
+        router: {
+          base: '/resto_rating/',
+        },
+      }
+    : {};
+
 export default {
   mode: 'universal',
 
@@ -30,7 +40,7 @@ export default {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#fff' },
+  loading: { color: '#ff2e63' },
 
   /*
    ** Global CSS
@@ -43,6 +53,12 @@ export default {
   env: {
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
   },
+
+  /*
+   ** Router
+   */
+
+  ...routerBase,
 
   /*
    ** Plugins to load before mounting the App
