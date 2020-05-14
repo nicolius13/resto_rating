@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container>
+    <b-container class="colorTransition">
       <b-row class="flex-nowrap no-gutters pt-5">
         <b-col cols="1" sm="2" class="text-right">
           <img class="logo" src="@/assets/img/logo.png" alt="logo" />
@@ -23,7 +23,18 @@
     </b-container>
     <b-container fluid class="map_section">
       <b-row>
-        <b-img fluid-grow src="@/assets/img/backgrounds/wave.png" alt="" />
+        <b-img
+          :class="!light ? '' : 'transparent'"
+          src="@/assets/img/backgrounds/wave.png"
+          fluid-grow
+          alt="wave"
+        />
+        <b-img
+          :class="!light ? 'transparent' : ''"
+          src="@/assets/img/backgrounds/waveB.png"
+          fluid-grow
+          alt="wave"
+        />
       </b-row>
       <b-container class="map_content">
         <b-row>
@@ -69,13 +80,13 @@
 
         <b-row class="cities mx-auto">
           <b-col class="text-right">
-            <p class="blue">Even:</p>
+            <p class="blue colorTransition">Even:</p>
           </b-col>
           <b-col class="text-left">
             <a @click="toMap({ lat: 17.395094, lng: 104.804415 })">Thakhek</a>
           </b-col>
           <b-col class="text-right">
-            <p class="blue">Or:</p>
+            <p class="blue colorTransition">Or:</p>
           </b-col>
           <b-col class="text-left">
             <a @click="toMap({ lat: 46.644531, lng: 1.560187 })">Tendu</a>
@@ -87,9 +98,15 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   layout: 'about',
   transition: 'page',
+  computed: {
+    ...mapState({
+      light: state => state.restoMap.light,
+    }),
+  },
   methods: {
     toMap(location) {
       this.$store.commit('restoMap/setAutoComplLocation', location);
@@ -137,6 +154,13 @@ export default {
 
 /* MAP SECTION */
 
+/* wave img */
+.transparent {
+  transition: opacity 0.4s ease-in-out;
+  opacity: 0;
+  position: absolute;
+}
+
 .map_section {
   background: url('../assets/img/backgrounds/world.svg');
   background-position: top center;
@@ -144,6 +168,7 @@ export default {
   background-repeat: no-repeat;
   background-color: #a74554;
   margin-top: 0;
+  color: #fff;
 }
 @media only screen and (min-width: 1200px) {
   .map_section {
@@ -178,9 +203,15 @@ export default {
   color: #08d9d6;
   transition: all 0.2s ease-in-out;
 }
+.light .cities a:hover {
+  color: #ff8811;
+}
 
 .blue {
   color: #08d9d6;
   font-size: rfs(1.3rem);
+}
+.light .blue {
+  color: #ff8811;
 }
 </style>

@@ -1,8 +1,10 @@
 <template>
-  <div id="footer">
+  <div id="footer" class="colorTransition">
     <b-container fluid="md" class="footerRow">
       <b-row class="footerRow" align-v="center" align-h="center">
-        <b-col cols="2" class="d-none d-sm-flex"></b-col>
+        <b-col cols="2" class="d-none d-sm-flex">
+          <ThemeBtn />
+        </b-col>
         <b-col>
           <p class="text-center credit">
             designed and developed by Nicolas Vastrade
@@ -38,7 +40,12 @@
 </template>
 
 <script>
-export default {};
+import ThemeBtn from './ThemeBtn';
+export default {
+  components: {
+    ThemeBtn,
+  },
+};
 </script>
 
 <style lang="postcss" scoped>
@@ -48,6 +55,9 @@ export default {};
   background-color: #1d1d1d;
   position: absolute;
 }
+.light #footer {
+  background-color: #e2e2e2;
+}
 .footerRow {
   height: 100%;
 }
@@ -55,11 +65,7 @@ p {
   margin: 0;
 }
 
-.credit {
-  font-size: rfs(1rem);
-  color: #525252;
-}
-
+/* Social links */
 .icons {
   font-size: rfs(1.5rem);
 }
@@ -67,6 +73,9 @@ p {
   color: #fff;
   transition: all 0.2s ease-in-out;
   margin: 0 0.5rem;
+}
+.light .socialIcon {
+  color: rgb(34, 34, 34);
 }
 .socialIcon:hover {
   color: #ff2e63;

@@ -5,10 +5,11 @@
     @show="resetModal"
     @hidden="resetModal"
     :oncontextmenu="show ? 'return true;' : 'return false;'"
+    class="colorTransition"
     centered
   >
     <template v-slot:modal-title>
-      <h3 class="modalTitle">Add a Restaurant</h3>
+      <h3 class="modalTitle colorTransition">Add a Restaurant</h3>
     </template>
     <!-- form -->
     <b-form
@@ -26,7 +27,7 @@
           id="name-input"
           v-model="name"
           :state="nameState"
-          class="textInput"
+          class="textInput colorTransition"
           required
         ></b-form-input>
       </b-form-group>

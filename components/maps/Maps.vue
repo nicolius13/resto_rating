@@ -1,5 +1,7 @@
 <template>
-  <div id="google-map" ref="googleMap"></div>
+  <div id="google-map" ref="googleMap">
+    <FailModal :geolocError="geolocError" />
+  </div>
 </template>
 
 <script>
@@ -10,7 +12,12 @@ import GoogleMapsApiLoader from 'google-maps-api-loader';
 // map settings
 import mapSettings from '@/assets/mapSettings/mapSettings.json';
 
+import FailModal from '../UI/FailModal';
+
 export default {
+  components: {
+    FailModal,
+  },
   data() {
     return {
       apiKey: process.env.GOOGLE_MAPS_API_KEY,
@@ -26,14 +33,23 @@ export default {
         lng: 104.804329,
       },
       restoIcon: require('@/assets/img/mapIcons/resto-icon.png'),
+      geolocError: {},
+      pagination: null,
     };
   },
   computed: {
     mapConfig() {
-      return {
-        ...this.mapSettings,
-        center: this.mapCenter,
-      };
+      if (this.light) {
+        return {
+          ...this.mapSettings.light,
+          center: this.mapCenter,
+        };
+      } else {
+        return {
+          ...this.mapSettings.dark,
+          center: this.mapCenter,
+        };
+      }
     },
     ...mapState({
       restoList: state => state.restoMap.filteredList,
@@ -42,6 +58,8 @@ export default {
       AddedRestaurants: state => state.restoMap.AddedRestaurants,
       filteringFinished: state => state.restoMap.filteringFinished,
       autoComplLocation: state => state.restoMap.autoComplLocation,
+      light: state => state.restoMap.light,
+      seeMoreCliked: state => state.restoMap.seeMoreCliked,
     }),
   },
   watch: {
@@ -52,6 +70,7 @@ export default {
     filteringFinished() {
       if (this.filteringFinished && this.map) {
         this.handleMapIdle();
+        this.$store.commit('restoMap/resetFilteringFinished');
       }
     },
     // watch modification of the map center and re center it
@@ -63,6 +82,12 @@ export default {
     'mapConfig.center.lng'() {
       if (this.map) {
         this.reCenterMap();
+      }
+    },
+    seeMoreCliked() {
+      if (this.seeMoreCliked) {
+        this.pagination.nextPage();
+        this.handleMapIdle();
       }
     },
   },
@@ -102,7 +127,7 @@ export default {
       });
 
       // Event listener
-      // create the 'search this area' btn when the user finish to drag the map
+      // create the 'search this area' btn when the user finish to drag the map for the first time
       this.google.maps.event.addListenerOnce(this.map, 'dragend', () => {
         const searchThisAreaDiv = document.createElement('div');
         const mapControl = new this.MapControl(searchThisAreaDiv, this);
@@ -111,10 +136,13 @@ export default {
           searchThisAreaDiv
         );
       });
-
+      // show the search this area' btn when the user finish to drag the map
       this.google.maps.event.addListener(this.map, 'dragend', () => {
         const searchAreaControl = document.getElementById('searchAreaControl');
-        searchAreaControl.style.display = 'flex';
+        // wait a little to prevent the user to search again while another search is on the way
+        setTimeout(() => {
+          searchAreaControl.style.display = 'flex';
+        }, 500);
       });
 
       // wait that the map is loaded
@@ -173,8 +201,13 @@ export default {
 
       // Click event
       controlUI.addEventListener('click', () => {
+        // clear all the marker and cluster
+        vue.removeMarkers();
+        // reset the store
         vue.$store.commit('restoMap/resetAll');
+        // search again
         vue.searchPlace(vue.map.getCenter());
+        // hide the btn
         controlUI.style.display = 'none';
       });
     },
@@ -213,27 +246,43 @@ export default {
         this.searchPlace();
       }
     },
-    // throw an alert if the geoloc is refuse or not supported
+    // open a modal if the geoloc is refuse or not supported
     handleLocationError(browserHasGeoloc) {
-      alert(
-        browserHasGeoloc
-          ? 'Error: The Geolocation service failed.'
-          : "Error: Your browser doesn't support geolocation."
-      );
+      if (browserHasGeoloc) {
+        this.geolocError = {
+          title: 'Geolocation fail',
+          error: 'The Geolocation service failed.',
+        };
+        this.$bvModal.show('geolocFailModal');
+      } else {
+        this.geolocError = {
+          title: 'Geolocation fail',
+          error: "Your browser doesn't support geolocation.",
+        };
+        this.$bvModal.show('geolocFailModal');
+      }
     },
     searchPlace(center = this.mapCenter) {
       this.places.nearbySearch(
         {
           location: center,
-          rankBy: this.google.maps.places.RankBy.DISTANCE,
+          radius: 1000,
           type: 'restaurant',
         },
-        (res, status) => {
+        (res, status, pagination) => {
           if (status === this.google.maps.places.PlacesServiceStatus.OK) {
             this.$store.commit('restoMap/setRestoList', res);
             this.$emit('restoImported');
-            this.initMarkers();
-            this.handleMapIdle();
+            this.initCluster();
+            // check if there is more result
+            if (pagination.hasNextPage) {
+              this.pagination = pagination;
+
+              this.$store.commit(
+                'restoMap/setSearchResultHasPage',
+                pagination.hasNextPage
+              );
+            }
           }
         }
       );
@@ -259,10 +308,23 @@ export default {
     //          MARKERS
     // ///////////////////////
 
-    initMarkers() {
+    removeMarkers() {
+      // from the map
+      this.markers.forEach(marker => {
+        marker.setMap(null);
+      });
+      this.markers = [];
+      // from the cluster
+      if (this.markerCluster) {
+        this.markerCluster.clearMarkers();
+      }
+    },
+
+    initCluster() {
       // build an empty markers cluster
       this.markerCluster = new MarkerClusterer(this.map, [], {
-        maxZoom: 12,
+        maxZoom: 14,
+        ignoreHidden: true,
         clusterClass: 'custom-clustericon',
         styles: [
           {
@@ -365,7 +427,7 @@ export default {
             // put the marker into the marker cluster
             this.markerCluster.addMarker(marker);
           }
-        }, i * 100);
+        }, i * 50);
       });
       // emit the markers array to be accesible by the parents components
       this.$emit('markers', this.markers);

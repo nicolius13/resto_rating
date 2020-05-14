@@ -1,5 +1,5 @@
 <template>
-  <b-navbar id="navBar" type="muted" toggleable="md">
+  <b-navbar id="navBar" class="colorTransition" type="muted" toggleable="md">
     <b-container>
       <b-navbar-brand id="logo" to="/">
         <img src="@/assets/img/logo.png" alt="logo" />
@@ -30,13 +30,20 @@
             <b-link class="nav-link deco" to="/about">About</b-link>
           </li>
         </b-navbar-nav>
+        <div class="themeBtn d-block d-sm-none">
+          <ThemeBtn />
+        </div>
       </b-collapse>
     </b-container>
   </b-navbar>
 </template>
 
 <script>
+import ThemeBtn from './ThemeBtn';
 export default {
+  components: {
+    ThemeBtn,
+  },
   data() {
     return {
       mobileOpen: false,
@@ -45,6 +52,7 @@ export default {
   methods: {
     mobileBtn() {
       this.mobileOpen = !this.mobileOpen;
+      this.$emit('mobileMenu', this.mobileOpen);
     },
   },
 };
@@ -53,6 +61,9 @@ export default {
 <style scoped>
 #navBar {
   background-color: #222222;
+}
+.light #navBar {
+  background-color: #e2e2e2;
 }
 
 #logo {
@@ -74,7 +85,7 @@ export default {
 .navbar-nav .nav-link {
   color: #08d9d6;
   transition: all 0.3s ease-in-out;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1.3rem;
 }
 .navbar-nav .nav-link:hover,
 .navbar-nav .nav-link:focus {
@@ -84,6 +95,17 @@ export default {
 .navbar-nav .deco {
   text-decoration: none;
   position: relative;
+}
+
+.light .navbar-nav .nav-link {
+  color: #ff8811;
+  transition: all 0.3s ease-in-out;
+  padding: 0.5rem 1.3rem;
+}
+.light .navbar-nav .nav-link:hover,
+.light .navbar-nav .nav-link:focus {
+  color: #ca6e11;
+  transition: all 0.3s ease-in-out;
 }
 
 .navbar-nav .deco::before {
@@ -98,11 +120,15 @@ export default {
   transform: scaleX(0);
   transition: all 0.3s ease-in-out 0s;
 }
-
 .navbar-nav .deco:hover::before,
 .nuxt-link-exact-active.deco::before {
   visibility: visible;
   transform: scaleX(1);
+}
+
+/* Theme btn */
+.themeBtn {
+  padding: 0.5rem 1.3rem;
 }
 
 /* MOBILE MENU BTN */
@@ -139,6 +165,12 @@ export default {
 .burgerBtn:hover span {
   background: #09a5a2;
 }
+.light .burgerBtn span {
+  background: #ff8811;
+}
+.light .burgerBtn:hover span {
+  background: #ca6e11;
+}
 
 .burgerBtn span:nth-child(1) {
   top: 0px;
@@ -156,7 +188,7 @@ export default {
 }
 .burgerBtn.open span:nth-child(2) {
   opacity: 0;
-  left: 60px;
+  left: 28px;
 }
 .burgerBtn.open span:nth-child(3) {
   top: 11px;

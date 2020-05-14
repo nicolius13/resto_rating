@@ -1,19 +1,30 @@
 <template>
-  <b-container :style="{ '--bgImg': bgImg }" class="landing">
+  <b-container :style="{ '--bgImg': bgImg }" class="landing colorTransition">
     <b-row>
-      <h1 class="findTitle">Find Restaurant</h1>
+      <h1 class="findTitle colorTransition">Find Restaurants</h1>
     </b-row>
     <b-row class="searchBar justify-content-center">
-      <b-input-group class="inputGroup">
-        <b-form-input id="autoInput" v-model="input" type="text" />
+      <b-input-group class="inputGroup colorTransition">
+        <b-form-input
+          id="autoInput"
+          v-model="input"
+          class="colorTransition"
+          type="text"
+          placeholder="Where do you want to eat ?"
+        />
         <b-input-group-append>
-          <b-button @click="getGeoloc" class="geoloc"></b-button>
+          <b-button
+            @click="getGeoloc"
+            :class="geolocIcon"
+            class="geoloc colorTransition"
+          ></b-button>
         </b-input-group-append>
       </b-input-group>
       <button @click="handleGoBtn" class="okBtn outlineBtn mainBtn">
         GO
       </button>
     </b-row>
+    <FailModal :geolocError="geolocError" />
   </b-container>
 </template>
 
@@ -21,9 +32,13 @@
 import GoogleMapsApiLoader from 'google-maps-api-loader';
 import { v4 as uuidV4 } from 'uuid';
 
+import FailModal from '../components/UI/FailModal';
+
 export default {
-  layout: 'default',
   transition: 'page',
+  components: {
+    FailModal,
+  },
   data() {
     return {
       apiKey: process.env.GOOGLE_MAPS_API_KEY,
@@ -34,6 +49,7 @@ export default {
       locationSelected: null,
       geocoder: null,
       geoloc: null,
+      geolocError: { title: '', error: '' },
       backImgArray: [
         require('@/assets/img/backgrounds/asian-d.jpg'),
         require('@/assets/img/backgrounds/resto-d.jpg'),
@@ -41,6 +57,11 @@ export default {
       ],
       bgImg: '',
     };
+  },
+  computed: {
+    geolocIcon() {
+      return this.$store.state.restoMap.light ? 'light' : 'dark';
+    },
   },
   created() {
     // choose the background img
@@ -124,13 +145,21 @@ export default {
         this.handleLocationError(false);
       }
     },
-    // throw an alert if the geoloc is refuse or not supported
+    // open a modal if the geoloc is refuse or not supported
     handleLocationError(browserHasGeoloc) {
-      alert(
-        browserHasGeoloc
-          ? 'Error: The Geolocation service failed.'
-          : "Error: Your browser doesn't support geolocation."
-      );
+      if (browserHasGeoloc) {
+        this.geolocError = {
+          title: 'Geolocation fail',
+          error: 'The Geolocation service failed.',
+        };
+        this.$bvModal.show('geolocFailModal');
+      } else {
+        this.geolocError = {
+          title: 'Geolocation fail',
+          error: "Your browser doesn't support geolocation.",
+        };
+        this.$bvModal.show('geolocFailModal');
+      }
     },
     // geocoding
     initGeocoding() {
@@ -147,10 +176,18 @@ export default {
           if (res[0]) {
             this.input = res[0].formatted_address;
           } else {
-            window.alert('No results found');
+            this.geolocError = {
+              title: 'Geocoder fail',
+              error: 'No results found.',
+            };
+            this.$bvModal.show('geolocFailModal');
           }
         } else {
-          window.alert('Geocoder failed due to: ' + status);
+          this.geolocError = {
+            title: 'Geocoder fail',
+            error: 'Geocoder failed due to: ' + status,
+          };
+          this.$bvModal.show('geolocFailModal');
         }
       });
     },
@@ -178,6 +215,9 @@ export default {
   right: 0;
   position: absolute;
   z-index: -1;
+}
+.light .landing::after {
+  box-shadow: inset 0 0 10em 2em #e2e2e2;
 }
 
 /* autocomplete prediction */
@@ -212,22 +252,39 @@ export default {
   font-size: rfs(1rem);
   font-weight: 400;
   line-height: 1.5;
+  border: none;
+}
+.light #autoInput {
+  background-color: #e2e2e2;
+  color: #1d1d1d;
 }
 #autoInput:focus {
   box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
 }
 
+.light .form-control::placeholder {
+  color: #5f5f5f;
+}
+
 /* Geoloc Btn */
 .geoloc {
   width: 50px;
+  border: none;
+}
+.geoloc.dark {
   background: url('../assets/img/geoloc.png'), #fff;
   background-position: center;
   background-repeat: no-repeat;
   background-size: 30px;
-  border: none;
 }
 .geoloc:focus {
   box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
+}
+.geoloc.light {
+  background: url('../assets/img/geoloc.png'), #e2e2e2;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 30px;
 }
 
 /* GO button */

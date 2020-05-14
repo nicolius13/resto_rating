@@ -1,5 +1,5 @@
 <template>
-  <b-card :id="'resto-' + resto.id">
+  <b-card :id="'resto-' + resto.id" class="colorTransition">
     <b-card-title
       @click="handleOpening"
       :class="selectedRestaurant === resto.id ? '' : 'collapsed'"
@@ -8,7 +8,7 @@
     >
     <b-card-text>
       {{ averageRating }}
-      <span class="stars mainStar">
+      <span class="stars mainStar colorTransition">
         <b-icon :icon="starsAverage[0]"></b-icon>
         <b-icon :icon="starsAverage[1]"></b-icon>
         <b-icon :icon="starsAverage[2]"></b-icon>
@@ -57,7 +57,10 @@
         >
           See more Comments
         </button>
-        <button v-b-modal="'modal-' + resto.id" class="outlineBtn seeMoreBtn ">
+        <button
+          v-b-modal="'modal-' + resto.id"
+          class="outlineBtn seeMoreBtn colorTransition"
+        >
           Add Comment
         </button>
       </b-row>
@@ -243,6 +246,9 @@ export default {
   background-color: #292929;
   margin: 0.75rem 0;
 }
+.light .card {
+  background-color: #eeeeee;
+}
 
 .card-title {
   text-align: center;
@@ -265,6 +271,9 @@ export default {
 .stars {
   color: #08d9d6;
   margin: 0 0.2rem;
+}
+.light .stars {
+  color: #ff8811;
 }
 .mainStar {
   font-size: 1rem;
@@ -302,6 +311,15 @@ export default {
 .seeMoreBtn:hover {
   background-color: #08d9d6;
   color: #000;
+}
+.light .seeMoreBtn {
+  font-size: 0.8rem;
+  color: #ff8811;
+  border: 1px solid #ff8811;
+}
+.light .seeMoreBtn:hover {
+  background-color: #ff8811;
+  color: #fff;
 }
 
 .addCommBtnBtn {

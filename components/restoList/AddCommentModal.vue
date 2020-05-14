@@ -4,11 +4,12 @@
     @ok="handleOk"
     @show="resetModal"
     @hidden="resetModal"
+    class="colorTransition"
     centered
   >
     <!-- title -->
     <template v-slot:modal-title>
-      <h3 class="modalTitle">Add a comment</h3>
+      <h3 class="modalTitle colorTransition">Add a comment</h3>
     </template>
     <!-- form -->
     <b-form @submit.stop.prevent="handleSubmit" class="d-block">

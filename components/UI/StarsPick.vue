@@ -10,7 +10,7 @@
       <b-iconstack>
         <b-icon
           :class="isHovered[0] ? 'colorFill' : ''"
-          class="fill"
+          class="fill colorTransition"
           stacked
           icon="star-fill"
           scale="0.8"
@@ -29,7 +29,7 @@
       <b-iconstack>
         <b-icon
           :class="isHovered[1] ? 'colorFill' : ''"
-          class="fill"
+          class="fill colorTransition"
           stacked
           icon="star-fill"
           scale="0.8"
@@ -48,7 +48,7 @@
       <b-iconstack>
         <b-icon
           :class="isHovered[2] ? 'colorFill' : ''"
-          class="fill"
+          class="fill colorTransition"
           stacked
           icon="star-fill"
           scale="0.8"
@@ -67,7 +67,7 @@
       <b-iconstack>
         <b-icon
           :class="isHovered[3] ? 'colorFill' : ''"
-          class="fill"
+          class="fill colorTransition"
           stacked
           icon="star-fill"
           scale="0.8"
@@ -86,7 +86,7 @@
       <b-iconstack>
         <b-icon
           :class="isHovered[4] ? 'colorFill' : ''"
-          class="fill"
+          class="fill colorTransition"
           stacked
           icon="star-fill"
           scale="0.8"
@@ -149,19 +149,27 @@ export default {
   cursor: pointer;
 }
 
-.select {
-  color: #08d9d6;
-}
 .fill {
   color: #1d1d1d;
 }
+.select,
+.fullStar .fill,
 .colorFill {
-  color: #08d9d6;
-}
-.fullStar .fill {
   color: #08d9d6;
 }
 .fullStar .colorFill {
   color: #048684;
+}
+
+.light .fill {
+  color: #e2e2e2;
+}
+.light .select,
+.light .fullStar .fill,
+.light .colorFill {
+  color: #ff8811;
+}
+.light .fullStar .colorFill {
+  color: #d67615;
 }
 </style>
