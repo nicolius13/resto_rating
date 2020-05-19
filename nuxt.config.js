@@ -1,12 +1,13 @@
-/* eslint-disable no-dupe-keys */
 import pkg from './package';
 
+// Router base
+const routerBase = '/resto_rating';
 // only add `router.base = '/resto_rating/'` if `DEPLOY_ENV` is `GH_PAGES`
-const routerBase =
+const addRouterBase =
   process.env.DEPLOY_ENV === 'GH_PAGES'
     ? {
         router: {
-          base: '/resto_rating/',
+          base: routerBase,
         },
       }
     : {};
@@ -18,7 +19,7 @@ export default {
    ** Headers of the page
    */
   head: {
-    title: pkg.name,
+    title: 'Resto Finder',
     meta: [
       { charset: 'utf-8' },
       {
@@ -27,8 +28,15 @@ export default {
       },
       { hid: 'description', name: 'description', content: pkg.description },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     link: [
+      {
+        rel: 'icon',
+        type: 'image/x-icon',
+        href:
+          process.env.DEPLOY_ENV === 'GH_PAGES'
+            ? `${routerBase}/favicon.ico`
+            : '/favicon.ico',
+      },
       {
         rel: 'stylesheet',
         href:
@@ -58,7 +66,7 @@ export default {
    ** Router
    */
 
-  ...routerBase,
+  ...addRouterBase,
 
   /*
    ** Plugins to load before mounting the App

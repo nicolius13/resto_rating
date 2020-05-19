@@ -12,6 +12,7 @@
         />
       </b-row>
     </b-container>
+    <!-- to top btn -->
     <transition name="fade">
       <button id="top" @click="backTopTop" v-show="toTop" href="#header">
         <b-icon-arrow-up font-scale="1.2"></b-icon-arrow-up>
@@ -51,7 +52,7 @@ export default {
     selectedRestaurant() {
       this.bounceMarker();
     },
-    markers(newVal) {
+    markers() {
       this.markers.forEach(marker => {
         this.google.maps.event.clearListeners(marker, 'click');
 
@@ -75,13 +76,14 @@ export default {
     // change the selected restaurant
     clickMarker(marker) {
       this.$store.commit('restoMap/setSelectedRestaurant', marker.id);
-      // scroll to the restaurant card
+      // Scroll
       const resto = document.getElementById('resto-' + marker.id);
       const list = document.getElementById('list');
       // scroll to the list if th escreen is smaller than 768px
       if (window.innerWidth <= 768) {
         list.scrollIntoView();
       }
+      // scroll to the restaurant card
       list.scrollTo(0, resto.offsetTop);
     },
 
@@ -95,7 +97,8 @@ export default {
         }
       });
     },
-    // Scroll btn
+
+    // TO TOP BTN
     // check if we scroll pass 400px and show the button
     scrollHandler() {
       if (window.pageYOffset > 400) {

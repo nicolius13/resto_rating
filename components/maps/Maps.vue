@@ -1,13 +1,14 @@
 <template>
   <div id="google-map" ref="googleMap">
+    <!-- MODAL -->
     <FailModal :geolocError="geolocError" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import MarkerClusterer from '@google/markerclustererplus';
 import GoogleMapsApiLoader from 'google-maps-api-loader';
+import MarkerClusterer from '@google/markerclustererplus';
 
 // map settings
 import mapSettings from '@/assets/mapSettings/mapSettings.json';
@@ -67,13 +68,14 @@ export default {
     AddedRestaurants() {
       this.handleMapIdle();
     },
+    // after filtering handle the map idle (marker creation)
     filteringFinished() {
       if (this.filteringFinished && this.map) {
         this.handleMapIdle();
         this.$store.commit('restoMap/resetFilteringFinished');
       }
     },
-    // watch modification of the map center and re center it
+    // watch modification of the map center and re center it (used when geoloc is used)
     'mapConfig.center.lat'() {
       if (this.map) {
         this.reCenterMap();
@@ -84,6 +86,7 @@ export default {
         this.reCenterMap();
       }
     },
+    // watch if the see more restaurant btn is clicked and add the markers
     seeMoreCliked() {
       if (this.seeMoreCliked) {
         this.pagination.nextPage();
@@ -102,6 +105,7 @@ export default {
     });
   },
 
+  // reset the state when leaving the page
   beforeDestroy() {
     this.$store.commit('restoMap/resetAll');
   },
@@ -147,7 +151,7 @@ export default {
 
       // wait that the map is loaded
       this.google.maps.event.addListenerOnce(this.map, 'tilesloaded', () => {
-        // add event listener (when the map is still)
+        // add event listener (when the map is still(idle))
         this.google.maps.event.addListener(this.map, 'idle', () => {
           this.handleMapIdle();
         });

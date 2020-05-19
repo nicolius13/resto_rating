@@ -65,6 +65,10 @@ p {
   margin: 0;
 }
 
+.credit {
+  color: rgb(110, 110, 110);
+}
+
 /* Social links */
 .icons {
   font-size: rfs(1.5rem);

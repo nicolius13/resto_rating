@@ -24,6 +24,7 @@
         GO
       </button>
     </b-row>
+    <!-- MODAL -->
     <FailModal :geolocError="geolocError" />
   </b-container>
 </template>
@@ -64,12 +65,12 @@ export default {
     },
   },
   created() {
-    // choose the background img
+    // choose the background img randomly
     const randNum = Math.floor(Math.random() * this.backImgArray.length);
     this.bgImg = `url(${this.backImgArray[randNum]})`;
   },
   mounted() {
-    // init the google object
+    // init the google object with the place library
     GoogleMapsApiLoader({
       libraries: ['places'],
       apiKey: this.apiKey,
@@ -161,7 +162,8 @@ export default {
         this.$bvModal.show('geolocFailModal');
       }
     },
-    // geocoding
+
+    // GEOCODING
     initGeocoding() {
       this.geocoder = new this.google.maps.Geocoder();
     },
@@ -172,7 +174,9 @@ export default {
       };
       // try to have the adress from the geoloc
       this.geocoder.geocode({ location: latLng }, (res, status) => {
+        // if the status is 'OK' else throw an error
         if (status === 'OK') {
+          // if there is a response put it in the input else throw an error
           if (res[0]) {
             this.input = res[0].formatted_address;
           } else {
@@ -228,7 +232,7 @@ export default {
 }
 </style>
 
-<style scoped>
+<style scoped lang="postcss">
 .findTitle {
   font-size: rfs(5rem);
   margin-bottom: 2rem;
@@ -277,14 +281,14 @@ export default {
   background-repeat: no-repeat;
   background-size: 30px;
 }
-.geoloc:focus {
-  box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
-}
 .geoloc.light {
   background: url('../assets/img/geoloc.png'), #e2e2e2;
   background-position: center;
   background-repeat: no-repeat;
   background-size: 30px;
+}
+.geoloc:focus {
+  box-shadow: 0 0 0 0.2rem rgba(8, 217, 214, 0.5);
 }
 
 /* GO button */
