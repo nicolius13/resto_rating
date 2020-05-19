@@ -15,6 +15,7 @@ export const state = () => ({
 });
 
 export const mutations = {
+  // reset all the state that need to be reset
   resetAll(state) {
     state.restoList = [];
     state.filteredList = [];
@@ -34,7 +35,7 @@ export const mutations = {
           reviews: [],
           haveDetails: false,
         });
-        // add user_ratings_total and rating keys if doesn't exist
+        // add user_ratings_total and rating keys if it doesn't exist
       } else {
         state.restoList.push({
           ...resto,
@@ -53,6 +54,7 @@ export const mutations = {
     }
   },
 
+  // rating average
   setRatingAverage(state, ratingAverage) {
     state.ratingAverage = ratingAverage;
   },
