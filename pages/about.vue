@@ -55,9 +55,12 @@
           <b-col>
             <a @click="toMap({ lat: 48.8573, lng: 2.349363 })">Paris</a>
           </b-col>
+        </b-row>
+        <b-row cols="2" cols-sm="4" class="cities text-center mx-auto">
           <b-col>
             <a @click="toMap({ lat: 43.604675, lng: 3.879026 })">Montpellier</a>
           </b-col>
+
           <b-col>
             <a @click="toMap({ lat: 50.82699, lng: 4.34449 })">Brussels </a>
           </b-col>
@@ -67,6 +70,9 @@
           <b-col>
             <a @click="toMap({ lat: 52.37776, lng: 4.88335 })">Amsterdam</a>
           </b-col>
+        </b-row>
+
+        <b-row class="cities text-center mx-auto">
           <b-col>
             <a @click="toMap({ lat: 51.50716, lng: -0.127715 })">London</a>
           </b-col>
