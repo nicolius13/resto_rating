@@ -86,13 +86,13 @@ export default {
     },
     // watch if restaurant is added
     restoList() {
-      this.calAverage();
+      this.storeAverage();
       this.filterList();
     },
   },
   methods: {
-    // calculate the average rating
-    calAverage() {
+    // store the averages rating
+    storeAverage() {
       // reset the ratingAverageArray
       this.$store.commit('restoMap/setRatingAverage', []);
       this.restoList.forEach(resto => {
