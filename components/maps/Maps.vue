@@ -56,7 +56,7 @@ export default {
       restoList: state => state.restoMap.filteredList,
       markersDisplayed: state => state.restoMap.markersDisplayed,
       selectedRestaurant: state => state.restoMap.selectedRestaurant,
-      AddedRestaurants: state => state.restoMap.AddedRestaurants,
+      addedRestaurants: state => state.restoMap.addedRestaurants,
       filteringFinished: state => state.restoMap.filteringFinished,
       autoComplLocation: state => state.restoMap.autoComplLocation,
       light: state => state.restoMap.light,
@@ -65,7 +65,7 @@ export default {
   },
   watch: {
     // watch if a restaurant is added
-    AddedRestaurants() {
+    addedRestaurants() {
       this.handleMapIdle();
     },
     // after filtering handle the map idle (marker creation)

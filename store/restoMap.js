@@ -2,7 +2,7 @@
 
 export const state = () => ({
   restoList: [],
-  AddedRestaurants: [],
+  addedRestaurants: [],
   filteredList: [],
   filteringFinished: false,
   ratingAverage: [],
@@ -47,8 +47,8 @@ export const mutations = {
       }
     });
     // add the added restaurant if needed
-    if (state.AddedRestaurants) {
-      state.AddedRestaurants.forEach(resto => {
+    if (state.addedRestaurants) {
+      state.addedRestaurants.forEach(resto => {
         state.restoList.push(resto);
       });
     }
@@ -126,7 +126,7 @@ export const mutations = {
   // ADD RESTAURANT
   addRestaurant(state, resto) {
     state.restoList.push(resto);
-    state.AddedRestaurants.push(resto);
+    state.addedRestaurants.push(resto);
   },
 
   setSearchResultHasPage(state, hasPage) {

@@ -29,7 +29,6 @@ h1 {
 /* Theme transition */
 .colorTransition {
   transition: all 0.4s ease-in-out;
-  /* transition-property: color, background-color; */
 }
 
 /* PAGES TRANSITIONS */
@@ -61,14 +60,12 @@ h1 {
 }
 
 /* BUTTONS */
-.outlineBtn {
+.outlineBtn,
+#confirmModal button {
   background: none;
   border-radius: 0.25rem;
   margin: 0.2rem 0.4rem;
   padding: 0.4rem 0.8rem;
-  transition: all 0.2s ease-in-out;
-}
-.outlineBtn:hover {
   transition: all 0.2s ease-in-out;
 }
 
@@ -128,24 +125,29 @@ h1 {
 }
 
 /* Buttons */
-.cancelBtn {
+.cancelBtn,
+#confirmModal button.btn-secondary {
   color: #838383;
   border: 1px solid #838383;
 }
-.cancelBtn:hover {
+.cancelBtn:hover,
+#confirmModal button.btn-secondary:hover {
   background-color: #292929;
   color: #fff;
 }
-.light .cancelBtn:hover {
+.light .cancelBtn:hover,
+.light #confirmModal button.btn-secondary:hover {
   background-color: #838383;
   color: #e2e2e2;
 }
 
-.okBtn {
+.okBtn,
+#confirmModal button.btn-primary {
   color: #ff2e63;
   border: 1px solid #ff2e63;
 }
-.okBtn:hover {
+.okBtn:hover,
+#confirmModal button.btn-primary:hover {
   background-color: #ff2e63;
   color: #fff;
 }

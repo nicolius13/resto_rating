@@ -60,8 +60,28 @@ export default {
     handleOk(bvModalEvt) {
       // Prevent modal from closing
       bvModalEvt.preventDefault();
-      // Trigger submit handler
-      this.handleSubmit();
+      // check if the review have a rating =/= 0 and a text
+      if (this.rating === 0 && this.text === '') {
+        this.$bvModal
+          .msgBoxConfirm(
+            'Are you sure you want to add a review with a rating of 0 and no comment ?',
+            {
+              id: 'confirmModal',
+              title: 'Please Confirm',
+              size: 'md',
+              buttonSize: 'sm',
+              centered: true,
+              okTitle: 'YES',
+              cancelTitle: 'NO',
+            }
+          )
+          .then(value => {
+            if (value === true) {
+              // Trigger submit handler
+              this.handleSubmit();
+            }
+          });
+      }
     },
     handleSubmit() {
       // emit an event with the comment to add
@@ -78,4 +98,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+#confirmModal .modal-body {
+  text-align: center;
+}
+</style>
