@@ -1,5 +1,5 @@
 <template>
-  <div class="back">
+  <div>
     <Header @mobileMenu="mobileOpen = $event" />
     <nuxt :style="mainHeight" />
     <Footer class="footer" />
@@ -24,7 +24,7 @@ export default {
     mainHeight() {
       /* heigth the screen - header and footer */
       if (this.mobileOpen) {
-        return 'height: Calc(100vh - 252px - 70px);';
+        return 'height: Calc(100vh - 196px - 70px);';
       } else {
         return 'height: Calc(100vh - 76px - 70px);';
       }

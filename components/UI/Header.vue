@@ -11,8 +11,8 @@
         class=" first-button"
         target="nav-collapse"
       >
-        <template>
-          <div :class="mobileOpen ? 'open' : ''" class="burgerBtn">
+        <template v-slot:default="{ expanded }">
+          <div :class="expanded ? 'open' : ''" class="burgerBtn">
             <span></span><span></span><span></span>
           </div>
         </template>
