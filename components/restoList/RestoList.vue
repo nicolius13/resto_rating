@@ -71,7 +71,6 @@ export default {
       restoList: state => state.restoMap.restoList,
       filteredList: state => state.restoMap.filteredList,
       markersDisplayed: state => state.restoMap.markersDisplayed,
-      ratingAverages: state => state.restoMap.ratingAverage,
       hasPage: state => state.restoMap.searchResultHasPage,
     }),
   },
@@ -86,30 +85,10 @@ export default {
     },
     // watch if restaurant is added
     restoList() {
-      this.storeAverage();
       this.filterList();
     },
   },
   methods: {
-    // store the averages rating
-    storeAverage() {
-      // reset the ratingAverageArray
-      this.$store.commit('restoMap/setRatingAverage', []);
-      this.restoList.forEach(resto => {
-        if (resto.rating) {
-          this.$store.commit('restoMap/addRatingAverage', {
-            averages: resto.rating,
-            id: resto.id,
-          });
-        } else {
-          // if no comment put average to 0
-          this.$store.commit('restoMap/addRatingAverage', {
-            averages: 0,
-            id: resto.id,
-          });
-        }
-      });
-    },
     filterList() {
       let lowerLimit = this.lowerLimit;
       let higherLimit = this.higherLimit;
@@ -118,16 +97,16 @@ export default {
         lowerLimit = this.higherLimit;
         higherLimit = this.lowerLimit;
       }
-      // reset the filteredAverages array
+
       const filteredAverages = [];
       // put the id of the restaurant if it's in the range selected
-      this.ratingAverages.forEach(rating => {
-        if (rating.average >= lowerLimit && rating.average <= higherLimit) {
-          filteredAverages.push(rating.restoId);
+      this.restoList.forEach(resto => {
+        if (resto.rating >= lowerLimit && resto.rating <= higherLimit) {
+          filteredAverages.push(resto);
         }
       });
       // filter the restaurant list with the resto id put in the filteredAverages array
-      this.$store.commit('restoMap/filteringList', filteredAverages);
+      this.$store.commit('restoMap/setFilteredList', filteredAverages);
     },
 
     seeMoreResto() {

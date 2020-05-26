@@ -57,7 +57,6 @@ export default {
       markersDisplayed: state => state.restoMap.markersDisplayed,
       selectedRestaurant: state => state.restoMap.selectedRestaurant,
       addedRestaurants: state => state.restoMap.addedRestaurants,
-      filteringFinished: state => state.restoMap.filteringFinished,
       autoComplLocation: state => state.restoMap.autoComplLocation,
       light: state => state.restoMap.light,
       seeMoreCliked: state => state.restoMap.seeMoreCliked,
@@ -69,10 +68,9 @@ export default {
       this.handleMapIdle();
     },
     // after filtering handle the map idle (marker creation)
-    filteringFinished() {
-      if (this.filteringFinished && this.map) {
+    restoList() {
+      if (this.restoList && this.map) {
         this.handleMapIdle();
-        this.$store.commit('restoMap/resetFilteringFinished');
       }
     },
     // watch modification of the map center and re center it (used when geoloc is used)

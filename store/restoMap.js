@@ -4,8 +4,6 @@ export const state = () => ({
   restoList: [],
   addedRestaurants: [],
   filteredList: [],
-  filteringFinished: false,
-  ratingAverage: [],
   markersDisplayed: [],
   selectedRestaurant: null,
   autoComplLocation: null,
@@ -54,37 +52,16 @@ export const mutations = {
     }
   },
 
-  // rating average
-  setRatingAverage(state, ratingAverage) {
-    state.ratingAverage = ratingAverage;
-  },
-  addRatingAverage(state, rating) {
-    state.ratingAverage.push({
-      restoId: rating.id,
-      average: rating.averages,
-    });
-  },
-
+  // FILTERING LIST
   // set an unfiltered list if no filtering is done (add resto page)
   setFilteredListToAllResto(state) {
     state.filteredList = state.restoList;
-    state.filteringFinished = true;
   },
-  filteringList(state, filteredAverages) {
-    state.filteringFinished = false;
-
-    // filter the restaurant list with the resto id put in the filteredAverages array
-    state.filteredList = state.restoList.filter((resto, i) => {
-      if (i === filteredAverages.length - 1) {
-        state.filteringFinished = true;
-      }
-      return filteredAverages.includes(resto.id);
-    });
-  },
-  resetFilteringFinished(state) {
-    state.filteringFinished = false;
+  setFilteredList(state, filteredList) {
+    state.filteredList = filteredList;
   },
 
+  // selected restaurnat (animate marker & open details)
   setSelectedRestaurant(state, resto) {
     state.selectedRestaurant = resto;
   },
