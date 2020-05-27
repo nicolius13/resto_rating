@@ -1,7 +1,7 @@
 <template>
   <b-modal
     id="addRestoModal"
-    @ok="handleOk"
+    @ok="handleSubmit"
     @show="resetModal"
     @hidden="resetModal"
     :oncontextmenu="show ? 'return true;' : 'return false;'"
@@ -71,13 +71,9 @@ export default {
       this.nameState = valid;
       return valid;
     },
-    handleOk(bvModalEvt) {
+    handleSubmit(bvModalEvt) {
       // prevent modal from closing
       bvModalEvt.preventDefault();
-      // trigger submit handler
-      this.handleSubmit();
-    },
-    handleSubmit() {
       // exit when the form isn't valid
       if (!this.checkFormValidity()) {
         return;

@@ -81,6 +81,9 @@ export default {
               this.handleSubmit();
             }
           });
+      } else {
+        // Trigger submit handler
+        this.handleSubmit();
       }
     },
     handleSubmit() {
