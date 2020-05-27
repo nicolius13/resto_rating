@@ -63,11 +63,7 @@ export default {
     }),
   },
   watch: {
-    // watch if a restaurant is added
-    addedRestaurants() {
-      this.handleMapIdle();
-    },
-    // after filtering handle the map idle (marker creation)
+    // watch the filteredList if resto is added
     restoList() {
       if (this.restoList && this.map) {
         this.handleMapIdle();
@@ -349,15 +345,15 @@ export default {
           lat: resto.geometry.location.lat(),
           lng: resto.geometry.location.lng(),
         });
-        const markerOptions = {
-          id: resto.id,
-          position: latLng,
-          icon: this.restoIcon,
-          animation: this.google.maps.Animation.DROP,
-          bouncing: false,
-        };
         // check if the restaurant is in the map bounds if true add it to the displayed markers array
         if (mapBounds.contains(latLng)) {
+          const markerOptions = {
+            id: resto.id,
+            position: latLng,
+            icon: this.restoIcon,
+            animation: this.google.maps.Animation.DROP,
+            bouncing: false,
+          };
           this.$store.commit('restoMap/addMarker', {
             markerOptions: markerOptions,
             markerList: 'markersDisplayed',
