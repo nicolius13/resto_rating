@@ -1,9 +1,9 @@
 <template>
-  <b-card :id="'resto-' + resto.id" class="colorTransition">
+  <b-card :id="'resto-' + resto.place_id" class="colorTransition">
     <b-card-title
       @click="handleOpening"
-      :class="selectedRestaurant === resto.id ? '' : 'collapsed'"
-      :data-id="resto.id"
+      :class="selectedRestaurant === resto.place_id ? '' : 'collapsed'"
+      :data-id="resto.place_id"
       >{{ resto.name }}</b-card-title
     >
     <b-card-text>
@@ -19,8 +19,8 @@
     </b-card-text>
     <!-- collapse -->
     <b-collapse
-      :id="'collapseInner-' + resto.id"
-      :visible="selectedRestaurant === resto.id"
+      :id="'collapseInner-' + resto.place_id"
+      :visible="selectedRestaurant === resto.place_id"
       accordion="restoDetails"
     >
       <b-img :src="img" fluid></b-img>
@@ -58,7 +58,7 @@
           See more Comments
         </button>
         <button
-          v-b-modal="'modal-' + resto.id"
+          v-b-modal="'modal-' + resto.place_id"
           class="outlineBtn seeMoreBtn colorTransition"
         >
           Add Comment
@@ -66,7 +66,7 @@
       </b-row>
     </b-collapse>
     <!-- MODAL -->
-    <AddCommentModal :restoId="resto.id" @addingComment="addComment" />
+    <AddCommentModal :restoId="resto.place_id" @addingComment="addComment" />
   </b-card>
 </template>
 
@@ -123,7 +123,7 @@ export default {
     // reset the comment displayed each time the selected restaurant change
     // and get the details of the selected restaurant
     selectedRestaurant(newVal) {
-      if (newVal === this.resto.id) {
+      if (newVal === this.resto.place_id) {
         this.commentLimit = 3;
         this.getDetails();
       }
@@ -219,7 +219,7 @@ export default {
         if (res.reviews) {
           this.$store.commit('restoMap/setReviews', {
             reviews: res.reviews,
-            id: this.resto.id,
+            id: this.resto.place_id,
           });
           // stars for the reviews
           this.resto.reviews.forEach((review, index) => {
@@ -232,7 +232,7 @@ export default {
     // put the new comment in the comments array
     addComment($event) {
       this.$store.commit('restoMap/addComment', {
-        id: this.resto.id,
+        id: this.resto.place_id,
         comment: $event,
       });
       this.starsComments.push(this.starRating($event.rating));
