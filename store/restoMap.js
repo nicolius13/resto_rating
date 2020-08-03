@@ -77,7 +77,7 @@ export const mutations = {
   // ADD  COMMENT
   setReviews(state, reviews) {
     state.restoList.find(resto => {
-      if (resto.id === reviews.id) {
+      if (resto.place_id === reviews.id) {
         resto.reviews = reviews.reviews;
         resto.haveDetails = true;
         return true;
@@ -86,7 +86,7 @@ export const mutations = {
   },
   addComment(state, comment) {
     state.restoList.find(resto => {
-      if (resto.id === comment.id) {
+      if (resto.place_id === comment.id) {
         resto.reviews.push(comment.comment);
         // add 1 to the total reviews number
         resto.user_ratings_total++;

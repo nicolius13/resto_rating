@@ -348,7 +348,7 @@ export default {
         // check if the restaurant is in the map bounds if true add it to the displayed markers array
         if (mapBounds.contains(latLng)) {
           const markerOptions = {
-            id: resto.id,
+            id: resto.place_id,
             position: latLng,
             icon: this.restoIcon,
             animation: this.google.maps.Animation.DROP,
