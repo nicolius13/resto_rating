@@ -19,7 +19,7 @@
     </div>
     <RestaurantCard
       v-for="resto in displayedResto"
-      :key="resto.id"
+      :key="resto.place_id"
       :resto="resto"
       :places="places"
     />
@@ -63,7 +63,7 @@ export default {
     displayedResto() {
       return this.filteredList.filter(marker => {
         return this.markersDisplayed.some(mark => {
-          return marker.id === mark.id;
+          return marker.place_id === mark.id;
         });
       });
     },

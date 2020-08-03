@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { v4 as uuidV4 } from 'uuid';
+
 import AddRestoModal from '../components/addResto/AddRestoModal';
 import Maps from '../components/maps/Maps';
 
@@ -81,7 +83,7 @@ export default {
     },
     addResto($event) {
       this.$store.commit('restoMap/addRestaurant', {
-        id: (this.$store.state.restoMap.restoList.length + 1).toString(),
+        id: uuidV4(),
         name: $event.name,
         geometry: {
           location: this.newRestoCoord,
