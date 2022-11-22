@@ -22,7 +22,7 @@
     "@nuxtjs/axios": "^5.10.3",
     "bootstrap-vue": "^2.14.0",
     "google-maps-api-loader": "^1.1.1",
-    "nuxt": "^2.12.2",
+    "nuxt": "^2.15.8",
     "nuxt-fontawesome": "^0.4.0",
     "rfs": "^9.0.3",
     "uuid": "^8.0.0"
